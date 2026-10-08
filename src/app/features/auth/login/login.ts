@@ -48,10 +48,11 @@ export class Login {
 
     this.auth.getCsrf().pipe(
       switchMap(()=>this.auth.login(request)),
+      switchMap(() => this.auth.cargarUsuario()),
       finalize(() => this.loading.set(false))
     ).subscribe({
       next:() =>{
-        void this.router.navigateByUrl('/inicio');
+        void this.router.navigateByUrl('/dashboard');
       },
       error: (error)=>{
         this.errorMessage.set(error.status === 0 ? 'No se pudo conectar con el backend.' : 'No se pudo iniciar sesión. Revisa las credenciales y la configuración CSRF.');

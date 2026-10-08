@@ -1,15 +1,18 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Service } from '@angular/core';
+import { inject, Injectable, Service, signal } from '@angular/core';
 import { tap, switchMap } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import {
   AuthRequest,
   AuthResponse,
-  CsrfResponse
+  CsrfResponse,
+  UsuarioActual
 } from './auth.models';
 
-@Service()
+@Injectable({
+  providedIn: 'root'
+})
 export class Auth {
 
   private readonly http = inject(HttpClient);
@@ -19,6 +22,8 @@ export class Auth {
   private csrfToken: string | null = null;
   private csrfHeaderName: string | null = null;
 
+  private readonly usuarioState = signal<UsuarioActual| null>(null);
+  readonly usuario = this.usuarioState.asReadonly();
 
   getCsrf() {
     return this.http.get<CsrfResponse>(
@@ -66,7 +71,9 @@ export class Auth {
         withCredentials: true,
         headers: { [this.csrfHeaderName!]: this.csrfToken! }
       })),
-      tap(response => this.accessToken = response.access_token)
+      tap(response => {this.accessToken = response.access_token}),
+    
+      switchMap(()=> this.cargarUsuario())
     );
   }
 
@@ -93,20 +100,23 @@ export class Auth {
     );
   }
 
-  clearSession(): void { this.accessToken = null; }
+  clearSession(): void { 
+    this.accessToken = null; 
+    this.usuarioState.set(null);
+  }
 
   getAccessToken(): string | null {
     return this.accessToken;
   }
+
+  cargarUsuario() {
+    return this.getProfile().pipe(
+    tap(usuario => this.usuarioState.set(usuario))
+  );
 }
-export interface UsuarioActual {
-  idUsuario: number;
-  correo: string;
-  estado: string;
-  rol: string;
 }
 export interface PedidoResumen {
   idPedido: number;
   estado: string;
-  fechaRegistro: string;
+  fechaRegistro: string;  
 }

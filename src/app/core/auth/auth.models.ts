@@ -11,3 +11,11 @@ export interface CsrfResponse {
   token: string;
   headerName: string;
 }
+
+
+export interface UsuarioActual {
+  idUsuario: number;
+  correo: string;
+  estado: string;
+  rol: string;
+}
