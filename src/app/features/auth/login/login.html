@@ -1,0 +1,57 @@
+<section class=" flex py-20 justify-center text-white">
+
+  <div class="w-full max-w-md p-8 bg-[#002d54]  h-fit">
+
+    <h1 class="text-3xl font-semibold">
+      Iniciar sesión
+    </h1>
+
+    <p class="mt-2">
+      Ingresa a tu cuenta de Linde.
+    </p>
+
+    <!-- FORMULARIO DE LOGIN -->
+    <form [formGroup]="form" (ngSubmit)="login()" class="mt-6 flex flex-col gap-4 ">
+      <div class="flex flex-col gap-2">
+        <label pLabel for="correo">Correo electrónico</label>
+        <input class="bg-white!" pInputText id="correo" type="email" formControlName="correo" placeholder="correo@ejemplo.com"/>
+      </div>
+      @if (form.controls.correo.touched && form.controls.correo.hasError('required')) {
+        <small class="text-red-500">
+          El correo es obligatorio.
+        </small>
+      }
+      @if (form.controls.correo.touched && form.controls.correo.hasError('email')) {
+        <small class="text-red-500">
+          Ingresa un correo válido.
+        </small>
+      }
+
+
+      <div class="flex flex-col gap-2">
+        <label pLabel for="contraseña">Contraseña</label>
+        <input class="bg-white!" pInputPassword id="contraseña" type="password" formControlName="contraseña" placeholder="Ingresa tu contraseña"/>
+      </div>
+      @if (form.controls['contraseña'].touched && form.controls['contraseña'].hasError('required')) {
+        <small class="text-red-500">
+          La contraseña es obligatoria.
+        </small>
+      }
+      <button pButton type="submit" [disabled]="loading()">{{ loading() ? 'Ingresando…' : 'Ingresar' }}</button>
+      @if (errorMessage()) { <p role="alert" class="text-red-600">{{ errorMessage() }}</p> }
+    </form>
+
+    <p class="mt-6 text-center">
+      ¿No estás registrado?
+      <a
+        routerLink="/register"
+        class="font-semibold hover:underline"
+      >
+        Regístrate
+      </a>
+    </p>
+
+
+  </div>
+
+</section>
