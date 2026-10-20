@@ -1,7 +1,6 @@
 <app-header />
 
-<main class="min-h-screen bg-gray-50">
-  <div class="mx-auto max-w-7xl p-6">
-    <router-outlet />
-  </div>
-</main>
+<div class="min-h-screen bg-gray-50 lg:flex">
+  <app-sidebar class="block shrink-0 lg:w-64" />
+  <main class="min-w-0 flex-1"><div class="mx-auto max-w-7xl p-4 md:p-6"><router-outlet /></div></main>
+</div>

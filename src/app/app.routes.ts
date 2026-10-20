@@ -19,7 +19,8 @@ export const routes: Routes = [
     loadComponent: () => import('./layouts/dashboard-layout/dashboard-layout').then(m => m.DashboardLayout),
     
     children: [
-      {path: '', loadComponent: () => import('./features/dashboard/dashboard') .then(m => m.Dashboard)}
+      {path: 'perfil', loadComponent: () => import('./features/perfil/perfil').then(m => m.Perfil)},
+      {path: '', pathMatch: 'full', loadComponent: () => import('./features/dashboard/dashboard').then(m => m.Dashboard)}
     ]
   },
 

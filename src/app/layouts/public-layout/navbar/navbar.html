@@ -12,75 +12,71 @@
 
         </a>
 
-        <div class="flex-1 flex flex-col h-full px-4">
+        <div class="flex w-full h-full items-center px-6 pr-5">
 
-            <!-- Barra superior -->
-            <div class="hidden lg:flex flex-1 items-center justify-between text-sm">
+            <div class="flex w-full flex-col h-full justify-center pl-6 pr-5">
+                <!-- Barra superior -->
+                <div class="hidden lg:flex lg:flex-2/5 items-center justify-between text-sm">
 
-                <span class="font-medium text-white">
-                Perú
-                </span>
+                    <div class="flex items-center justify-end w-full gap-6">
 
-                <div class="flex items-center gap-6">
+                        <a routerLink="/contacto" class="text-[#ffffffb0]  transition-colors">
+                            Servicio al cliente
+                        </a>
 
-                <a routerLink="/contacto" class="text-gray-500 hover:text-blue-700 transition-colors">
-                    Servicio al cliente
-                </a>
+                        <a href="https://www.linde.com" target="_blank" rel="noopener noreferrer" class="text-[#ffffffb0] transition-colors">
+                            Linde Corporativo
+                        </a>
 
-                <a href="https://www.linde.com" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-blue-700 transition-colors">
-                    Linde Corporativo
-                </a>
+                    </div>
+                </div>
+
+
+                <!-- Navegación principal -->
+                <div class="hidden lg:flex-3/5 lg:flex items-start justify-between">
+                        <!-- Links desktop -->
+                        <div class="hidden lg:flex items-center gap-8 text-lg  text-white ">
+                            <a routerLink="/inicio" routerLinkActive="" class="font-medium  hover:underline underline-offset-8 transition-colors">Inicio</a>
+                            <a routerLink="/nosotros" routerLinkActive="" class="font-medium  hover:underline underline-offset-8 transition-colors">Nosotros</a>
+                            <a routerLink="/productos" routerLinkActive="" class="font-medium hover:underline underline-offset-8 transition-colors">Productos</a>
+                            <a routerLink="/contacto" routerLinkActive="" class="font-medium hover:underline underline-offset-8 transition-colors">Contacto</a>
+                        </div>
+
+
+                        <!-- Acciones -->
+                        <div class="hidden ml-auto lg:flex items-center gap-2">
+                            <!-- Buscar -->
+                            <button type="button" class="w-11 h-11 flex items-start pt-1 justify-end" aria-label="Buscar">
+                                <i class="bi bi-search text-white "></i>
+                            </button>
+                        </div>
 
                 </div>
             </div>
+            <button routerLink="/login" pButton class="hidden! lg:inline-flex! bg-[#07c]! border-0! text-white! font-normal! hover:bg-[#005491]! py-2! px-4! text-[1rem]! w-38 h-11">
+                <!-- <a routerLink="/login" class="hidden lg:flex items-center px-5 py-2.5bg-blue-700  text-white font-medium hover:bg-blue-800 transition-colors"> -->
+                    Iniciar sesión
+                <!-- </a> -->
+            </button>       
 
 
-            <!-- Navegación principal -->
-            <div class="flex-1 lg:flex items-center justify-between">
-                    <!-- Links desktop -->
-                    <div class="hidden lg:flex items-center gap-8  text-white ">
-                        <a routerLink="/inicio" routerLinkActive="" class="font-medium  hover:underline underline-offset-8 transition-colors">Inicio</a>
-                        <a routerLink="/nosotros" routerLinkActive="" class="font-medium  hover:underline underline-offset-8 transition-colors">Nosotros</a>
-                        <a routerLink="/productos" routerLinkActive="" class="font-medium hover:underline underline-offset-8 transition-colors">Productos</a>
-                        <a routerLink="/contacto" routerLinkActive="" class="font-medium hover:underline underline-offset-8 transition-colors">Contacto</a>
-                    </div>
 
-
-                    <!-- Acciones -->
-                    <div class="hidden ml-auto lg:flex items-center gap-2">
-
-                    <!-- Buscar -->
-                    <button type="button" class="w-11 h-11 flex items-center justify-center text-gray-600 hover:text-blue-700 hover:bg-gray-100rounded-full transition-colors" aria-label="Buscar">
-                        <i class="bi bi-search text-white "></i>
-                    </button>
-
-
-                    <!-- Login desktop -->
-                    <button routerLink="/login" pButton class="bg-[#07c]! border-0! text-white! hover:bg-[#005491]!">
-                    <!-- <a routerLink="/login" class="hidden lg:flex items-center px-5 py-2.5bg-blue-700  text-white font-medium hover:bg-blue-800 transition-colors"> -->
-                        Iniciar sesión
-                    <!-- </a> -->
-                    </button>
-
-
-                    <!-- Menú móvil -->
-                    <button type="button" class="lg:hidden w-11 h-11 flex items-center justify-center text-gray-700"aria-label="Abrir menú">
-                        <i class="pi pi-bars text-2xl">dad</i>
-                    </button>
-
-                </div>
+            <!-- MOVIL -->
+            <div class="lg:hidden flex w-full h-full justify-end gap-5">
+                <!-- Buscar -->
+                <button type="button" class="flex items-center justify-center" aria-label="Buscar">
+                    <i class="bi bi-search flex items-center text-white text-xl "></i>
+                </button>
+                <!-- Menú móvil -->
+                <button type="button" class="flex items-center justify-center" aria-label="Abrir menú">
+                    <i class="bi bi-list flex items-center text-white text-4xl"></i>
+                </button>
 
             </div>
 
         </div>
     
 
-
-    <!-- ========================= -->
-    <!-- PARTE DERECHA -->
-    <!-- ========================= -->
-
-    
 
   </nav>
 

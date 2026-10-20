@@ -1,0 +1,17 @@
+<aside class="h-full border-r border-slate-200 bg-white p-4 text-slate-900">
+  <p class="mb-4 text-xs font-semibold uppercase tracking-wider text-slate-500">{{ usuario()?.rol }} · Navegación</p>
+  <label for="buscar-menu" class="sr-only">Buscar una sección</label>
+  <input pInputText id="buscar-menu" type="search" placeholder="Buscar sección…" [value]="search()"
+    (input)="search.set($any($event.target).value)" class="mb-4 w-full bg-white! text-slate-900!" />
+  <nav aria-label="Navegación principal" class="flex flex-col gap-1">
+    <a routerLink="/dashboard" [queryParams]="{}" routerLinkActive="bg-sky-100" [routerLinkActiveOptions]="{exact: true}"
+      ariaCurrentWhenActive="page" class="rounded-lg px-3 py-3 font-medium hover:bg-slate-100"><i class="pi pi-home mr-2" aria-hidden="true"></i>Resumen</a>
+    @for (section of sections(); track section.key) {
+      <a routerLink="/dashboard" [queryParams]="{seccion: section.key}" routerLinkActive="bg-sky-100"
+        [routerLinkActiveOptions]="{exact: true}" ariaCurrentWhenActive="page"
+        class="rounded-lg px-3 py-3 text-sm hover:bg-slate-100">{{ section.title }}</a>
+    } @empty { <p class="px-3 py-2 text-sm text-slate-500">No hay secciones coincidentes.</p> }
+    <a routerLink="/dashboard/perfil" routerLinkActive="bg-sky-100" ariaCurrentWhenActive="page"
+      class="mt-4 rounded-lg border-t border-slate-100 px-3 py-3 font-medium hover:bg-slate-100"><i class="pi pi-user mr-2" aria-hidden="true"></i>Mi perfil</a>
+  </nav>
+</aside>

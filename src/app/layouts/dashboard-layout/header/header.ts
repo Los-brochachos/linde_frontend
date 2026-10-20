@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
 
-
 @Component({
   imports: [MenuModule],
   selector: 'app-header',

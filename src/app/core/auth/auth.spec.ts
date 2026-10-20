@@ -25,7 +25,7 @@ describe('Auth', () => {
     expect(refresh.request.body).toEqual({});
     refresh.flush({ access_token: 'new-access' });
     expect(service.getAccessToken()).toBe('new-access');
-    service.getProfile().subscribe();
+
     const profile = http.expectOne(`${environment.apiUrl}/api/v1/usuarios/me`);
     expect(profile.request.headers.get('Authorization')).toBe('Bearer new-access');
     profile.flush({ correo: 'admin@linde.example', rol: 'ADMIN' });
@@ -42,6 +42,7 @@ describe('Auth', () => {
     service.refreshSession().subscribe();
     http.expectOne(`${environment.apiUrl}/auth/csrf`).flush({ token: 'csrf', headerName: 'X-XSRF-TOKEN' });
     http.expectOne(`${environment.apiUrl}/auth/refresh-token`).flush({ access_token: 'access' });
+    http.expectOne(`${environment.apiUrl}/api/v1/usuarios/me`).flush({ idUsuario: 1, correo: 'admin@linde.example', rol: 'ADMIN', estado: 'ACTIVO' });
     service.logout().subscribe();
     http.expectOne(`${environment.apiUrl}/auth/csrf`).flush({ token: 'csrf', headerName: 'X-XSRF-TOKEN' });
     const logout = http.expectOne(`${environment.apiUrl}/auth/logout`);
@@ -49,5 +50,6 @@ describe('Auth', () => {
     expect(logout.request.withCredentials).toBe(true);
     logout.flush(null, { status: 204, statusText: 'No Content' });
     expect(service.getAccessToken()).toBeNull();
+    expect(service.usuario()).toBeNull();
   });
 });
