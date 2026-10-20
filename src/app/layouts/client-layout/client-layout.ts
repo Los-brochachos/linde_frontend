@@ -1,11 +1,9 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { Header } from './header/header';
-import { Footer } from './footer/footer';
+import { DashboardLayout } from '../dashboard-layout/dashboard-layout';
 
 @Component({
   selector: 'app-client-layout',
-  imports: [RouterOutlet, Header, Footer],
+  imports: [DashboardLayout],
   templateUrl: './client-layout.html',
 })
 export class ClientLayout {}

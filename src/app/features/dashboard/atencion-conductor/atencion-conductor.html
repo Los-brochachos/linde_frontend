@@ -1,0 +1,26 @@
+<section class="mx-auto max-w-4xl space-y-6 p-4 text-slate-900 md:p-6">
+  <a routerLink="/dashboard/atenciones" class="text-sky-700">Volver a mis atenciones</a>
+  <div class="flex flex-wrap items-center justify-between gap-4"><h1 class="text-3xl font-semibold">Atención asignada</h1><button type="button" (click)="actualizar()" [disabled]="cargando() || guardando()" class="rounded-lg border px-4 py-2 disabled:opacity-50">Actualizar atención</button></div>
+  @if (cargando()) { <p role="status">Cargando atención…</p> }
+  @if (error()) { <p role="alert" class="rounded-lg bg-red-50 p-4 text-red-700">{{ error() }}</p> }
+  @if (mensaje()) { <p role="status" class="rounded-lg bg-green-50 p-4 text-green-800">{{ mensaje() }}</p> }
+  @if (atencion(); as a) {
+    <div class="space-y-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+      <h2 class="text-2xl font-semibold">Atención #{{ a.idAtencion }}</h2>
+      <dl class="grid gap-5 sm:grid-cols-2">
+        <div><dt class="text-sm text-slate-500">Pedido</dt><dd>#{{ a.idPedido }}</dd></div>
+        <div><dt class="text-sm text-slate-500">Estado</dt><dd data-testid="estado-atencion" class="font-semibold">{{ a.estado }}</dd></div>
+        <div><dt class="text-sm text-slate-500">Cisterna</dt><dd>#{{ a.idCisterna }}</dd></div><div><dt class="text-sm text-slate-500">Conductor</dt><dd>#{{ a.idConductor }}</dd></div>
+        <div><dt class="text-sm text-slate-500">Inicio programado</dt><dd>{{ a.fechaInicioProgramada }}</dd></div><div><dt class="text-sm text-slate-500">Fin programado</dt><dd>{{ a.fechaFinProgramada ?? 'Sin registrar' }}</dd></div>
+        <div><dt class="text-sm text-slate-500">Inicio real</dt><dd data-testid="inicio-real">{{ a.fechaInicio ?? 'Sin registrar' }}</dd></div><div><dt class="text-sm text-slate-500">Fin real</dt><dd data-testid="fin-real">{{ a.fechaFin ?? 'Sin registrar' }}</dd></div>
+        <div class="sm:col-span-2"><dt class="text-sm text-slate-500">Observaciones</dt><dd>{{ a.observaciones || 'Sin observaciones' }}</dd></div>
+      </dl>
+      @if (a.estado === 'PROGRAMADA') { <button type="button" (click)="cambiar('iniciar')" [disabled]="guardando()" class="rounded-lg bg-[#002d54] px-5 py-3 text-white disabled:opacity-50">{{ guardando() ? 'Guardando…' : 'Iniciar atención' }}</button> }
+      @if (a.estado === 'EN_CURSO') {
+        @if (!confirmarFin()) { <button type="button" (click)="confirmarFin.set(true)" class="rounded-lg bg-[#002d54] px-5 py-3 text-white">Finalizar atención</button> }
+        @else { <div class="space-y-3 rounded-lg border border-amber-300 p-4"><p>Confirma que la atención ha terminado. Se registrará la fecha y hora real de finalización.</p><div class="flex flex-wrap gap-3"><button type="button" (click)="cambiar('finalizar')" [disabled]="guardando()" class="rounded-lg bg-[#002d54] px-4 py-2 text-white disabled:opacity-50">{{ guardando() ? 'Guardando…' : 'Confirmar finalización' }}</button><button type="button" (click)="confirmarFin.set(false)" [disabled]="guardando()" class="rounded-lg border px-4 py-2">Volver</button></div></div> }
+      }
+      @if (a.estado === 'FINALIZADA') { <p class="text-slate-600">La atención ya está finalizada.</p> }
+    </div>
+  }
+</section>

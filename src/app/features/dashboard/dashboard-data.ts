@@ -21,7 +21,7 @@ export const DASHBOARD_ROLES: Record<string, { title: string; description: strin
   ADMIN: { title: 'Administración', description: 'Resumen general de usuarios, clientes y operaciones.', sections: [pedidos, usuarios, clientes, atenciones, alertas, fallas, productos, cisternas, conductores, historial] },
   ANALISTA: { title: 'Análisis de operaciones', description: 'Consulta el estado de los pedidos y los recursos del sistema.', sections: [pedidos, clientes, atenciones, alertas, fallas, productos, cisternas, conductores, usuarios, historial] },
   PROGRAMADOR: { title: 'Programación de operaciones', description: 'Consulta pedidos, atenciones, alertas y recursos disponibles para planificar el servicio.', sections: [pedidos, atenciones, alertas, conductores, cisternas, productos] },
-  CONDUCTOR: { title: 'Operaciones de transporte', description: 'Consulta las atenciones y alertas de operación disponibles para tu rol.', sections: [atenciones, alertas] },
+  CONDUCTOR: { title: 'Operaciones de transporte', description: 'Consulta las atenciones y alertas de operación disponibles para tu rol.', sections: [{ ...atenciones, path: 'atenciones/asignadas' }, alertas] },
   TECNICO: { title: 'Mantenimiento', description: 'Consulta fallas, historial de mantenimiento, cisternas y atenciones.', sections: [fallas, historial, cisternas, atenciones] },
   CLIENTE: { title: 'Mis pedidos', description: 'Consulta tus pedidos y los productos disponibles.', sections: [{ ...pedidos, title: 'Mis pedidos', path: 'pedidos/mis-pedidos' }, productos] },
 };

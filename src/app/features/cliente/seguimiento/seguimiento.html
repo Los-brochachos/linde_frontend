@@ -1,1 +1,12 @@
-<p>seguimiento works!</p>
+<section class="mx-auto max-w-5xl px-6 py-12 text-slate-900">
+  <h1 class="text-3xl font-bold text-[#002d54]">Seguimiento de pedidos</h1><p class="mt-2 text-slate-600">Revisa el estado y los movimientos de tus pedidos.</p>
+  <div class="my-6 flex flex-wrap items-end gap-4"><div class="flex-1"><label for="pedido-seguimiento" class="mb-2 block font-medium">Selecciona tu pedido</label><select id="pedido-seguimiento" [value]="selectedId()" (change)="select($any($event.target).value)" class="w-full rounded-lg border bg-white p-3 text-slate-900"><option value="">Seleccionar pedido</option>@for (p of pedidos(); track p.idPedido) { <option [value]="p.idPedido">Pedido #{{ p.idPedido }} · {{ p.estado }}</option> }</select></div>
+    <button type="button" (click)="refresh()" [disabled]="loading() || !selectedId()" class="rounded bg-[#007cc0] px-4 py-3 text-white disabled:opacity-50">Actualizar seguimiento</button>
+  </div>
+  @if (loading()) { <p role="status">Consultando seguimiento…</p> }
+  @if (error()) { <p role="alert" class="rounded bg-red-50 p-4 text-red-700">{{ error() }}</p> }
+  @if (pedido(); as p) {
+    <div class="mb-6 rounded-xl border bg-white p-6"><h2 class="text-xl font-semibold">Pedido #{{ p.idPedido }}</h2><p class="mt-2">Estado actual: <strong>{{ p.estado }}</strong></p><p>Entrega estimada: {{ p.fechaEntregaEstimada | date:'dd/MM/yyyy' }}</p></div>
+    <ol class="space-y-4">@for (evento of eventos(); track evento.idSeguimiento) { <li class="rounded-xl border-l-4 border-sky-600 bg-white p-5 shadow-sm"><h3 class="font-semibold">{{ evento.estado }}</h3><time class="text-sm text-slate-500">{{ evento.fechaHora | date:'dd/MM/yyyy HH:mm' }}</time><p class="mt-2">{{ evento.observacion }}</p></li> } @empty { <li>No hay movimientos registrados.</li> }</ol>
+  } @else if (!loading() && !error()) { <p role="status" class="rounded-xl border bg-white p-8">Selecciona uno de tus pedidos para ver su seguimiento.</p> }
+</section>

@@ -6,7 +6,7 @@ export interface DetallePedidoRequest {
 export interface PedidoRequest {
   fechaEntregaEstimada: string;
   prioridad: string;
-  idCliente: number;
+
   detalles: DetallePedidoRequest[];
 }
 

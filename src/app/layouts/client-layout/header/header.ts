@@ -1,38 +1,28 @@
-import { Component } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
-import { CommonModule } from '@angular/common'; // 👈 IMPORTANTE: Añade CommonModule para usar el *ngIf
+import { DialogModule } from 'primeng/dialog';
 
-@Component({
-  selector: 'app-header',
-  standalone: true,
-  imports: [
-    RouterLink, 
-    RouterLinkActive, 
-    ButtonModule,
-    CommonModule // 👈 Agregado aquí
-  ],
-  templateUrl: './header.html',
-})
+import { Auth } from '../../../core/auth/auth';
+
+@Component({ selector: 'app-header', imports: [RouterLink, RouterLinkActive, ButtonModule, DialogModule], templateUrl: './header.html' })
 export class Header {
-  // Variable lógica para mostrar u ocultar el aviso flotante
-  mostrarModalConfirmacion: boolean = false;
-
-  constructor(private router: Router) {}
-
-  // Abre el anuncio
-  abrirConfirmacion() {
-    this.mostrarModalConfirmacion = true;
-  }
-
-  // Cierra el anuncio si eligen Cancelar
-  cancelarCierre() {
-    this.mostrarModalConfirmacion = false;
-  }
-
-  // Ejecuta la redirección si eligen Aceptar
+  private readonly auth = inject(Auth);
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
+  readonly usuario = this.auth.usuario;
+  mostrarModalConfirmacion = false;
+  cerrando = false;
+  error = '';
+  abrirConfirmacion() { this.error = ''; this.mostrarModalConfirmacion = true; }
+  cancelarCierre() { if (!this.cerrando) this.mostrarModalConfirmacion = false; }
   aceptarCierre() {
-    this.mostrarModalConfirmacion = false;
-    this.router.navigate(['/login']);
+    if (this.cerrando) return;
+    this.cerrando = true; this.error = '';
+    this.auth.logout().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => { this.cerrando = false; this.mostrarModalConfirmacion = false; void this.router.navigateByUrl('/login'); },
+      error: () => { this.cerrando = false; this.error = 'No se pudo cerrar la sesión. Intenta nuevamente.'; },
+    });
   }
 }

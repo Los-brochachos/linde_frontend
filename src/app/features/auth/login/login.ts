@@ -5,6 +5,7 @@ import { InputPasswordModule } from 'primeng/inputpassword';
 import { ButtonDirective } from 'primeng/button';
 import { LabelModule } from 'primeng/label';
 import { Router, RouterLink } from '@angular/router';
+import { homeForRole } from '../../../core/auth/access';
 import { Auth } from '../../../core/auth/auth';
 import { AuthRequest } from '../../../core/auth/auth.models';
 import { switchMap, finalize } from 'rxjs';
@@ -51,8 +52,8 @@ export class Login {
       switchMap(() => this.auth.cargarUsuario()),
       finalize(() => this.loading.set(false))
     ).subscribe({
-      next:() =>{
-        void this.router.navigateByUrl('/dashboard');
+      next:(usuario) =>{
+        void this.router.navigateByUrl(homeForRole(usuario.rol));
       },
       error: (error)=>{
         this.errorMessage.set(error.status === 0 ? 'No se pudo conectar con el backend.' : 'No se pudo iniciar sesión. Revisa las credenciales y la configuración CSRF.');

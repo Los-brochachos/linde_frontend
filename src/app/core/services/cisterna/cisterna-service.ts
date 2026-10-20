@@ -1,8 +1,9 @@
-import { Service } from '@angular/core';
-import { environment } from '../../../../environments/environment';
+import { Injectable, inject } from '@angular/core';
+import { ApiService } from '../api.service';
+import { CisternaResponse } from '../../models/CisternaModel';
 
-@Service()
+@Injectable({ providedIn: 'root' })
 export class CisternaService {
-    private readonly API_URL=`${environment.apiUrl}/api/v1/cisterna}`;
-    
+  private readonly api = inject(ApiService);
+  activas() { return this.api.get<CisternaResponse[]>('cisternas/activas'); }
 }

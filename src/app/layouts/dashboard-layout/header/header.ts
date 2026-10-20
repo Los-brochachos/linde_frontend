@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { Auth } from '../../../core/auth/auth';
 import { Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
@@ -15,11 +15,11 @@ export class Header {
 
   readonly usuario = this.auth.usuario;
 
-  readonly items: MenuItem[] = [
+  readonly items = computed<MenuItem[]>(() => [
     {
       label: 'Mi perfil',
       icon: 'pi pi-user',
-      routerLink: '/dashboard/perfil'
+      routerLink: this.usuario()?.rol === 'CLIENTE' ? '/cliente/perfil' : '/dashboard/perfil'
     },
     {
       separator: true
@@ -30,8 +30,7 @@ export class Header {
       command: () => this.cerrarSesion()
     }
 
-  ]
-
+  ]);
   cerrarSesion(): void {
     this.auth.logout().subscribe({
       next: () => {

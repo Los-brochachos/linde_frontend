@@ -1,0 +1,26 @@
+<section class="mx-auto max-w-3xl space-y-6 p-4 text-slate-900 md:p-6">
+  <a routerLink="/dashboard/atenciones" class="text-sky-700">Volver a Atenciones</a>
+  <h1 class="text-3xl font-semibold">Cancelar atención</h1>
+  @if (cargando()) { <p role="status">Cargando atención…</p> }
+  @if (error()) { <p role="alert" class="rounded-lg bg-red-50 p-4 text-red-700">{{ error() }}</p> }
+  @if (mensaje()) { <p role="status" class="rounded-lg bg-green-50 p-4 text-green-800">{{ mensaje() }}</p> }
+  @if (atencion(); as a) {
+    <div class="space-y-5 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+      <h2 class="text-2xl font-semibold">Atención #{{ a.idAtencion }}</h2>
+      <dl class="grid gap-4 sm:grid-cols-2"><div><dt class="text-sm text-slate-500">Pedido</dt><dd>#{{ a.idPedido }}</dd></div><div><dt class="text-sm text-slate-500">Estado</dt><dd data-testid="estado-atencion" class="font-semibold">{{ a.estado }}</dd></div><div><dt class="text-sm text-slate-500">Inicio programado</dt><dd>{{ a.fechaInicioProgramada }}</dd></div><div><dt class="text-sm text-slate-500">Fin programado</dt><dd>{{ a.fechaFinProgramada }}</dd></div></dl>
+      @if (a.estado === 'PROGRAMADA') {
+        <p class="text-sm text-slate-600">La cancelación afecta a esta atención. El pedido asociado se conserva.</p>
+        <form [formGroup]="form" (ngSubmit)="revisar()" class="space-y-4" novalidate>
+          <label for="motivo-cancelacion" class="block font-medium">Motivo de cancelación</label>
+          <textarea id="motivo-cancelacion" formControlName="observaciones" rows="4" maxlength="250" [readOnly]="guardando() || confirmar()" [attr.aria-invalid]="form.controls.observaciones.touched && form.controls.observaciones.invalid" aria-describedby="error-motivo" class="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900"></textarea>
+          @if (form.controls.observaciones.touched && form.controls.observaciones.invalid) { <p id="error-motivo" role="alert" class="text-sm text-red-700">Ingresa un motivo de cancelación de hasta 250 caracteres.</p> }
+          @if (!confirmar()) { <button type="submit" class="rounded-lg bg-red-700 px-5 py-3 text-white">Cancelar atención</button> }
+          @else { <div class="space-y-3 rounded-lg border border-amber-300 p-4"><p>Se cancelará esta atención y quedará registrado el motivo indicado.</p><div class="flex flex-wrap gap-3"><button type="button" (click)="cancelar()" [disabled]="guardando()" class="rounded-lg bg-red-700 px-4 py-2 text-white disabled:opacity-50">{{ guardando() ? 'Guardando…' : 'Confirmar cancelación' }}</button><button type="button" (click)="confirmar.set(false)" [disabled]="guardando()" class="rounded-lg border px-4 py-2">Volver</button></div></div> }
+        </form>
+      } @else {
+        @if (a.estado === 'CANCELADA') { <div><h3 class="font-medium">Motivo registrado</h3><p data-testid="motivo-registrado">{{ a.observaciones }}</p></div> }
+        @else { <p>Solo se puede cancelar una atención PROGRAMADA.</p> }
+      }
+    </div>
+  }
+</section>

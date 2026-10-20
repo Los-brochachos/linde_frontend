@@ -1,0 +1,20 @@
+<section class="mx-auto max-w-5xl space-y-6 p-4 text-slate-900 md:p-6">
+  <a routerLink="/cliente/pedidos" class="text-sky-700">Volver a Mis pedidos</a>
+  <h1 class="text-3xl font-semibold">Detalle del pedido</h1>
+  @if (cargando()) { <p role="status">Cargando pedido…</p> }
+  @else if (error()) { <p role="alert" class="text-red-700">{{ error() }}</p><button type="button" (click)="actualizar()" class="rounded border px-4 py-2">Reintentar</button> }
+  @else if (pedido(); as pedido) {
+    @if (recienCreado()) { <p role="status" class="rounded-lg bg-green-50 p-4 text-green-800">Pedido #{{ pedido.idPedido }} registrado correctamente.</p> }
+    <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+      <h2 class="mb-5 text-2xl font-semibold">Pedido #{{ pedido.idPedido }}</h2>
+      <dl class="grid gap-4 sm:grid-cols-2"><div><dt class="text-sm text-slate-500">Estado</dt><dd class="font-medium">{{ pedido.estado }}</dd></div><div><dt class="text-sm text-slate-500">Prioridad</dt><dd>{{ pedido.prioridad }}</dd></div><div><dt class="text-sm text-slate-500">Fecha de registro</dt><dd>{{ pedido.fechaRegistro }}</dd></div><div><dt class="text-sm text-slate-500">Fecha estimada de entrega</dt><dd>{{ pedido.fechaEntregaEstimada }}</dd></div></dl>
+    </div>
+    <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
+      <table class="w-full text-left"><caption class="p-5 text-left text-xl font-semibold">Productos registrados</caption><thead class="bg-slate-50"><tr><th scope="col" class="p-4">Producto</th><th scope="col" class="p-4">Cantidad</th><th scope="col" class="p-4">Precio unitario</th><th scope="col" class="p-4">Importe</th></tr></thead>
+        <tbody>@for (detalle of detalles(); track detalle.idDetalle) { <tr class="border-t border-slate-100"><td class="p-4">{{ detalle.nombreProducto }}</td><td class="p-4">{{ detalle.cantidad | number:'1.0-2' }}</td><td class="p-4">{{ detalle.precioUnitario | number:'1.2-2' }}</td><td class="p-4">{{ detalle.cantidad * detalle.precioUnitario | number:'1.2-2' }}</td></tr> } @empty { <tr><td colspan="4" class="p-4">No hay detalles disponibles para este pedido.</td></tr> }</tbody>
+        @if (detalles().length) { <tfoot class="border-t border-slate-200 font-semibold"><tr><th scope="row" colspan="3" class="p-4">Total de productos</th><td class="p-4">{{ total() | number:'1.2-2' }}</td></tr></tfoot> }
+      </table>
+    </div>
+    <div class="flex flex-wrap gap-4"><a [routerLink]="['/cliente/seguimiento', pedido.idPedido]" class="rounded-lg bg-[#002d54] px-4 py-3 text-white">Ver seguimiento</a><a routerLink="/cliente/pedidos/nuevo" class="rounded-lg border border-sky-700 px-4 py-3 text-sky-700">Nuevo pedido</a></div>
+  }
+</section>

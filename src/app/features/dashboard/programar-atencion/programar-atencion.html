@@ -1,0 +1,37 @@
+<section class="mx-auto max-w-4xl space-y-6 p-4 text-slate-900 md:p-6">
+  <a routerLink="/dashboard/atenciones" class="text-sky-700">Volver a Atenciones</a>
+  <h1 class="text-3xl font-semibold">{{ idEdicion() === null ? 'Programar atención' : 'Editar atención #' + idEdicion() }}</h1>
+  @if (cargando()) { <p role="status">Cargando pedidos y recursos…</p> }
+  @else if (errorCarga()) { <p role="alert" class="text-red-700">{{ errorCarga() }}</p><button type="button" (click)="cargar()" class="rounded border px-4 py-2">Reintentar</button> }
+  @else if (creada(); as atencion) {
+    <div class="space-y-4 rounded-xl border border-green-200 bg-white p-6 shadow-sm">
+      <p role="status" class="text-green-800">Atención #{{ atencion.idAtencion }} {{ idEdicion() === null ? 'programada' : 'actualizada' }} correctamente.</p>
+      <dl class="grid gap-4 sm:grid-cols-2"><div><dt>Pedido</dt><dd>#{{ atencion.idPedido }}</dd></div><div><dt>Estado</dt><dd>{{ atencion.estado }}</dd></div><div><dt>Inicio programado</dt><dd>{{ atencion.fechaInicioProgramada }}</dd></div><div><dt>Fin programado</dt><dd>{{ atencion.fechaFinProgramada }}</dd></div><div><dt>Cisterna</dt><dd>#{{ atencion.idCisterna }}</dd></div><div><dt>Conductor</dt><dd>#{{ atencion.idConductor }}</dd></div></dl>
+      <a routerLink="/dashboard/atenciones" [queryParams]="{q: atencion.idAtencion}" class="inline-block rounded-lg bg-[#002d54] px-4 py-3 text-white">Consultar atenciones</a>
+    </div>
+  }
+  @else if (idEdicion() === null && !pendientes().length) { <p role="status">No hay pedidos pendientes sin atención activa para programar.</p> }
+  @else {
+    <form [formGroup]="form" (ngSubmit)="guardar()" novalidate class="space-y-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+      <p class="text-sm text-slate-600">Selecciona el pedido y el intervalo de atención. Las horas corresponden al horario local. Los recursos se filtran según las programaciones registradas.</p>
+      <fieldset [disabled]="guardando()" class="space-y-5">
+        @if (original(); as actual) { <p class="rounded-lg bg-slate-50 p-3">Pedido asociado: #{{ actual.idPedido }}. El pedido se conserva al editar.</p> } @else {
+        <div><label for="pedido" class="mb-2 block font-medium">Pedido pendiente *</label><select id="pedido" formControlName="idPedido" class="w-full rounded-lg border bg-white p-3 text-slate-900" [attr.aria-invalid]="form.controls.idPedido.touched && form.controls.idPedido.invalid"><option [ngValue]="null">Selecciona un pedido</option>@for (p of pendientes(); track p.idPedido) { <option [ngValue]="p.idPedido">Pedido #{{ p.idPedido }} · {{ p.prioridad }} · {{ p.fechaEntregaEstimada }}</option> }</select>@if (form.controls.idPedido.touched && form.controls.idPedido.invalid) { <p class="text-sm text-red-700">Selecciona un pedido.</p> }</div>
+        }
+        <div class="grid gap-5 sm:grid-cols-2">
+          <div><label for="inicio-programado" class="mb-2 block font-medium">Inicio programado *</label><input pInputText id="inicio-programado" type="datetime-local" formControlName="fechaInicioProgramada" class="w-full bg-white! text-slate-900!" [attr.aria-invalid]="form.controls.fechaInicioProgramada.touched && form.controls.fechaInicioProgramada.invalid" />@if (form.controls.fechaInicioProgramada.touched && form.controls.fechaInicioProgramada.invalid) { <p class="text-sm text-red-700">Indica la fecha y hora de inicio.</p> }</div>
+          <div><label for="fin-programado" class="mb-2 block font-medium">Fin programado *</label><input pInputText id="fin-programado" type="datetime-local" formControlName="fechaFinProgramada" class="w-full bg-white! text-slate-900!" [attr.aria-invalid]="form.controls.fechaFinProgramada.touched && form.controls.fechaFinProgramada.invalid" />@if (form.controls.fechaFinProgramada.touched && form.controls.fechaFinProgramada.invalid) { <p class="text-sm text-red-700">Indica la fecha y hora de fin.</p> }</div>
+        </div>
+        @if (intervalo().inicio && intervalo().fin && !intervaloValido()) { <p class="text-red-700">La hora de fin debe ser posterior a la hora de inicio.</p> }
+        <div class="grid gap-5 sm:grid-cols-2">
+          <div><label for="cisterna" class="mb-2 block font-medium">Cisterna disponible *</label><select id="cisterna" formControlName="idCisterna" class="w-full rounded-lg border bg-white p-3 text-slate-900" [attr.aria-invalid]="form.controls.idCisterna.touched && form.controls.idCisterna.invalid"><option [ngValue]="null">Selecciona una cisterna</option>@for (c of cisternasDisponibles(); track c.idCisterna) { <option [ngValue]="c.idCisterna">{{ c.placa }} · {{ c.nombre }}</option> }</select>@if (intervaloValido() && !cisternasDisponibles().length) { <p class="text-sm text-red-700">No hay cisternas disponibles en ese horario.</p> }@if (form.controls.idCisterna.touched && form.controls.idCisterna.invalid) { <p class="text-sm text-red-700">Selecciona una cisterna.</p> }</div>
+          <div><label for="conductor" class="mb-2 block font-medium">Conductor disponible *</label><select id="conductor" formControlName="idConductor" class="w-full rounded-lg border bg-white p-3 text-slate-900" [attr.aria-invalid]="form.controls.idConductor.touched && form.controls.idConductor.invalid"><option [ngValue]="null">Selecciona un conductor</option>@for (c of conductoresDisponibles(); track c.idTrabajador) { <option [ngValue]="c.idTrabajador">{{ c.nombres }} {{ c.apellidos }}</option> }</select>@if (intervaloValido() && !conductoresDisponibles().length) { <p class="text-sm text-red-700">No hay conductores disponibles en ese horario.</p> }@if (form.controls.idConductor.touched && form.controls.idConductor.invalid) { <p class="text-sm text-red-700">Selecciona un conductor.</p> }</div>
+        </div>
+        @if (!intervaloValido()) { <p class="text-sm text-slate-600">Completa un horario válido para consultar los recursos disponibles.</p> }
+        <div><label for="observaciones" class="mb-2 block font-medium">Observaciones (opcional)</label><textarea id="observaciones" formControlName="observaciones" maxlength="250" rows="3" class="w-full rounded-lg border bg-white p-3 text-slate-900"></textarea><p class="text-sm text-slate-500">Máximo 250 caracteres.</p></div>
+      </fieldset>
+      @if (error()) { <p role="alert" class="rounded bg-red-50 p-3 text-red-700">{{ error() }}</p> }
+      <button type="submit" [disabled]="guardando()" class="rounded-lg bg-[#002d54] px-5 py-3 text-white disabled:opacity-50">{{ guardando() ? 'Guardando…' : (idEdicion() === null ? 'Guardar programación' : 'Guardar cambios') }}</button>
+    </form>
+  }
+</section>

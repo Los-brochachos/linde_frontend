@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable, Service, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { tap, switchMap } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
