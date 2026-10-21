@@ -8,6 +8,7 @@ export const routes: Routes = [
   {
     path: 'cliente', loadComponent: () => import('./layouts/client-layout/client-layout').then(m => m.ClientLayout), title: "Linde",
     children:[
+      {path:'', redirectTo:'inicio', pathMatch: 'full' },
       {path: 'inicio', loadComponent: () => import('./features/cliente/inicio/inicio').then(m => m.Inicio)},
       {path: 'citas', loadComponent: () => import('./features/cliente/citas/citas').then(m => m.Citas)},
       {path: 'seguimiento', loadComponent: () => import('./features/cliente/seguimiento/seguimiento').then(m => m.Seguimiento)}

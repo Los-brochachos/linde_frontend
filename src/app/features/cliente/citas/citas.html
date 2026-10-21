@@ -1,1 +1,183 @@
-<p>citas works!</p>
+<div class="w-full min-h-screen bg-slate-50 py-8 px-6">
+  <div class="max-w-7xl mx-auto space-y-6">
+
+    <!-- Encabezado de Sección -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div>
+        <h1 class="text-2xl font-bold text-[#002d54] tracking-tight">Historial de Citas y Pedidos</h1>
+        <p class="text-sm text-slate-500">Visualiza y gestiona las solicitudes de suministro y citas técnicas registradas.</p>
+      </div>
+      <button (click)="abrirModal()" class="bg-[#007cc0] hover:bg-[#005491] text-white font-semibold text-sm px-4 py-2.5 rounded shadow transition-colors flex items-center gap-2">
+        <i class="bi bi-calendar-plus"></i> Solicitar Nueva Cita
+      </button>
+    </div>
+
+    <!-- Bloque de Métricas Resumen -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
+        <div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-lg flex items-center justify-center text-lg"><i class="bi bi-clock"></i></div>
+        <div>
+          <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">Pendientes</div>
+          <div class="text-xl font-bold text-slate-800">1 Solicitud</div>
+        </div>
+      </div>
+      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
+        <div class="w-10 h-10 bg-blue-50 text-[#007cc0] rounded-lg flex items-center justify-center text-lg"><i class="bi bi-truck"></i></div>
+        <div>
+          <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">En Ruta</div>
+          <div class="text-xl font-bold text-slate-800">1 Solicitud</div>
+        </div>
+      </div>
+      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
+        <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center text-lg"><i class="bi bi-check-circle"></i></div>
+        <div>
+          <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">Entregados</div>
+          <div class="text-xl font-bold text-slate-800">1 Solicitud</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenedor de la Tabla -->
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-[#002d54] uppercase tracking-wider">
+              <th class="px-6 py-4">ID Pedido / Cita</th>
+              <th class="px-6 py-4">Producto Solicitado</th>
+              <!-- NUEVA COLUMNA DE CISTERNA ASIGNADA -->
+              <th class="px-6 py-4">Cisterna Asignada</th>
+              <th class="px-6 py-4">Entrega Estimada</th>
+              <th class="px-6 py-4 text-center">Estado</th>
+              <th class="px-6 py-4 text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-sm text-slate-700">
+            <tr *ngFor="let cita of historialCitas" class="hover:bg-slate-50/70 transition-colors">
+              
+              <!-- ID -->
+              <td class="px-6 py-4 font-semibold text-[#002d54] whitespace-nowrap">#{{ cita.idPedido }}</td>
+              
+              <!-- Producto Solicitado -->
+              <td class="px-6 py-4">
+                <div class="flex items-center gap-2">
+                  <i class="bi bi-box-seam text-slate-400 text-base"></i>
+                  <span class="font-medium text-slate-700">{{ cita.productoSolicitado }}</span>
+                </div>
+              </td>
+              
+              <!-- Cisterna Asignada (NUEVA CELDA ESTILIZADA) -->
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center gap-2">
+                  <i class="bi bi-truck text-slate-400 text-base"></i>
+                  <span [ngClass]="cita.cisternaAsignada === 'Por asignar' ? 'text-slate-400 italic text-xs' : 'text-slate-700 font-medium'">
+                    {{ cita.cisternaAsignada }}
+                  </span>
+                </div>
+              </td>
+              
+              <!-- Entrega Estimada -->
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex flex-col">
+                  <span class="font-semibold text-slate-800 flex items-center gap-1">
+                    <i class="bi bi-calendar3 text-xs text-slate-400"></i> {{ cita.fechaEntregaEstimada }}
+                  </span>
+                  <span class="text-xs text-slate-500 flex items-center gap-1 mt-0.5">
+                    <i class="bi bi-clock text-xs text-slate-400"></i> {{ cita.horaEntregaEstimada }}
+                  </span>
+                </div>
+              </td>
+              
+              <!-- Estado -->
+              <td class="px-6 py-4 whitespace-nowrap text-center">
+                <span class="inline-block text-xs font-medium px-2.5 py-1 rounded-full border" [ngClass]="obtenerClaseEstado(cita.estado)">
+                  {{ cita.estado.replace('_', ' ') }}
+                </span>
+              </td>
+              
+              <!-- Acciones -->
+              <td class="px-6 py-4 whitespace-nowrap text-center">
+                <button (click)="verSeguimiento(cita.idPedido)"
+                      class="text-xs font-bold text-[#007cc0] hover:text-[#005491] bg-sky-50 hover:bg-sky-100 px-3 py-1.5 rounded transition-all">
+                <i class="bi bi-eye-fill mr-1"></i> Seguimiento
+              </button>
+              </td>
+
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL FLOTANTE -->
+  <!-- ========================================================================= -->
+  <div *ngIf="mostrarModalCita" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div class="bg-white rounded-xl shadow-2xl border border-slate-200 max-w-md w-full mx-4 overflow-hidden flex flex-col max-h-[90vh]">
+      
+      <div class="bg-[#002d54] px-6 py-4 flex justify-between items-center text-white">
+        <h3 class="text-lg font-bold flex items-center gap-2">
+          <i class="bi bi-calendar-plus text-sky-400"></i> Solicitar Cita de Abastecimiento
+        </h3>
+        <button (click)="cerrarModal()" class="text-slate-400 hover:text-white transition-colors text-xl">&times;</button>
+      </div>
+
+      <form (ngSubmit)="guardarCita()" class="p-6 space-y-4 overflow-y-auto flex-1">
+        
+        <div class="space-y-1">
+          <label class="text-xs font-bold text-[#002d54] uppercase tracking-wider block">Producto Linde requerido</label>
+          <select [(ngModel)]="nuevaCita.idProducto" name="idProducto" class="w-full bg-slate-50 border border-slate-200 rounded p-2.5 text-sm text-slate-800 focus:outline-none focus:border-[#007cc0]">
+            <option *ngFor="let prod of productosDisponibles" [value]="prod.id">{{ prod.nombre }}</option>
+          </select>
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-xs font-bold text-[#002d54] uppercase tracking-wider block">Cantidad (Kg)</label>
+          <input type="number" [(ngModel)]="nuevaCita.cantidad" name="cantidad" min="1" max="50" class="w-full bg-slate-50 border border-slate-200 rounded p-2.5 text-sm text-slate-800 focus:outline-none focus:border-[#007cc0]">
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-1">
+            <label class="text-xs font-bold text-[#002d54] uppercase tracking-wider block">Fecha Estimada</label>
+            <input type="date" [(ngModel)]="nuevaCita.fechaEntregaEstimada" name="fechaEntregaEstimada" required class="w-full bg-slate-50 border border-slate-200 rounded p-2.5 text-sm text-slate-800 focus:outline-none focus:border-[#007cc0]">
+          </div>
+          <div class="space-y-1">
+            <label class="text-xs font-bold text-[#002d54] uppercase tracking-wider block">Hora Estimada</label>
+            <input type="time" [(ngModel)]="nuevaCita.horaEntregaEstimada" name="horaEntregaEstimada" class="w-full bg-slate-50 border border-slate-200 rounded p-2.5 text-sm text-slate-800 focus:outline-none focus:border-[#007cc0]">
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-xs font-bold text-[#002d54] uppercase tracking-wider block">Prioridad de Solicitud</label>
+          <div class="flex gap-4 pt-1">
+            <label class="flex items-center gap-1.5 text-sm text-slate-700 cursor-pointer">
+              <input type="radio" [(ngModel)]="nuevaCita.prioridad" name="prioridad" value="BAJA" class="text-[#007cc0] focus:ring-[#007cc0]"> Baja
+            </label>
+            <label class="flex items-center gap-1.5 text-sm text-slate-700 cursor-pointer">
+              <input type="radio" [(ngModel)]="nuevaCita.prioridad" name="prioridad" value="MEDIA" class="text-[#007cc0] focus:ring-[#007cc0]"> Media
+            </label>
+            <label class="flex items-center gap-1.5 text-sm text-slate-700 cursor-pointer">
+              <input type="radio" [(ngModel)]="nuevaCita.prioridad" name="prioridad" value="ALTA" class="text-[#007cc0] focus:ring-[#007cc0]"> Alta
+            </label>
+          </div>
+        </div>
+          <!-- Botonera Inferior interna dentro del <form> -->
+        <div class="flex justify-end gap-3 pt-4 border-t border-slate-100">
+        
+        <!-- Botón Cancelar -->
+        <button type="button" 
+                (click)="cerrarModal()" 
+                class="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded transition-colors">
+            Cancelar
+        </button>
+
+        <!-- Botón Confirmar (Corregido e Integrado con pButton) -->
+        <button type="submit" 
+                pButton 
+                class="bg-[#007cc0]! border-0! text-white! hover:bg-[#005491]! font-semibold text-sm px-5 py-2 rounded shadow-sm transition-colors">
+            Confirmar Solicitud
+        </button>
+        </div>  
+
