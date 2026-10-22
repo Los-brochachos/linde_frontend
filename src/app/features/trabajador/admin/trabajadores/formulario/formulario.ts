@@ -36,7 +36,7 @@ export class FormularioTrabajador {
     { key: 'licenciaConducir', titulo: 'Licencia de conducir', roles: ['CONDUCTOR'] },
     { key: 'categoriaLicencia', titulo: 'Categoría de licencia', opciones: ['A_I', 'A_IIA', 'A_IIB', 'A_IIIA', 'A_IIIB', 'A_IIIC'], roles: ['CONDUCTOR'] },
     { key: 'fechaVencimientoLicencia', titulo: 'Vencimiento de licencia', tipo: 'date', roles: ['CONDUCTOR'] },
-    { key: 'turno', titulo: 'Turno', opciones: ['MANANA', 'TARDE', 'NOCHE'], roles: ['PROGRAMADOR'] },
+    { key: 'turno', titulo: 'Turno', opciones: ['MAÑANA', 'TARDE', 'NOCHE'], roles: ['PROGRAMADOR'] },
     { key: 'nivelIngles', titulo: 'Nivel de inglés', opciones: ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'], roles: ['PROGRAMADOR'] },
     { key: 'especialidad', titulo: 'Especialidad', opciones: ['MECANICA_CISTERNAS', 'SISTEMAS_HIDRAULICOS', 'SISTEMAS_ELECTRICOS', 'MANTENIMIENTO_INDUSTRIAL', 'DIAGNOSTICO_VEHICULOS'], roles: ['TECNICO'] },
     { key: 'nivelTecnico', titulo: 'Nivel técnico', opciones: ['JUNIOR', 'SEMISENIOR', 'SENIOR'], roles: ['TECNICO'] },
