@@ -13,16 +13,16 @@
         <div><dt class="text-sm text-slate-500">Cisterna</dt><dd>{{ a.cisterna || 'Cisterna #' + a.idCisterna }}</dd></div><div><dt class="text-sm text-slate-500">Conductor</dt><dd>{{ a.nombreConductor || 'Conductor #' + a.idConductor }}</dd></div>
         <div><dt class="text-sm text-slate-500">Inicio programado</dt><dd>{{ a.fechaInicioProgramada | date:'dd/MM/yyyy HH:mm' }}</dd></div><div><dt class="text-sm text-slate-500">Fin programado</dt><dd>{{ (a.fechaFinProgramada | date:'dd/MM/yyyy HH:mm') || 'Sin registrar' }}</dd></div>
         <div><dt class="text-sm text-slate-500">Inicio real</dt><dd data-testid="inicio-real">{{ (a.fechaInicio | date:'dd/MM/yyyy HH:mm') || 'Sin registrar' }}</dd></div><div><dt class="text-sm text-slate-500">Fin real</dt><dd data-testid="fin-real">{{ (a.fechaFin | date:'dd/MM/yyyy HH:mm') || 'Sin registrar' }}</dd></div>
-        <div class="sm:col-span-2"><dt class="text-sm text-slate-500">Observaciones</dt><dd class="whitespace-pre-wrap break-words">{{ a.observaciones || 'Sin observaciones' }}</dd></div>
+        <div class="sm:col-span-2"><dt class="text-sm text-slate-500">Observaciones</dt><dd class="whitespace-pre-wrap flex-wrap-reversebreak-words">{{ a.observaciones || 'Sin observaciones' }}</dd></div>
       </dl>
       @if (a.estado === 'PROGRAMADA') {
-        @if (enCurso(); as activa) { <p role="status" class="rounded-lg bg-amber-50 p-4 text-amber-900">Ya tienes la atenci?n #{{ activa.idAtencion }} en curso. Final?zala antes de aceptar otra. <a [routerLink]="['/dashboard/atenciones/asignadas', activa.idAtencion]" class="font-semibold underline">Ir al recorrido actual</a></p> }
+        @if (enCurso(); as activa) { <p role="status" class="rounded-lg bg-amber-50 p-4 text-amber-900">Ya tienes la atención #{{ activa.idAtencion }} en curso. Finalizala antes de aceptar otra. <a [routerLink]="['/dashboard/atenciones/asignadas', activa.idAtencion]" class="font-semibold underline">Ir al recorrido actual</a></p> }
         <button type="button" (click)="cambiar('iniciar')" [disabled]="guardando() || !!enCurso()" class="rounded-lg bg-[#002d54] px-5 py-3 text-white disabled:opacity-50">{{ guardando() ? 'Guardando…' : 'Iniciar atención' }}</button> }
       @if (a.estado === 'EN_CURSO') {
         @if (!confirmarFin()) { <button type="button" (click)="confirmarFin.set(true)" class="rounded-lg bg-[#002d54] px-5 py-3 text-white">Finalizar atención</button> }
         @else { <div class="space-y-3 rounded-lg border border-amber-300 p-4"><p>Confirma que la atención ha terminado. Se registrará la fecha y hora real de finalización.</p><div class="flex flex-wrap gap-3"><button type="button" (click)="cambiar('finalizar')" [disabled]="guardando()" class="rounded-lg bg-[#002d54] px-4 py-2 text-white disabled:opacity-50">{{ guardando() ? 'Guardando…' : 'Confirmar finalización' }}</button><button type="button" (click)="confirmarFin.set(false)" [disabled]="guardando()" class="rounded-lg border px-4 py-2">Volver</button></div></div> }
       }
-      @if (a.estado === 'CANCELADA') { <p class="text-red-700">Esta atenci?n fue cancelada. No se puede iniciar el recorrido.</p> }
+      @if (a.estado === 'CANCELADA') { <p class="text-red-700">Esta atención fue cancelada. No se puede iniciar el recorrido.</p> }
       @if (a.estado === 'FINALIZADA') { <p class="text-slate-600">La atención ya está finalizada.</p> }
     </div>
   }

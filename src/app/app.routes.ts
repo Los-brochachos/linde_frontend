@@ -1,18 +1,9 @@
-import { inject } from '@angular/core';
-import { Auth } from './core/auth/auth';
 import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/auth-guard';
 import { DASHBOARD_ROLES } from './features/dashboard/dashboard-data';
 
 const sections = [...new Set(Object.values(DASHBOARD_ROLES).flatMap(config => config.sections.map(section => section.key)))];
-const pedidosPersonal = () => inject(Auth).usuario()?.rol === 'PROGRAMADOR'
-  ? import('./features/trabajador/programador/pedidos/pedidos').then(m => m.PedidosProgramador)
-  : listado();
-const atencionesPersonal = () => inject(Auth).usuario()?.rol === 'CONDUCTOR'
-  ? import('./features/trabajador/conductor/atenciones/listado/listado').then(m => m.MisAtencionesConductor)
-  : inject(Auth).usuario()?.rol === 'PROGRAMADOR'
-  ? import('./features/trabajador/programador/atenciones/listado/listado').then(m => m.AtencionesProgramador)
-  : listado();
+const vistaRol = () => import('./features/dashboard/vista-rol/vista-rol').then(m => m.VistaRol);
 const listado = () => import('./features/dashboard/listado/listado').then(m => m.Listado);
 
 export const routes: Routes = [
@@ -40,9 +31,7 @@ export const routes: Routes = [
     canActivate: [authGuard], canActivateChild: [authGuard],
     loadComponent: () => import('./layouts/dashboard-layout/dashboard-layout').then(m => m.DashboardLayout),
     children: [
-      { path: '', pathMatch: 'full', loadComponent: () => inject(Auth).usuario()?.rol === 'PROGRAMADOR'
-        ? import('./features/trabajador/programador/inicio/inicio').then(m => m.InicioProgramador)
-        : import('./features/dashboard/dashboard').then(m => m.Dashboard) },
+      { path: '', pathMatch: 'full', data: { vistaRol: 'inicio' }, loadComponent: vistaRol },
       { path: 'perfil', loadComponent: () => import('./features/trabajador/perfil/perfil').then(m => m.Perfil) },
       { path: 'trabajadores/nuevo', data: { sectionKey: 'trabajadores', roles: ['ADMIN'], modoTrabajador: 'crear' }, loadComponent: () => import('./features/trabajador/admin/trabajadores/formulario/formulario').then(m => m.FormularioTrabajador) },
       { path: 'trabajadores/:id/editar', data: { sectionKey: 'trabajadores', roles: ['ADMIN'], modoTrabajador: 'editar' }, loadComponent: () => import('./features/trabajador/admin/trabajadores/formulario/formulario').then(m => m.FormularioTrabajador) },
@@ -52,7 +41,7 @@ export const routes: Routes = [
       { path: 'atenciones/asignadas/:id', data: { sectionKey: 'atenciones', roles: ['CONDUCTOR'] }, loadComponent: () => import('./features/trabajador/conductor/atenciones/detalle/atencion-conductor').then(m => m.AtencionConductor) },
       { path: 'atenciones/:id/editar', data: { sectionKey: 'atenciones', roles: ['PROGRAMADOR'] }, loadComponent: () => import('./features/trabajador/programador/atenciones/programar-atencion/programar-atencion').then(m => m.ProgramarAtencion) },
       { path: 'atenciones/:id/cancelar', data: { sectionKey: 'atenciones', roles: ['PROGRAMADOR'] }, loadComponent: () => import('./features/trabajador/programador/atenciones/cancelar-atencion/cancelar-atencion').then(m => m.CancelarAtencion) },
-      ...sections.map(key => ({ path: key, data: { sectionKey: key }, loadComponent: key === 'pedidos' ? pedidosPersonal : key === 'atenciones' ? atencionesPersonal : listado })),
+      ...sections.map(key => ({ path: key, data: { sectionKey: key, vistaRol: key }, loadComponent: ['pedidos', 'atenciones'].includes(key) ? vistaRol : listado })),
     ],
   },
   {
