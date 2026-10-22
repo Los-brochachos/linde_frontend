@@ -1,14 +1,497 @@
-<section class="mx-auto max-w-7xl px-6 py-12 text-slate-900">
-  <div class="mb-6 flex flex-wrap items-center justify-between gap-4"><div><h1 class="text-3xl font-bold text-[#002d54]">Mis citas</h1><p class="mt-2 text-slate-600">Atenciones programadas para tus pedidos de gas.</p></div>
-    <button type="button" (click)="load()" [disabled]="loading()" class="rounded bg-[#007cc0] px-4 py-2 text-white disabled:opacity-50">Actualizar citas</button>
+
+<section class="mx-auto flex w-full max-w-7xl flex-col gap-6 p-4 text-slate-900 sm:p-6">
+
+  <!-- ENCABEZADO PRINCIPAL -->
+  <div class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+
+    <div class="min-w-0">
+      <div class="mb-2 flex items-center gap-2">
+        <span class="h-1.5 w-1.5 rounded-full bg-[#0077cc]"></span>
+        <span class="text-xs font-bold uppercase tracking-[0.16em] text-[#0077cc]">
+          Portal del cliente
+        </span>
+      </div>
+
+      <h1 class="text-2xl font-bold tracking-tight text-[#002d54] sm:text-3xl">
+        Mis citas
+      </h1>
+
+      <p class="mt-2 max-w-2xl text-sm leading-relaxed text-slate-500">
+        Consulta las atenciones programadas de tus pedidos, su avance y las observaciones del servicio.
+      </p>
+    </div>
+
+    <!-- ACTUALIZAR -->
+    <button type="button" (click)="load()" [disabled]="loading()" class="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-[#002d54] shadow-sm transition-all hover:border-[#0077cc] hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50">
+      <i class="pi pi-refresh text-sm" [class.pi-spin]="loading()"></i>
+      <span>{{ loading() ? 'Actualizando...' : 'Actualizar citas' }}</span>
+    </button>
+
   </div>
-  @if (loading()) { <p role="status">Consultando tus citas…</p> }
-  @else if (error()) { <p role="alert" class="rounded bg-red-50 p-4 text-red-700">{{ error() }}</p> }
-  @else if (!citas().length) { <p role="status" class="rounded-xl border bg-white p-8">No tienes citas registradas.</p> }
-  @else {
-    <div class="overflow-x-auto rounded-xl border bg-white"><table class="w-full text-left text-sm"><caption class="sr-only">Mis citas</caption>
-      <thead class="bg-slate-100"><tr><th class="p-4">Atención</th><th class="p-4">Pedido</th><th class="p-4">Inicio programado</th><th class="p-4">Fin programado</th><th class="p-4">Estado</th><th class="p-4">Seguimiento</th></tr></thead>
-      <tbody>@for (cita of citas(); track cita.idAtencion) { <tr class="border-t"><td class="p-4">{{ cita.idAtencion }}</td><td class="p-4">{{ cita.idPedido }}</td><td class="p-4">{{ cita.fechaInicioProgramada | date:'dd/MM/yyyy HH:mm' }}</td><td class="p-4">{{ cita.fechaFinProgramada | date:'dd/MM/yyyy HH:mm' }}</td><td class="p-4">{{ cita.estado }}</td><td class="p-4"><a [routerLink]="['/cliente/seguimiento', cita.idPedido]" class="text-sky-700 underline">Ver pedido</a></td></tr> }</tbody>
-    </table></div>
-  }
+
+  <!-- PANEL DE FILTROS -->
+  <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+    <div class="border-b border-slate-100 px-5 py-5 sm:px-6">
+
+      <div class="flex items-start gap-3">
+        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-[#0077cc]">
+          <i class="pi pi-calendar text-lg"></i>
+        </div>
+
+        <div>
+          <h2 class="text-base font-bold text-[#002d54]">
+            Consultar atenciones
+          </h2>
+          <p class="mt-1 text-xs leading-relaxed text-slate-500">
+            Selecciona una categoría para visualizar tus citas.
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PESTAÑAS -->
+    <div class="p-4 sm:p-5">
+
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-3" aria-label="Grupos de citas">
+
+        @for (item of grupos; track item.key) {
+
+          <button type="button" (click)="grupo.set(item.key)" [attr.aria-pressed]="grupo() === item.key" class="group flex min-h-17 items-center justify-between gap-3 rounded-xl border px-4 py-3 text-left transition-all duration-200" [class.border-[#0077cc]]="grupo() === item.key" [class.bg-sky-50]="grupo() === item.key" [class.shadow-sm]="grupo() === item.key" [class.border-slate-200]="grupo() !== item.key" [class.bg-white]="grupo() !== item.key">
+
+            <div class="flex min-w-0 items-center gap-3">
+
+              <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg transition-colors" [class.bg-[#0077cc]]="grupo() === item.key" [class.text-white]="grupo() === item.key" [class.bg-slate-100]="grupo() !== item.key" [class.text-slate-500]="grupo() !== item.key">
+
+                @if (item.key === 'proximas') {
+                  <i class="pi pi-calendar-plus text-base"></i>
+                } @else if (item.key === 'curso') {
+                  <i class="pi pi-clock text-base"></i>
+                } @else {
+                  <i class="pi pi-history text-base"></i>
+                }
+
+              </div>
+
+              <span class="truncate text-sm font-semibold" [class.text-[#002d54]]="grupo() === item.key" [class.text-slate-600]="grupo() !== item.key">
+                {{ item.titulo }}
+              </span>
+
+            </div>
+
+            <span class="inline-flex min-w-8 shrink-0 items-center justify-center rounded-full px-2.5 py-1 text-xs font-bold" [class.bg-[#0077cc]]="grupo() === item.key" [class.text-white]="grupo() === item.key" [class.bg-slate-100]="grupo() !== item.key" [class.text-slate-600]="grupo() !== item.key">
+              {{ loading() ? '…' : cantidad(item.key) }}
+            </span>
+
+          </button>
+
+        }
+
+      </div>
+
+      <!-- FILTRO DEL HISTORIAL -->
+      @if (grupo() === 'historial') {
+
+        <div class="mt-5 flex flex-col gap-3 rounded-xl border border-slate-100 bg-slate-50/70 p-4 sm:flex-row sm:items-center sm:justify-between">
+
+          <div class="flex items-center gap-3">
+            <i class="pi pi-filter text-[#0077cc]"></i>
+
+            <div>
+              <label for="filtrar-citas" class="block text-sm font-semibold text-[#002d54]">
+                Estado del historial
+              </label>
+              <p class="mt-0.5 text-xs text-slate-500">
+                Filtra tus atenciones anteriores.
+              </p>
+            </div>
+          </div>
+
+          <div class="relative w-full sm:w-64">
+            <select id="filtrar-citas" [value]="estadoHistorial()" (change)="estadoHistorial.set($any($event.target).value)" class="h-11 w-full appearance-none rounded-xl border border-slate-300 bg-white px-4 pr-10 text-sm font-medium text-slate-700 outline-none transition-colors focus:border-[#0077cc] focus:ring-2 focus:ring-sky-100">
+              <option value="TODAS">Finalizadas y canceladas</option>
+              <option value="FINALIZADA">Finalizadas</option>
+              <option value="CANCELADA">Canceladas</option>
+            </select>
+
+            <i class="pi pi-chevron-down pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-400"></i>
+          </div>
+
+        </div>
+
+      } @else if (grupo() === 'proximas') {
+
+        <div class="mt-5 flex items-start gap-3 rounded-xl border border-sky-100 bg-sky-50/70 px-4 py-3">
+          <i class="pi pi-info-circle mt-0.5 text-[#0077cc]"></i>
+
+          <p class="text-xs leading-relaxed text-slate-600">
+            Las citas se muestran desde la fecha más cercana. Si el horario ya venció, permanecerán aquí hasta que el personal actualice su estado.
+          </p>
+        </div>
+
+      } @else if (grupo() === 'curso') {
+
+        <div class="mt-5 flex items-start gap-3 rounded-xl border border-sky-100 bg-sky-50/70 px-4 py-3">
+          <i class="pi pi-info-circle mt-0.5 text-[#0077cc]"></i>
+
+          <p class="text-xs leading-relaxed text-slate-600">
+            Aquí puedes consultar las atenciones que se encuentran actualmente en curso.
+          </p>
+        </div>
+
+      }
+
+    </div>
+
+  </div>
+
+  <!-- CONTENIDO -->
+  <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+    <!-- CABECERA DE TABLA -->
+    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-5 sm:px-6">
+
+      <div class="flex items-center gap-3">
+
+        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#002d54] text-white">
+          <i class="pi pi-list text-base"></i>
+        </div>
+
+        <div>
+          <h2 class="text-base font-bold text-[#002d54]">
+            @if (grupo() === 'proximas') {
+              Próximas citas
+            } @else if (grupo() === 'curso') {
+              Citas en curso
+            } @else {
+              Historial de citas
+            }
+          </h2>
+
+          <p class="mt-1 text-xs text-slate-500">
+            Detalle de las atenciones de tus pedidos.
+          </p>
+        </div>
+
+      </div>
+
+      @if (!loading() && !error()) {
+        <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600">
+          <i class="pi pi-database text-[11px]"></i>
+          {{ visibles().length }} registros
+        </span>
+      }
+
+    </div>
+
+    <!-- CARGANDO -->
+    @if (loading()) {
+
+      <div role="status" class="flex min-h-64 flex-col items-center justify-center gap-4 px-6 py-12 text-center">
+
+        <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-sky-50">
+          <i class="pi pi-spin pi-spinner text-3xl text-[#0077cc]"></i>
+        </div>
+
+        <div>
+          <p class="text-sm font-semibold text-[#002d54]">
+            Consultando tus citas
+          </p>
+
+          <p class="mt-2 text-xs text-slate-500">
+            Estamos obteniendo la información de tus atenciones.
+          </p>
+        </div>
+
+      </div>
+
+    } @else if (error()) {
+
+      <!-- ERROR -->
+      <div role="alert" class="p-5 sm:p-6">
+
+        <div class="flex items-start gap-4 rounded-xl border border-red-200 bg-red-50 p-5">
+
+          <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-red-100 text-red-600">
+            <i class="pi pi-exclamation-triangle text-lg"></i>
+          </div>
+
+          <div class="min-w-0 flex-1">
+            <h3 class="text-sm font-bold text-red-800">
+              No se pudieron cargar las citas
+            </h3>
+
+            <p class="mt-2 text-sm leading-relaxed text-red-700">
+              {{ error() }}
+            </p>
+
+            <button type="button" (click)="load()" class="mt-4 inline-flex items-center gap-2 rounded-lg border border-red-200 bg-white px-4 py-2 text-xs font-semibold text-red-700 transition-colors hover:bg-red-100">
+              <i class="pi pi-refresh"></i>
+              Reintentar
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+    } @else if (visibles().length === 0) {
+
+      <!-- SIN RESULTADOS -->
+      <div class="flex min-h-72 flex-col items-center justify-center px-6 py-12 text-center">
+
+        <div class="mb-5 flex h-18 w-18 items-center justify-center rounded-2xl bg-slate-100">
+          <i class="pi pi-calendar-times text-3xl text-slate-400"></i>
+        </div>
+
+        <h3 class="text-base font-bold text-[#002d54]">
+          No hay citas para mostrar
+        </h3>
+
+        <p class="mt-2 max-w-sm text-sm leading-relaxed text-slate-500">
+          {{ vacio() }}
+        </p>
+
+      </div>
+
+    } @else {
+
+      <!-- TABLA EN ESCRITORIO -->
+      <div class="hidden overflow-x-auto lg:block">
+
+        <table class="w-full min-w-245 border-collapse text-left text-sm">
+
+          <caption class="sr-only">
+            Mis citas: {{ grupo() === 'proximas' ? 'Próximas' : grupo() === 'curso' ? 'En curso' : 'Historial' }}
+          </caption>
+
+          <thead class="bg-[#f5f8fc]">
+            <tr class="border-b border-slate-200">
+              <th scope="col" class="px-5 py-4 text-xs font-bold uppercase tracking-wide text-slate-500">Atención</th>
+              <th scope="col" class="px-5 py-4 text-xs font-bold uppercase tracking-wide text-slate-500">Pedido</th>
+              <th scope="col" class="px-5 py-4 text-xs font-bold uppercase tracking-wide text-slate-500">Inicio programado</th>
+              <th scope="col" class="px-5 py-4 text-xs font-bold uppercase tracking-wide text-slate-500">Fin programado</th>
+              <th scope="col" class="px-5 py-4 text-xs font-bold uppercase tracking-wide text-slate-500">Estado</th>
+              <th scope="col" class="px-5 py-4 text-xs font-bold uppercase tracking-wide text-slate-500">Observaciones</th>
+              <th scope="col" class="px-5 py-4 text-right text-xs font-bold uppercase tracking-wide text-slate-500">Consulta</th>
+            </tr>
+          </thead>
+
+          <tbody class="divide-y divide-slate-100">
+
+            @for (cita of visibles(); track cita.idAtencion) {
+
+              <tr class="align-top transition-colors hover:bg-sky-50/40">
+
+                <!-- ATENCIÓN -->
+                <td class="px-5 py-5">
+                  <span class="inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-2.5 py-1.5 text-xs font-bold text-[#002d54]">
+                    <i class="pi pi-hashtag text-[10px] text-slate-400"></i>
+                    {{ cita.idAtencion }}
+                  </span>
+                </td>
+
+                <!-- PEDIDO -->
+                <td class="px-5 py-5">
+                  <span class="font-semibold text-slate-700">
+                    #{{ cita.idPedido }}
+                  </span>
+                </td>
+
+                <!-- INICIO -->
+                <td class="px-5 py-5">
+                  <div class="flex flex-col gap-2">
+                    <span class="whitespace-nowrap font-medium text-slate-700">
+                      <i class="pi pi-calendar mr-1.5 text-xs text-[#0077cc]"></i>
+                      {{ cita.fechaInicioProgramada | date:preferencias.formatoHora() }}
+                    </span>
+
+                    @if (vencida(cita)) {
+                      <span class="inline-flex max-w-52 items-start gap-1.5 rounded-lg bg-amber-50 px-2.5 py-2 text-xs leading-relaxed text-amber-800">
+                        <i class="pi pi-exclamation-circle mt-0.5 shrink-0"></i>
+                        Horario vencido; pendiente de actualización
+                      </span>
+                    }
+                  </div>
+                </td>
+
+                <!-- FIN -->
+                <td class="px-5 py-5">
+                  <span class="whitespace-nowrap text-slate-600">
+                    {{ (cita.fechaFinProgramada | date:preferencias.formatoHora()) || 'Sin definir' }}
+                  </span>
+                </td>
+
+                <!-- ESTADO -->
+                <td class="px-5 py-5">
+
+                  @if (cita.estado === 'FINALIZADA') {
+                    <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700">
+                      <i class="pi pi-check-circle text-[11px]"></i>
+                      Finalizada
+                    </span>
+                  } @else if (cita.estado === 'CANCELADA') {
+                    <span class="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1.5 text-xs font-bold text-red-700">
+                      <i class="pi pi-times-circle text-[11px]"></i>
+                      Cancelada
+                    </span>
+                  } @else if (cita.estado === 'EN_CURSO') {
+                    <span class="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700">
+                      <i class="pi pi-clock text-[11px]"></i>
+                      En curso
+                    </span>
+                  } @else if (cita.estado === 'PROGRAMADA') {
+                    <span class="inline-flex items-center gap-1.5 rounded-full bg-sky-50 px-3 py-1.5 text-xs font-bold text-sky-700">
+                      <i class="pi pi-calendar text-[11px]"></i>
+                      Programada
+                    </span>
+                  } @else {
+                    <span class="inline-flex rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600">
+                      {{ cita.estado }}
+                    </span>
+                  }
+
+                </td>
+
+                <!-- OBSERVACIONES -->
+                <td class="max-w-xs px-5 py-5">
+
+                  @if (cita.estado === 'CANCELADA') {
+                    <span class="mb-2 block text-xs font-bold text-red-700">
+                      Motivo de cancelación
+                    </span>
+                  }
+
+                  <p class="whitespace-pre-wrap wrap-break-words text-xs leading-relaxed text-slate-600">
+                    {{ cita.observaciones?.trim() || (cita.estado === 'CANCELADA' ? 'No se registró un motivo de cancelación.' : 'Sin observaciones.') }}
+                  </p>
+
+                </td>
+
+                <!-- SEGUIMIENTO -->
+                <td class="px-5 py-5 text-right">
+                  <a [routerLink]="['/cliente/seguimiento', cita.idPedido]" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-sky-100 bg-sky-50 px-3 py-2 text-xs font-bold text-[#0077cc] transition-colors hover:border-sky-200 hover:bg-sky-100">
+                    <i class="pi pi-eye"></i>
+                    Ver seguimiento
+                  </a>
+                </td>
+
+              </tr>
+
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+      <!-- TARJETAS EN MÓVILES Y TABLETS -->
+      <div class="grid gap-4 p-4 sm:grid-cols-2 sm:p-5 lg:hidden">
+
+        @for (cita of visibles(); track cita.idAtencion) {
+
+          <article class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+
+            <!-- ENCABEZADO DE TARJETA -->
+            <div class="flex items-center justify-between gap-3 border-b border-slate-100 bg-slate-50/70 px-4 py-3">
+
+              <div>
+                <p class="text-xs text-slate-500">Atención</p>
+                <p class="mt-1 text-sm font-bold text-[#002d54]">
+                  #{{ cita.idAtencion }}
+                </p>
+              </div>
+
+              @if (cita.estado === 'FINALIZADA') {
+                <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">Finalizada</span>
+              } @else if (cita.estado === 'CANCELADA') {
+                <span class="rounded-full bg-red-50 px-3 py-1 text-xs font-bold text-red-700">Cancelada</span>
+              } @else if (cita.estado === 'EN_CURSO') {
+                <span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">En curso</span>
+              } @else if (cita.estado === 'PROGRAMADA') {
+                <span class="rounded-full bg-sky-50 px-3 py-1 text-xs font-bold text-sky-700">Programada</span>
+              } @else {
+                <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600">{{ cita.estado }}</span>
+              }
+
+            </div>
+
+            <!-- CONTENIDO -->
+            <div class="space-y-4 p-4">
+
+              <div>
+                <p class="text-xs font-medium text-slate-500">Pedido asociado</p>
+                <p class="mt-1 text-sm font-bold text-slate-700">#{{ cita.idPedido }}</p>
+              </div>
+
+              <div class="grid grid-cols-1 gap-3 border-t border-slate-100 pt-4">
+                <div>
+                  <p class="text-xs font-medium text-slate-500">Inicio programado</p>
+                  <p class="mt-1 text-sm font-semibold text-slate-700">
+                    {{ cita.fechaInicioProgramada | date:preferencias.formatoHora() }}
+                  </p>
+
+                  @if (vencida(cita)) {
+                    <p class="mt-2 flex items-start gap-1.5 text-xs text-amber-700">
+                      <i class="pi pi-exclamation-circle mt-0.5"></i>
+                      Horario vencido; pendiente de actualización
+                    </p>
+                  }
+                </div>
+
+                <div>
+                  <p class="text-xs font-medium text-slate-500">Fin programado</p>
+                  <p class="mt-1 text-sm font-semibold text-slate-700">
+                    {{ (cita.fechaFinProgramada | date:preferencias.formatoHora()) || 'Sin definir' }}
+                  </p>
+                </div>
+              </div>
+
+              <div class="border-t border-slate-100 pt-4">
+                <p class="text-xs font-semibold text-slate-500">
+                  {{ cita.estado === 'CANCELADA' ? 'Motivo de cancelación' : 'Observaciones' }}
+                </p>
+
+                <p class="mt-2 whitespace-pre-wrap wrap-break-words text-sm leading-relaxed text-slate-600">
+                  {{ cita.observaciones?.trim() || (cita.estado === 'CANCELADA' ? 'No se registró un motivo de cancelación.' : 'Sin observaciones.') }}
+                </p>
+              </div>
+
+              <!-- ACCIÓN -->
+              <a [routerLink]="['/cliente/seguimiento', cita.idPedido]" class="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#0077cc] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#0064a3]">
+                <i class="pi pi-eye"></i>
+                Ver seguimiento
+                <i class="pi pi-arrow-right text-xs"></i>
+              </a>
+
+            </div>
+
+          </article>
+
+        }
+
+      </div>
+
+    }
+
+    <!-- PIE -->
+    @if (!loading() && !error() && visibles().length > 0) {
+      <div class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 bg-slate-50/50 px-5 py-4 sm:px-6">
+
+        <p class="text-xs text-slate-500">
+          Mostrando <span class="font-bold text-[#002d54]">{{ visibles().length }}</span> atenciones
+        </p>
+
+        <span class="inline-flex items-center gap-2 text-xs text-slate-400">
+          <i class="pi pi-shield"></i>
+          Información de tus pedidos
+        </span>
+
+      </div>
+    }
+
+  </div>
+
 </section>

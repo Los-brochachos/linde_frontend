@@ -1,1 +1,461 @@
-<p>productos works!</p>
+
+<div class="w-full overflow-hidden bg-white text-slate-800">
+
+  <!-- HERO -->
+  <section class="relative flex min-h-90 items-center overflow-hidden bg-[#002d54] sm:min-h-107.5 lg:min-h-117.5">
+
+    <img src="https://assets.linde.com/-/media/celum-connect/2024/02/27/14/22/dsc_0837_br_fin_186294.jpg?impolicy=focal-point&amp;cw=1320&amp;ch=413&amp;fx=1065&amp;fy=428" alt="Gases, equipos y soluciones industriales Linde" class="absolute inset-0 h-full w-full object-cover object-center" />
+
+    <div class="absolute inset-0 bg-linear-to-r from-[#001c38]/95 via-[#002d54]/70 to-[#002d54]/20"></div>
+
+    <div class="relative z-10 mx-auto w-full max-w-7xl px-6 py-16 sm:px-10 lg:px-12">
+
+      <div class="max-w-3xl">
+
+        <div class="mb-7 flex items-center gap-2 text-sm text-white/80">
+          <a routerLink="/inicio" class="transition-colors hover:text-white">Inicio</a>
+          <i class="pi pi-angle-right text-xs"></i>
+          <span class="font-semibold text-white">Productos</span>
+        </div>
+
+        <p class="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-sky-300">
+          Gases, modos de abastecimiento y productos
+        </p>
+
+        <h1 class="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
+          Nuestros productos
+        </h1>
+
+        <p class="mt-6 max-w-2xl text-base leading-8 text-blue-50/90 sm:text-lg">
+          Gases industriales, medicinales y especiales, equipos y soluciones de suministro para diferentes necesidades.
+        </p>
+
+      </div>
+
+    </div>
+
+    <div class="absolute bottom-0 left-0 h-1.5 w-full bg-[#0077cc]"></div>
+
+  </section>
+
+
+  <!-- INTRODUCCIÓN -->
+  <section class="bg-white px-6 py-20 sm:px-10 lg:py-28">
+
+    <div class="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-2 lg:gap-20">
+
+      <div>
+
+        <p class="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[#0077cc]">
+          ¿Qué ofrecemos?
+        </p>
+
+        <h2 class="text-3xl font-bold leading-tight tracking-tight text-[#002d54] sm:text-4xl">
+          Soluciones que hacen su trabajo más fácil, eficiente y seguro
+        </h2>
+
+        <p class="mt-6 text-base leading-8 text-slate-600">
+          Los gases industriales desempeñan un papel esencial en numerosas actividades cotidianas. Aunque muchas veces no son visibles, forman parte de procesos que permiten fabricar productos, conservar alimentos y desarrollar tecnologías.
+        </p>
+
+        <p class="mt-5 text-base leading-8 text-slate-600">
+          En Linde ofrecemos gases puros, mezclas especializadas, equipos y distintas modalidades de suministro para responder a las necesidades de nuestros clientes.
+        </p>
+
+        <p class="mt-5 text-base leading-8 text-slate-600">
+          Nuestro objetivo es contribuir a mejorar la productividad, optimizar procesos y ofrecer soluciones adaptadas a cada aplicación.
+        </p>
+
+      </div>
+
+      <div class="relative">
+
+        <div class="grid grid-cols-2 gap-3">
+
+          <div class="row-span-2 overflow-hidden rounded-2xl bg-slate-100">
+            <img src="https://assets.linde.com/-/media/celum-connect/2024/07/08/17/59/cylinder_kaiser_00002713_8369_isocv2_84883.jpg?impolicy=focal-point&amp;cw=584&amp;ch=584&amp;fx=1024&amp;fy=724" alt="Cilindros industriales Linde" loading="lazy" class="h-full min-h-82.5 w-full object-cover" />
+          </div>
+
+          <div class="overflow-hidden rounded-2xl bg-slate-100">
+            <img src="https://assets.linde.com/-/media/celum-connect/2024/03/05/19/52/linde-employees-beside-bulk-trailer_us_2_img_4459_185259_br_fin_185259.jpg?impolicy=focal-point&amp;cw=263&amp;ch=263&amp;fx=1024&amp;fy=683" alt="Personal y soluciones de suministro" loading="lazy" class="h-40 w-full object-cover sm:h-47.5" />
+          </div>
+
+          <div class="overflow-hidden rounded-2xl bg-slate-100">
+            <img src="https://assets.linde.com/-/media/celum-connect/2024/07/08/18/00/gettyimages_155292130_isocv2_72619_br_fin_isocoatedv2eci_140232.jpg?impolicy=focal-point&amp;cw=263&amp;ch=263&amp;fx=1024&amp;fy=681" alt="Aplicaciones industriales" loading="lazy" class="h-40 w-full object-cover sm:h-47.5" />
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- GASES -->
+  <section id="gases" class="bg-[#f4f7fb] px-6 py-20 sm:px-10 lg:py-28">
+
+    <div class="mx-auto max-w-7xl">
+
+      <div class="mb-14 max-w-3xl">
+
+        <p class="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[#0077cc]">
+          Nuestro portafolio
+        </p>
+
+        <h2 class="text-3xl font-bold tracking-tight text-[#002d54] sm:text-4xl">
+          Gases para cada aplicación
+        </h2>
+
+        <p class="mt-5 text-base leading-8 text-slate-600">
+          Explore nuestras principales categorías de gases y descubra cómo pueden contribuir a diferentes procesos industriales, técnicos y sanitarios.
+        </p>
+
+      </div>
+
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+
+        @for (gas of gases; track gas.nombre) {
+
+          <article class="group rounded-2xl border border-slate-200 bg-white p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-sky-200 hover:shadow-lg sm:p-9">
+
+            <div class="flex items-start gap-5">
+
+              <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-[#eaf4fc] text-[#0077cc] transition-colors group-hover:bg-[#0077cc] group-hover:text-white">
+                <i [class]="gas.icono + ' text-2xl'"></i>
+              </div>
+
+              <div class="min-w-0">
+
+                <h3 class="text-xl font-bold text-[#002d54]">
+                  {{ gas.nombre }}
+                </h3>
+
+                <p class="mt-4 text-sm leading-7 text-slate-600">
+                  {{ gas.descripcion }}
+                </p>
+
+                <div class="mt-6 border-t border-slate-100 pt-5">
+
+                  <p class="text-xs font-bold uppercase tracking-wider text-[#0077cc]">
+                    Ejemplos y aplicaciones
+                  </p>
+
+                  <p class="mt-2 text-sm leading-6 text-slate-500">
+                    {{ gas.ejemplos }}
+                  </p>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </article>
+
+        }
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- DESTACADO GASES -->
+  <section class="bg-white px-6 py-20 sm:px-10 lg:py-28">
+
+    <div class="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-2 lg:gap-20">
+
+      <div class="order-2 lg:order-1">
+
+        <p class="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[#0077cc]">
+          Gases industriales y especiales
+        </p>
+
+        <h2 class="text-3xl font-bold leading-tight tracking-tight text-[#002d54] sm:text-4xl">
+          Una amplia variedad de gases y mezclas
+        </h2>
+
+        <p class="mt-6 text-base leading-8 text-slate-600">
+          Desde gases de uso industrial hasta mezclas de alta pureza, Linde ofrece soluciones para procesos de fabricación, investigación, análisis, atención médica y otras aplicaciones.
+        </p>
+
+        <p class="mt-5 text-base leading-8 text-slate-600">
+          La selección del gas adecuado, su pureza y su modalidad de suministro son factores importantes para el desempeño de cada proceso.
+        </p>
+
+        <div class="mt-8 flex flex-wrap gap-3">
+
+          <span class="rounded-full border border-sky-100 bg-[#eaf4fc] px-4 py-2 text-sm font-medium text-[#005b9f]">Oxígeno</span>
+          <span class="rounded-full border border-sky-100 bg-[#eaf4fc] px-4 py-2 text-sm font-medium text-[#005b9f]">Nitrógeno</span>
+          <span class="rounded-full border border-sky-100 bg-[#eaf4fc] px-4 py-2 text-sm font-medium text-[#005b9f]">Argón</span>
+          <span class="rounded-full border border-sky-100 bg-[#eaf4fc] px-4 py-2 text-sm font-medium text-[#005b9f]">CO₂</span>
+          <span class="rounded-full border border-sky-100 bg-[#eaf4fc] px-4 py-2 text-sm font-medium text-[#005b9f]">Hidrógeno</span>
+
+        </div>
+
+      </div>
+
+      <div class="order-1 overflow-hidden rounded-2xl bg-[#eaf4fc] lg:order-2">
+
+        <img src="https://assets.linde.com/-/media/celum-connect/2024/02/26/15/30/66860_tlg_fascinating_gases_66860.jpg?impolicy=focal-point&amp;cw=648&amp;ch=648&amp;fx=337&amp;fy=161" alt="Gases industriales y especializados" loading="lazy" class="aspect-4/3 w-full object-cover" />
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- MODOS DE SUMINISTRO -->
+  <section id="suministro" class="bg-[#002d54] px-6 py-20 text-white sm:px-10 lg:py-28">
+
+    <div class="mx-auto max-w-7xl">
+
+      <div class="mb-14 max-w-3xl">
+
+        <p class="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-sky-300">
+          Soluciones de abastecimiento
+        </p>
+
+        <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">
+          Modos de suministro
+        </h2>
+
+        <p class="mt-5 text-base leading-8 text-blue-100">
+          Ofrecemos distintas alternativas para responder a necesidades de volumen, pureza, disponibilidad y continuidad operativa.
+        </p>
+
+      </div>
+
+      <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+
+        @for (suministro of suministros; track suministro.numero) {
+
+          <article class="rounded-xl border border-white/15 bg-white/10 p-7 transition-all duration-300 hover:-translate-y-1 hover:bg-white/15">
+
+            <div class="mb-8 flex items-center justify-between">
+
+              <div class="flex h-13 w-13 items-center justify-center rounded-xl bg-white/10 text-sky-300">
+                <i [class]="suministro.icono + ' text-2xl'"></i>
+              </div>
+
+              <span class="text-3xl font-bold text-white/20">
+                {{ suministro.numero }}
+              </span>
+
+            </div>
+
+            <h3 class="text-xl font-bold text-white">
+              {{ suministro.titulo }}
+            </h3>
+
+            <p class="mt-4 text-sm leading-7 text-blue-100/90">
+              {{ suministro.descripcion }}
+            </p>
+
+          </article>
+
+        }
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- SUMINISTRO INDUSTRIAL -->
+  <section class="bg-white px-6 py-20 sm:px-10 lg:py-28">
+
+    <div class="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-2 lg:gap-20">
+
+      <div class="overflow-hidden rounded-2xl bg-slate-100">
+
+        <img src="https://assets.linde.com/-/media/celum-connect/2024/06/08/14/41/linde_vpbanner_isocv2_49371_50273_extended_169324.jpg?impolicy=focal-point&amp;cw=648&amp;ch=648&amp;fx=1024&amp;fy=617" alt="Sistemas de abastecimiento industrial" loading="lazy" class="aspect-4/3s w-full object-cover" />
+
+      </div>
+
+      <div>
+
+        <p class="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[#0077cc]">
+          Flexibilidad y continuidad
+        </p>
+
+        <h2 class="text-3xl font-bold leading-tight tracking-tight text-[#002d54] sm:text-4xl">
+          El suministro adecuado para cada operación
+        </h2>
+
+        <p class="mt-6 text-base leading-8 text-slate-600">
+          Cada instalación tiene necesidades particulares. Algunas operaciones requieren cilindros portátiles, mientras que otras necesitan abastecimiento líquido o soluciones de producción continua.
+        </p>
+
+        <p class="mt-5 text-base leading-8 text-slate-600">
+          La elección de la modalidad depende de factores como el consumo, las condiciones del proceso, la infraestructura disponible y los requisitos de seguridad.
+        </p>
+
+        <div class="mt-8 flex items-start gap-4 rounded-xl border border-sky-100 bg-[#f4f7fb] p-5">
+
+          <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-[#eaf4fc] text-[#0077cc]">
+            <i class="pi pi-check-circle text-xl"></i>
+          </div>
+
+          <div>
+            <h3 class="font-bold text-[#002d54]">
+              Soluciones adaptadas
+            </h3>
+            <p class="mt-2 text-sm leading-7 text-slate-600">
+              Diferentes modalidades de suministro para responder a los requerimientos de cada cliente.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- EQUIPOS -->
+  <section id="equipos" class="bg-[#f4f7fb] px-6 py-20 sm:px-10 lg:py-28">
+
+    <div class="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-2 lg:gap-20">
+
+      <div>
+
+        <p class="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[#0077cc]">
+          Tecnología y aplicaciones
+        </p>
+
+        <h2 class="text-3xl font-bold leading-tight tracking-tight text-[#002d54] sm:text-4xl">
+          Equipos y soluciones para sus procesos
+        </h2>
+
+        <p class="mt-6 text-base leading-8 text-slate-600">
+          Además de los gases, Linde ofrece soluciones de equipos y aplicaciones orientadas a mejorar el uso de los gases industriales, de proceso y especiales.
+        </p>
+
+        <p class="mt-5 text-base leading-8 text-slate-600">
+          Los equipos adecuados permiten gestionar el suministro, controlar parámetros y contribuir al funcionamiento eficiente de distintas instalaciones.
+        </p>
+
+        <div class="mt-8 space-y-4">
+
+          <div class="flex items-start gap-3">
+            <i class="pi pi-check-circle mt-1 text-lg text-[#0077cc]"></i>
+            <p class="text-sm leading-7 text-slate-600">Equipos de manejo y distribución de gases.</p>
+          </div>
+
+          <div class="flex items-start gap-3">
+            <i class="pi pi-check-circle mt-1 text-lg text-[#0077cc]"></i>
+            <p class="text-sm leading-7 text-slate-600">Soluciones para aplicaciones industriales especializadas.</p>
+          </div>
+
+          <div class="flex items-start gap-3">
+            <i class="pi pi-check-circle mt-1 text-lg text-[#0077cc]"></i>
+            <p class="text-sm leading-7 text-slate-600">Tecnologías orientadas a mejorar la eficiencia operativa.</p>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="overflow-hidden rounded-2xl bg-white shadow-lg shadow-slate-200/60">
+
+        <img src="https://assets.linde.com/-/media/celum-connect/2024/07/08/18/19/873b5792_ret_isocoatedv2_112470.jpg?impolicy=focal-point&amp;cw=648&amp;ch=648&amp;fx=1024&amp;fy=682" alt="Equipos y tecnología industrial Linde" loading="lazy" class="aspect-4/3 w-full object-cover" />
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- BENEFICIOS -->
+  <section class="bg-white px-6 py-20 sm:px-10 lg:py-28">
+
+    <div class="mx-auto max-w-7xl">
+
+      <div class="mx-auto mb-14 max-w-3xl text-center">
+
+        <p class="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[#0077cc]">
+          Valor para nuestros clientes
+        </p>
+
+        <h2 class="text-3xl font-bold tracking-tight text-[#002d54] sm:text-4xl">
+          ¿Por qué elegir nuestras soluciones?
+        </h2>
+
+        <p class="mt-5 text-base leading-8 text-slate-600">
+          Combinamos gases, tecnología y conocimiento especializado para contribuir al desarrollo de diferentes operaciones.
+        </p>
+
+      </div>
+
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+
+        @for (beneficio of beneficios; track beneficio.titulo) {
+
+          <article class="group rounded-xl border border-slate-200 bg-white p-7 text-center transition-all duration-300 hover:-translate-y-1 hover:border-sky-200 hover:shadow-lg">
+
+            <div class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#eaf4fc] text-[#0077cc] transition-colors group-hover:bg-[#0077cc] group-hover:text-white">
+              <i [class]="beneficio.icono + ' text-2xl'"></i>
+            </div>
+
+            <h3 class="text-lg font-bold text-[#002d54]">
+              {{ beneficio.titulo }}
+            </h3>
+
+            <p class="mt-4 text-sm leading-7 text-slate-600">
+              {{ beneficio.descripcion }}
+            </p>
+
+          </article>
+
+        }
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- CONTACTO CTA -->
+  <section class="relative overflow-hidden bg-[#002d54] px-6 py-16 text-white sm:px-10 lg:py-20">
+
+    <div class="absolute -right-20 -top-28 h-72 w-72 rounded-full border border-white/10"></div>
+    <div class="absolute -right-10 -top-16 h-52 w-52 rounded-full border border-white/10"></div>
+
+    <div class="relative mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 lg:flex-row lg:items-center">
+
+      <div class="max-w-2xl">
+
+        <p class="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-sky-300">
+          Estamos para ayudarle
+        </p>
+
+        <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">
+          ¿Necesita una solución para su empresa?
+        </h2>
+
+        <p class="mt-5 text-base leading-8 text-blue-100">
+          Comuníquese con nosotros para conocer más sobre nuestros gases, equipos y alternativas de abastecimiento.
+        </p>
+
+      </div>
+
+      <a routerLink="/contacto" class="inline-flex shrink-0 items-center justify-center gap-3 rounded-md bg-white px-8 py-4 text-sm font-bold text-[#002d54] transition-all hover:-translate-y-0.5 hover:bg-sky-100">
+        Contáctenos
+        <i class="pi pi-arrow-right text-sm"></i>
+      </a>
+
+    </div>
+
+  </section>
+
+</div>

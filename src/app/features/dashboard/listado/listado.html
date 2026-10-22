@@ -1,41 +1,283 @@
-<section class="flex flex-col gap-6 p-4 text-slate-900 md:p-6">
-  <div class="flex flex-wrap items-start justify-between gap-4">
-    <div><a [routerLink]="back" class="text-sm text-sky-700">Volver al inicio</a><h1 class="mt-2 text-3xl font-semibold">{{ section()?.title ?? 'Módulo no disponible' }}</h1></div>
-    @if (isClientOrders()) { <a routerLink="/cliente/pedidos/nuevo" class="rounded-lg bg-[#002d54] px-4 py-2 text-white">Nuevo pedido</a> }
-    @if (canSchedule()) { <a routerLink="/dashboard/atenciones/nueva" class="rounded-lg bg-[#002d54] px-4 py-2 text-white">Programar atención</a> }
-    <button type="button" (click)="refresh()" [disabled]="loading()" class="rounded-lg bg-[#002d54] px-4 py-2 text-white disabled:opacity-50">Actualizar listado</button>
+
+<section class="mx-auto flex w-full max-w-7xl flex-col gap-7 px-4 py-6 text-slate-800 sm:px-6 lg:py-9">
+
+  <!-- ENCABEZADO -->
+  <div class="flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
+    <div class="min-w-0">
+      <a [routerLink]="back" class="inline-flex items-center gap-2 text-sm font-semibold text-[#0077cc] transition-colors hover:text-[#002d54]">
+        <i class="pi pi-arrow-left text-xs"></i>
+        Volver al inicio
+      </a>
+
+      <p class="mb-2 mt-6 text-xs font-bold uppercase tracking-[0.18em] text-[#0077cc]">Gestión de registros</p>
+      <h1 class="wrap-break-word text-3xl font-bold tracking-tight text-[#002d54] sm:text-4xl">
+        {{ section()?.title ?? 'Módulo no disponible' }}
+      </h1>
+      <p class="mt-3 text-sm leading-6 text-slate-500">
+        Consulta y administra la información disponible en este módulo.
+      </p>
+    </div>
+
+    <!-- ACCIONES PRINCIPALES -->
+    <div class="flex flex-wrap items-center gap-3">
+
+      <button type="button" (click)="refresh()" [disabled]="loading()" class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-[#002d54] shadow-sm transition-colors hover:border-sky-200 hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50">
+        <i class="pi pi-refresh" [class.pi-spin]="loading()"></i>
+        {{ loading() ? 'Actualizando…' : 'Actualizar listado' }}
+      </button>
+
+      @if (isClientOrders()) {
+        <a routerLink="/cliente/pedidos/nuevo" class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#002d54] px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#004477]">
+          <i class="pi pi-plus"></i>
+          Nuevo pedido
+        </a>
+      }
+
+      @if (canSchedule()) {
+        <a routerLink="/dashboard/atenciones/nueva" class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#002d54] px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#004477]">
+          <i class="pi pi-calendar-plus"></i>
+          Programar atención
+        </a>
+      }
+
+    </div>
   </div>
+
   @if (section(); as section) {
-    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm" [attr.aria-busy]="loading()">
-      <div class="border-b border-slate-200 p-5">
-        <p class="text-sm text-slate-500">{{ filtered().length }} resultados · 10 registros por página</p>
-        <label for="buscar-registros" class="mt-4 block text-sm font-medium">Buscar en {{ section.title }}</label>
-        <input pInputText id="buscar-registros" type="search" [value]="query()" (input)="filter($any($event.target).value)" placeholder="Buscar por los datos del listado" class="mt-2 w-full bg-white! text-slate-900!" />
+
+    <!-- CONTENEDOR DEL LISTADO -->
+    <article class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" [attr.aria-busy]="loading()">
+
+      <!-- CABECERA Y BÚSQUEDA -->
+      <div class="border-b border-slate-100 px-6 py-6 sm:px-8">
+
+        <div class="flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
+          <div class="flex items-center gap-4">
+            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#eaf4fc] text-[#0077cc]">
+              <i class="pi pi-list text-xl"></i>
+            </div>
+
+            <div>
+              <h2 class="text-lg font-bold text-[#002d54]">Listado de registros</h2>
+              <p class="mt-1 text-sm text-slate-500">
+                Consulta los datos de {{ section.title }}.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex w-fit items-center gap-2 rounded-full bg-sky-50 px-4 py-2 text-xs font-bold text-[#0077cc]">
+            <i class="pi pi-database"></i>
+            {{ filtered().length }} resultados
+          </div>
+        </div>
+
+        <!-- BUSCADOR -->
+        <div class="mt-7 flex flex-col gap-3">
+          <label for="buscar-registros" class="text-sm font-semibold text-slate-700">
+            Buscar en {{ section.title }}
+          </label>
+
+          <div class="relative">
+            <i class="pi pi-search pointer-events-none absolute left-4 top-1/2 z-10 -translate-y-1/2 text-sm text-slate-400"></i>
+
+            <input pInputText id="buscar-registros" type="search" [value]="query()" (input)="filter($any($event.target).value)" placeholder="Buscar por los datos del listado..." class="h-12! w-full! rounded-xl! border! border-slate-300! bg-white! py-3! pl-11! pr-4! text-sm! text-slate-800! shadow-none! focus:border-[#0077cc]!" />
+          </div>
+
+          <p class="flex items-center gap-2 text-xs text-slate-400">
+            <i class="pi pi-info-circle"></i>
+            Se muestran hasta 10 registros por página.
+          </p>
+        </div>
+
       </div>
-      @if (loading()) { <p role="status" class="p-6">Cargando información…</p> }
-      @else if (error()) { <p role="alert" class="p-6 text-red-700">{{ error() }}</p> }
-      @else if (rows().length === 0) { <p role="status" class="p-6">No hay registros disponibles.</p> }
-      @else {
-        <div class="overflow-x-auto"><table class="w-full text-left text-sm">
-          <caption class="sr-only">{{ section.title }}</caption>
-          <thead class="bg-slate-50 text-slate-600"><tr>
-            @for (column of section.columns; track column.key) { <th scope="col" class="px-5 py-3">{{ column.label }}</th> }
-            @if (isClientOrders() || isDriverAttendances() || canEditAttendances()) { <th scope="col" class="px-5 py-3">Acciones</th> }
-          </tr></thead>
-          <tbody>@for (row of visible(); track $index) { <tr class="border-t border-slate-100">
-            @for (column of section.columns; track column.key) { <td class="max-w-sm px-5 py-4 wrap-break-words">{{ value(row, column.key) }}</td> }
-            @if (isClientOrders()) { <td class="px-5 py-4"><a [routerLink]="['/cliente/pedidos', row['idPedido']]" class="font-medium text-sky-700">Ver pedido</a></td> }
-            @if (isDriverAttendances()) { <td class="px-5 py-4"><a [routerLink]="['/dashboard/atenciones/asignadas', row['idAtencion']]" class="font-medium text-sky-700">Ver atención</a></td> }
-            @if (canEditAttendances()) { <td class="px-5 py-4">@if (row['estado'] === 'PROGRAMADA') { <a [routerLink]="['/dashboard/atenciones', row['idAtencion'], 'editar']" class="font-medium text-sky-700">Editar atención</a> <a [routerLink]="['/dashboard/atenciones', row['idAtencion'], 'cancelar']" class="ml-4 font-medium text-red-700">Cancelar atención</a> } @else { <span class="text-slate-500">Sin edición disponible</span> }</td> }
-          </tr> }</tbody>
-        </table></div>
-        @if (!filtered().length) { <p role="status" class="p-5">No hay coincidencias para esta búsqueda.</p> }
-        <div class="flex items-center justify-between gap-3 border-t border-slate-200 p-4">
-          <button type="button" (click)="changePage(page() - 1)" [disabled]="page() === 1" class="rounded border px-3 py-2 disabled:opacity-40">Anterior</button>
-          <span class="text-sm">Página {{ page() }} de {{ pages() }}</span>
-          <button type="button" (click)="changePage(page() + 1)" [disabled]="page() === pages()" class="rounded border px-3 py-2 disabled:opacity-40">Siguiente</button>
+
+      <!-- CARGANDO -->
+      @if (loading()) {
+        <div role="status" class="flex min-h-64 flex-col items-center justify-center px-6 py-12 text-center">
+          <i class="pi pi-spin pi-spinner mb-5 text-4xl text-[#0077cc]"></i>
+          <h3 class="text-lg font-bold text-[#002d54]">Cargando información</h3>
+          <p class="mt-2 text-sm text-slate-500">Estamos consultando los registros más recientes.</p>
         </div>
       }
+
+      <!-- ERROR -->
+      @else if (error()) {
+        <div role="alert" class="flex flex-col items-center px-6 py-14 text-center">
+          <div class="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-red-50 text-red-600">
+            <i class="pi pi-exclamation-triangle text-2xl"></i>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900">No se pudieron cargar los registros</h3>
+          <p class="mt-3 max-w-md text-sm leading-6 text-red-700">{{ error() }}</p>
+
+          <button type="button" (click)="refresh()" class="mt-6 inline-flex items-center gap-2 rounded-lg bg-[#002d54] px-5 py-3 text-sm font-semibold text-white hover:bg-[#004477]">
+            <i class="pi pi-refresh"></i>
+            Reintentar
+          </button>
+        </div>
+      }
+
+      <!-- SIN REGISTROS -->
+      @else if (rows().length === 0) {
+        <div role="status" class="flex flex-col items-center px-6 py-16 text-center">
+          <div class="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-50 text-slate-400">
+            <i class="pi pi-inbox text-3xl"></i>
+          </div>
+          <h3 class="text-lg font-bold text-[#002d54]">No hay registros disponibles</h3>
+          <p class="mt-2 text-sm text-slate-500">Todavía no se ha registrado información en este módulo.</p>
+
+          @if (isClientOrders()) {
+            <a routerLink="/cliente/pedidos/nuevo" class="mt-6 inline-flex items-center gap-2 rounded-lg bg-[#002d54] px-5 py-3 text-sm font-semibold text-white hover:bg-[#004477]">
+              <i class="pi pi-plus"></i>
+              Crear primer pedido
+            </a>
+          }
+        </div>
+      }
+
+      @else {
+
+        <!-- TABLA -->
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-175 text-left text-sm">
+
+            <caption class="sr-only">{{ section.title }}</caption>
+
+            <thead class="bg-[#f4f7fb] text-xs font-bold uppercase tracking-wider text-slate-500">
+              <tr>
+                @for (column of section.columns; track column.key) {
+                  <th scope="col" class="whitespace-nowrap px-6 py-4 first:pl-8">
+                    {{ column.label }}
+                  </th>
+                }
+
+                @if (isClientOrders() || isDriverAttendances() || canEditAttendances()) {
+                  <th scope="col" class="whitespace-nowrap px-6 py-4 text-right last:pr-8">
+                    Acciones
+                  </th>
+                }
+              </tr>
+            </thead>
+
+            <tbody class="divide-y divide-slate-100">
+
+              @for (row of visible(); track $index) {
+                <tr class="transition-colors hover:bg-slate-50/80">
+
+                  <!-- COLUMNAS DINÁMICAS -->
+                  @for (column of section.columns; track column.key) {
+                    <td class="max-w-sm px-6 py-5 text-sm text-slate-700 first:pl-8">
+                      <span class="block wrap-break-word">
+                        {{ value(row, column.key) }}
+                      </span>
+                    </td>
+                  }
+
+                  <!-- ACCIONES DE PEDIDOS -->
+                  @if (isClientOrders()) {
+                    <td class="whitespace-nowrap px-6 py-5 text-right last:pr-8">
+                      <a [routerLink]="['/cliente/pedidos', row['idPedido']]" class="inline-flex items-center gap-2 rounded-lg bg-sky-50 px-4 py-2.5 text-xs font-bold text-[#0077cc] transition-colors hover:bg-sky-100">
+                        <i class="pi pi-eye"></i>
+                        Ver pedido
+                      </a>
+                    </td>
+                  }
+
+                  <!-- ACCIONES DE CONDUCTORES -->
+                  @if (isDriverAttendances()) {
+                    <td class="whitespace-nowrap px-6 py-5 text-right last:pr-8">
+                      <a [routerLink]="['/dashboard/atenciones/asignadas', row['idAtencion']]" class="inline-flex items-center gap-2 rounded-lg bg-sky-50 px-4 py-2.5 text-xs font-bold text-[#0077cc] transition-colors hover:bg-sky-100">
+                        <i class="pi pi-eye"></i>
+                        Ver atención
+                      </a>
+                    </td>
+                  }
+
+                  <!-- ACCIONES DE ATENCIONES -->
+                  @if (canEditAttendances()) {
+                    <td class="px-6 py-5 text-right last:pr-8">
+                      @if (row['estado'] === 'PROGRAMADA') {
+                        <div class="flex flex-wrap justify-end gap-2">
+
+                          <a [routerLink]="['/dashboard/atenciones', row['idAtencion'], 'editar']" class="inline-flex items-center gap-2 rounded-lg bg-sky-50 px-3 py-2.5 text-xs font-bold text-[#0077cc] transition-colors hover:bg-sky-100">
+                            <i class="pi pi-pencil"></i>
+                            Editar
+                          </a>
+
+                          <a [routerLink]="['/dashboard/atenciones', row['idAtencion'], 'cancelar']" class="inline-flex items-center gap-2 rounded-lg bg-red-50 px-3 py-2.5 text-xs font-bold text-red-700 transition-colors hover:bg-red-100">
+                            <i class="pi pi-times-circle"></i>
+                            Cancelar
+                          </a>
+
+                        </div>
+                      } @else {
+                        <span class="inline-flex items-center gap-2 text-xs text-slate-400">
+                          <i class="pi pi-lock"></i>
+                          Sin edición disponible
+                        </span>
+                      }
+                    </td>
+                  }
+
+                </tr>
+              }
+
+            </tbody>
+          </table>
+        </div>
+
+        <!-- SIN RESULTADOS DE BÚSQUEDA -->
+        @if (!filtered().length) {
+          <div role="status" class="flex flex-col items-center border-t border-slate-100 px-6 py-12 text-center">
+            <i class="pi pi-search mb-4 text-3xl text-slate-300"></i>
+            <h3 class="font-bold text-slate-700">No se encontraron coincidencias</h3>
+            <p class="mt-2 text-sm text-slate-500">Prueba con otro término de búsqueda.</p>
+          </div>
+        }
+
+        <!-- PAGINACIÓN -->
+        <div class="flex flex-col justify-between gap-4 border-t border-slate-100 bg-slate-50/50 px-6 py-5 sm:flex-row sm:items-center sm:px-8">
+
+          <p class="text-xs text-slate-500">
+            {{ filtered().length }} resultados encontrados
+          </p>
+
+          <div class="flex items-center justify-between gap-4 sm:justify-end">
+
+            <button type="button" (click)="changePage(page() - 1)" [disabled]="page() === 1" class="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-xs font-semibold text-[#002d54] transition-colors hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-40">
+              <i class="pi pi-chevron-left text-[10px]"></i>
+              Anterior
+            </button>
+
+            <span class="whitespace-nowrap text-xs font-semibold text-slate-600">
+              Página <span class="text-[#002d54]">{{ page() }}</span> de {{ pages() }}
+            </span>
+
+            <button type="button" (click)="changePage(page() + 1)" [disabled]="page() === pages()" class="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-xs font-semibold text-[#002d54] transition-colors hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-40">
+              Siguiente
+              <i class="pi pi-chevron-right text-[10px]"></i>
+            </button>
+
+          </div>
+        </div>
+
+      }
+
+    </article>
+
+    <!-- AYUDA -->
+    <div class="flex items-start gap-4 rounded-xl border border-sky-100 bg-[#eaf4fc] p-5 sm:p-6">
+      <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-[#0077cc]">
+        <i class="pi pi-info-circle text-lg"></i>
+      </div>
+
+      <div>
+        <h3 class="text-sm font-bold text-[#002d54]">Información del listado</h3>
+        <p class="mt-2 text-sm leading-6 text-slate-600">
+          Puedes utilizar el buscador para localizar registros, navegar entre páginas y presionar «Actualizar listado» para consultar la información más reciente.
+        </p>
+      </div>
     </div>
+
   }
+
 </section>

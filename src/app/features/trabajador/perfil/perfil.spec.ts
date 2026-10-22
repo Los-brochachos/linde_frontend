@@ -2,7 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { describe, it, expect, afterEach } from 'vitest';
-import { Auth } from '../../core/auth/auth';
+import { Auth } from '../../../core/auth/auth';
 import { Perfil } from './perfil';
 
 describe('Mi perfil', () => {

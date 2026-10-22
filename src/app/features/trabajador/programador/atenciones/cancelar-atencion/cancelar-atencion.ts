@@ -3,8 +3,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { of, switchMap, tap, catchError } from 'rxjs';
-import { ApiService } from '../../../core/services/api.service';
-import { AtencionResponse } from '../../../core/models/AtencionModel';
+import { ApiService } from '../../../../../core/services/api.service';
+import { AtencionResponse } from '../../../../../core/models/AtencionModel';
 
 @Component({ selector: 'app-cancelar-atencion', imports: [RouterLink, ReactiveFormsModule], templateUrl: './cancelar-atencion.html' })
 export class CancelarAtencion {

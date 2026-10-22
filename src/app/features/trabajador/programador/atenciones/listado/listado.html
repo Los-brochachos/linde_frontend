@@ -1,0 +1,590 @@
+
+<section class="mx-auto flex w-full max-w-7xl min-w-0 flex-col gap-6 px-4 py-6 text-slate-800 sm:px-6">
+
+  <!-- VOLVER -->
+  <div>
+    <a routerLink="/dashboard" class="inline-flex items-center gap-2 text-sm font-semibold text-[#0077cc] transition-colors hover:text-[#005491]">
+      <i class="pi pi-arrow-left text-xs"></i>
+      Volver al inicio
+    </a>
+  </div>
+
+  <!-- ENCABEZADO -->
+  <div class="flex min-w-0 flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+
+    <div class="min-w-0 flex-1">
+      <div class="mb-2 flex items-center gap-2">
+        <span class="h-1.5 w-1.5 shrink-0 rounded-full bg-[#0077cc]"></span>
+        <span class="text-xs font-bold uppercase tracking-widest text-[#0077cc]">Programación de operaciones</span>
+      </div>
+
+      <h1 class="text-2xl font-bold tracking-tight text-[#002d54] sm:text-3xl">Atenciones</h1>
+
+      <p class="mt-2 max-w-2xl text-sm leading-relaxed text-slate-500">
+        Organiza las visitas programadas y consulta el avance y el historial de las entregas.
+      </p>
+    </div>
+
+    <div class="grid w-full grid-cols-1 gap-3 sm:grid-cols-2 lg:w-auto">
+
+      <button type="button" (click)="cargar()" [disabled]="cargando()" class="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-[#002d54] shadow-sm transition-colors hover:border-[#0077cc] hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50 lg:w-auto">
+        <i class="pi pi-refresh shrink-0" [class.pi-spin]="cargando()"></i>
+        <span>{{ cargando() ? 'Actualizando...' : 'Actualizar listado' }}</span>
+      </button>
+
+      <a routerLink="/dashboard/atenciones/nueva" class="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#002d54] px-5 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#004477] lg:w-auto">
+        <i class="pi pi-plus shrink-0"></i>
+        Crear atención
+      </a>
+
+    </div>
+  </div>
+
+  <!-- GRUPOS -->
+  <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3" aria-label="Grupos de atenciones">
+
+    @for (g of grupos; track g.key) {
+
+      <button type="button" (click)="cambiar({ grupo: g.key, estado: 'TODAS' })" [attr.aria-pressed]="grupo() === g.key" class="group flex min-w-0 items-center justify-between gap-3 rounded-2xl border p-4 text-left shadow-sm transition-all sm:p-5" [class.border-[#0077cc]]="grupo() === g.key" [class.bg-sky-50]="grupo() === g.key" [class.border-slate-200]="grupo() !== g.key" [class.bg-white]="grupo() !== g.key">
+
+        <div class="flex min-w-0 items-center gap-3">
+          <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-[#0077cc] shadow-sm">
+            <i class="pi pi-calendar text-lg"></i>
+          </div>
+
+          <div class="min-w-0">
+            <p class="wrap-break-word text-sm font-bold text-[#002d54]">{{ g.titulo }}</p>
+            <p class="mt-1 text-xs text-slate-500">Consultar atenciones</p>
+          </div>
+        </div>
+
+        <span class="inline-flex min-w-9 shrink-0 items-center justify-center rounded-full bg-white px-2.5 py-1.5 text-xs font-bold text-[#0077cc] shadow-sm">
+          {{ cargando() ? '…' : cantidad(g.key) }}
+        </span>
+
+      </button>
+
+    }
+
+  </div>
+
+  <!-- FILTROS -->
+  <div class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+    <div class="flex items-center gap-3 border-b border-slate-100 px-4 py-4 sm:px-6">
+
+      <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-[#0077cc]">
+        <i class="pi pi-filter text-lg"></i>
+      </div>
+
+      <div class="min-w-0">
+        <h2 class="text-base font-bold text-[#002d54]">Buscar y filtrar atenciones</h2>
+        <p class="mt-1 text-xs leading-relaxed text-slate-500">Encuentra programaciones por número, empresa, conductor o cisterna.</p>
+      </div>
+
+    </div>
+
+    <div class="grid grid-cols-1 gap-5 p-4 sm:p-5 lg:p-6" [class.md:grid-cols-2]="grupo() === 'HISTORIAL'">
+
+      <!-- BUSCADOR -->
+      <div class="min-w-0">
+
+        <label for="buscar-atenciones" class="mb-2 block text-sm font-semibold text-slate-700">
+          Buscar atención
+        </label>
+
+        <div class="relative">
+
+          <i class="pi pi-search pointer-events-none absolute left-4 top-1/2 z-10 -translate-y-1/2 text-sm text-slate-400"></i>
+
+          <input pInputText id="buscar-atenciones" type="search" [value]="consulta()" (input)="cambiar({ q: $any($event.target).value })" placeholder="Atención, pedido, empresa, conductor, placa..." class="h-12! w-full! min-w-0! rounded-xl! border! border-slate-300! bg-white! py-0! pl-11! pr-4! text-sm! shadow-none! focus:border-[#0077cc]!" />
+
+        </div>
+      </div>
+
+      <!-- FILTRO HISTORIAL -->
+      @if (grupo() === 'HISTORIAL') {
+
+        <div class="min-w-0">
+
+          <label for="estado-historial" class="mb-2 block text-sm font-semibold text-slate-700">
+            Estado del historial
+          </label>
+
+          <div class="relative">
+
+            <select id="estado-historial" [value]="historial()" (change)="cambiar({ estado: $any($event.target).value })" class="h-12 w-full min-w-0 appearance-none rounded-xl border border-slate-300 bg-white px-4 pr-10 text-sm text-slate-900 outline-none transition-colors focus:border-[#0077cc] focus:ring-2 focus:ring-sky-100">
+              <option value="TODAS">Finalizadas y canceladas</option>
+              <option value="FINALIZADA">Finalizadas</option>
+              <option value="CANCELADA">Canceladas</option>
+            </select>
+
+            <i class="pi pi-chevron-down pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-400"></i>
+
+          </div>
+        </div>
+
+      }
+
+    </div>
+  </div>
+
+  <!-- CARGANDO -->
+  @if (cargando()) {
+
+    <div role="status" class="flex min-h-64 flex-col items-center justify-center gap-4 rounded-2xl border border-slate-200 bg-white px-6 py-12 text-center shadow-sm">
+
+      <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-sky-50">
+        <i class="pi pi-spin pi-spinner text-3xl text-[#0077cc]"></i>
+      </div>
+
+      <p class="text-sm font-bold text-[#002d54]">Consultando atenciones</p>
+      <p class="text-xs text-slate-500">Obteniendo programaciones y estados de entrega.</p>
+
+    </div>
+
+  } @else if (error()) {
+
+    <!-- ERROR -->
+    <div role="alert" class="flex min-w-0 items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 sm:p-5">
+
+      <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-red-100 text-red-600">
+        <i class="pi pi-exclamation-triangle text-lg"></i>
+      </div>
+
+      <div class="min-w-0 flex-1">
+        <h2 class="text-sm font-bold text-red-800">No se pudieron cargar las atenciones</h2>
+
+        <p class="mt-2 wrap-break-word text-sm leading-relaxed text-red-700">{{ error() }}</p>
+
+        <button type="button" (click)="cargar()" class="mt-4 inline-flex min-h-10 items-center gap-2 rounded-lg border border-red-200 bg-white px-4 py-2 text-xs font-semibold text-red-700 transition-colors hover:bg-red-100">
+          <i class="pi pi-refresh"></i>
+          Reintentar
+        </button>
+      </div>
+
+    </div>
+
+  } @else {
+
+    <!-- LISTADO -->
+    <div class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+      <div class="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-4 py-4 sm:px-6 sm:py-5">
+
+        <div class="flex min-w-0 items-center gap-3">
+
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#002d54] text-white">
+            <i class="pi pi-list"></i>
+          </div>
+
+          <div class="min-w-0">
+            <h2 class="text-base font-bold text-[#002d54]">Listado de atenciones</h2>
+            <p class="mt-1 text-xs text-slate-500">Programaciones, ejecución y acciones disponibles.</p>
+          </div>
+
+        </div>
+
+        <span class="inline-flex shrink-0 items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600">
+          <i class="pi pi-database text-[11px]"></i>
+          {{ filtradas().length }} resultados
+        </span>
+
+      </div>
+
+      <!-- TABLA DESDE 1280 PX -->
+      <div class="hidden w-full min-w-0 overflow-x-auto xl:block">
+
+        <table class="w-full  border-collapse text-left text-xs">
+
+          <caption class="sr-only">Listado de atenciones del programador</caption>
+
+          <thead class="bg-[#f5f8fc]">
+            <tr class="border-b border-slate-200">
+              <th scope="col" class="w-[9%] px-2 py-3 text-[11px] font-bold uppercase tracking-normal text-slate-500">Atención</th>
+              <th scope="col" class="w-[16%] px-2 py-3 text-[11px] font-bold uppercase tracking-normal text-slate-500">Empresa</th>
+              <th scope="col" class="w-[16%] px-2 py-3 text-[11px] font-bold uppercase tracking-normal text-slate-500">Conductor / Cisterna</th>
+              <th scope="col" class="w-[19%] px-2 py-3 text-[11px] font-bold uppercase tracking-normal text-slate-500">Horario programado</th>
+              <th scope="col" class="w-[15%] px-2 py-3 text-[11px] font-bold uppercase tracking-normal text-slate-500">Estado</th>
+              <th scope="col" class="w-[15%] px-2 py-3 text-[11px] font-bold uppercase tracking-normal text-slate-500">Observaciones</th>
+              <th scope="col" class="w-[10%] px-2 py-3 text-[11px] font-bold uppercase tracking-normal text-slate-500">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+
+            @for (a of visibles(); track a.idAtencion) {
+
+              <tr class="align-top transition-colors hover:bg-sky-50/40">
+
+                <!-- ATENCIÓN / PEDIDO -->
+                <td class="px-2.5 py-4">
+                  <span class="inline-flex rounded-lg bg-slate-100 px-2.5 py-1.5 text-xs font-bold text-[#002d54]">
+                    #{{ a.idAtencion }}
+                  </span>
+
+                  <p class="mt-2 text-xs text-slate-500">Pedido #{{ a.idPedido }}</p>
+                </td>
+
+                <!-- EMPRESA -->
+                <td class="max-w-44 px-2.5 py-4">
+                  <div class="flex min-w-0 items-start gap-2">
+                    <i class="pi pi-building mt-0.5 shrink-0 text-xs text-slate-400"></i>
+                    <span class="wrap-break-word font-semibold leading-relaxed text-slate-700">{{ a.empresa }}</span>
+                  </div>
+                </td>
+
+                <!-- CONDUCTOR / CISTERNA -->
+                <td class="max-w-44 px-2.5 py-4">
+                  <div class="flex items-start gap-2">
+                    <i class="pi pi-user mt-0.5 shrink-0 text-xs text-[#0077cc]"></i>
+                    <span class="wrap-break-word font-semibold text-slate-700">{{ a.conductor }}</span>
+                  </div>
+
+                  <div class="mt-2 flex items-start gap-2 text-slate-500">
+                    <i class="pi pi-truck mt-0.5 shrink-0 text-xs"></i>
+                    <span class="wrap-break-word">{{ a.cisterna }}</span>
+                  </div>
+                </td>
+
+                <!-- HORARIO -->
+                <td class="px-2.5 py-4">
+                  <div class="flex items-start gap-2 text-slate-700">
+                    <i class="pi pi-calendar mt-0.5 shrink-0 text-xs text-[#0077cc]"></i>
+                    <span class="whitespace-nowrap font-semibold">{{ a.fechaInicioProgramada | date:'dd/MM/yyyy HH:mm' }}</span>
+                  </div>
+
+                  <div class="mt-2 flex items-start gap-2 text-slate-500">
+                    <i class="pi pi-clock mt-0.5 shrink-0 text-xs"></i>
+                    <span class="whitespace-nowrap">{{ (a.fechaFinProgramada | date:'dd/MM/yyyy HH:mm') || 'Sin definir' }}</span>
+                  </div>
+                </td>
+
+                <!-- ESTADO / EJECUCIÓN -->
+                <td class="max-w-48 px-2.5 py-4">
+
+                  @if (a.estado === 'PROGRAMADA') {
+                    <span class="inline-flex items-center gap-1.5 rounded-full bg-sky-50 px-2.5 py-1.5 text-[11px] font-bold text-sky-700">
+                      <i class="pi pi-calendar text-[10px]"></i>
+                      Programada
+                    </span>
+                  } @else if (a.estado === 'FINALIZADA') {
+                    <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1.5 text-[11px] font-bold text-emerald-700">
+                      <i class="pi pi-check-circle text-[10px]"></i>
+                      Finalizada
+                    </span>
+                  } @else if (a.estado === 'CANCELADA') {
+                    <span class="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-2.5 py-1.5 text-[11px] font-bold text-red-700">
+                      <i class="pi pi-times-circle text-[10px]"></i>
+                      Cancelada
+                    </span>
+                  } @else {
+                    <span class="inline-flex rounded-full bg-amber-50 px-2.5 py-1.5 text-[11px] font-bold text-amber-700">{{ a.estado }}</span>
+                  }
+
+                  @if (a.fechaInicio) {
+                    <p class="mt-3 wrap-break-word text-[11px] leading-relaxed text-slate-500">
+                      <span class="font-semibold">Inicio real:</span>
+                      {{ a.fechaInicio | date:'dd/MM/yyyy HH:mm' }}
+                    </p>
+                  }
+
+                  @if (a.fechaFin) {
+                    <p class="mt-1 wrap-break-word text-[11px] leading-relaxed text-slate-500">
+                      <span class="font-semibold">Entrega:</span>
+                      {{ a.fechaFin | date:'dd/MM/yyyy HH:mm' }}
+                    </p>
+                  }
+
+                </td>
+
+                <!-- OBSERVACIONES -->
+                <td class="max-w-48 px-2.5 py-4">
+
+                  @if (a.estado === 'CANCELADA') {
+                    <p class="mb-2 text-[11px] font-bold text-red-700">Motivo de cancelación</p>
+                  }
+
+                  <p class="whitespace-pre-wrap wrap-break-word text-xs leading-relaxed text-slate-600">
+                    {{ a.observaciones?.trim() || (a.estado === 'CANCELADA' ? 'Sin motivo registrado.' : 'Sin observaciones.') }}
+                  </p>
+
+                </td>
+
+                <!-- ACCIONES -->
+                <td class="px-2.5 py-4">
+
+                  @if (a.estado === 'PROGRAMADA') {
+
+                    <div class="flex min-w-26 flex-col gap-2">
+
+                      <a [routerLink]="['/dashboard/atenciones', a.idAtencion, 'editar']" class="inline-flex min-h-9 items-center justify-center gap-2 rounded-lg border border-sky-200 bg-sky-50 px-2.5 py-2 text-[11px] font-semibold text-[#0077cc] transition-colors hover:bg-sky-100">
+                        <i class="pi pi-pencil shrink-0"></i>
+                        Editar
+                      </a>
+
+                      <a [routerLink]="['/dashboard/atenciones', a.idAtencion, 'cancelar']" class="inline-flex min-h-9 items-center justify-center gap-2 rounded-lg border border-red-200 bg-white px-2.5 py-2 text-[11px] font-semibold text-red-600 transition-colors hover:bg-red-50">
+                        <i class="pi pi-times-circle shrink-0"></i>
+                        Cancelar
+                      </a>
+
+                    </div>
+
+                  } @else {
+
+                    <span class="inline-flex items-center gap-1.5 text-[11px] text-slate-400">
+                      <i class="pi pi-lock"></i>
+                      Solo consulta
+                    </span>
+
+                  }
+
+                </td>
+
+              </tr>
+
+            } @empty {
+
+              <tr>
+                <td colspan="7" class="px-6 py-14 text-center">
+
+                  <div class="flex flex-col items-center gap-3">
+                    <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100">
+                      <i class="pi pi-inbox text-2xl text-slate-400"></i>
+                    </div>
+
+                    <p class="text-sm font-bold text-[#002d54]">No se encontraron atenciones</p>
+                    <p class="text-xs text-slate-500">Prueba con otros criterios de búsqueda.</p>
+                  </div>
+
+                </td>
+              </tr>
+
+            }
+
+          </tbody>
+        </table>
+
+      </div>
+
+      <!-- TARJETAS RESPONSIVE: MENOS DE 1280 PX -->
+      <div class="grid grid-cols-1 gap-4 p-4 sm:p-5 md:grid-cols-2 xl:hidden">
+
+        @for (a of visibles(); track a.idAtencion) {
+
+          <article class="flex min-w-0 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+
+            <!-- CABECERA -->
+            <div class="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-slate-100 bg-slate-50/70 p-4">
+
+              <div>
+                <p class="text-xs text-slate-500">Atención</p>
+                <p class="mt-1 text-lg font-bold text-[#002d54]">#{{ a.idAtencion }}</p>
+                <p class="mt-1 text-xs text-slate-500">Pedido #{{ a.idPedido }}</p>
+              </div>
+
+              @if (a.estado === 'PROGRAMADA') {
+                <span class="rounded-full bg-sky-50 px-3 py-1.5 text-xs font-bold text-sky-700">Programada</span>
+              } @else if (a.estado === 'FINALIZADA') {
+                <span class="rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700">Finalizada</span>
+              } @else if (a.estado === 'CANCELADA') {
+                <span class="rounded-full bg-red-50 px-3 py-1.5 text-xs font-bold text-red-700">Cancelada</span>
+              } @else {
+                <span class="rounded-full bg-amber-50 px-3 py-1.5 text-xs font-bold text-amber-700">{{ a.estado }}</span>
+              }
+
+            </div>
+
+            <!-- CONTENIDO -->
+            <div class="flex flex-1 flex-col gap-4 p-4">
+
+              <!-- EMPRESA -->
+              <div class="min-w-0">
+                <p class="text-xs font-medium text-slate-500">Empresa</p>
+                <p class="mt-1 wrap-break-word text-sm font-bold text-[#002d54]">{{ a.empresa }}</p>
+              </div>
+
+              <!-- RECURSOS -->
+              <div class="grid grid-cols-1 gap-4 border-t border-slate-100 pt-4 min-[380px]:grid-cols-2">
+
+                <div class="min-w-0">
+                  <p class="text-xs font-medium text-slate-500">Conductor</p>
+                  <p class="mt-2 flex items-start gap-2 wrap-break-word text-sm font-semibold text-slate-700">
+                    <i class="pi pi-user mt-0.5 shrink-0 text-xs text-[#0077cc]"></i>
+                    {{ a.conductor }}
+                  </p>
+                </div>
+
+                <div class="min-w-0">
+                  <p class="text-xs font-medium text-slate-500">Cisterna</p>
+                  <p class="mt-2 flex items-start gap-2 wrap-break-word text-sm font-semibold text-slate-700">
+                    <i class="pi pi-truck mt-0.5 shrink-0 text-xs text-[#0077cc]"></i>
+                    {{ a.cisterna }}
+                  </p>
+                </div>
+
+              </div>
+
+              <!-- HORARIO -->
+              <div class="border-t border-slate-100 pt-4">
+
+                <p class="mb-3 text-xs font-medium text-slate-500">Horario programado</p>
+
+                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+
+                  <div class="min-w-0 rounded-lg bg-sky-50/70 p-3">
+                    <p class="text-[11px] font-semibold text-[#0077cc]">Inicio</p>
+                    <p class="mt-1 wrap-break-word text-xs font-bold text-[#002d54]">{{ a.fechaInicioProgramada | date:'dd/MM/yyyy HH:mm' }}</p>
+                  </div>
+
+                  <div class="min-w-0 rounded-lg bg-slate-50 p-3">
+                    <p class="text-[11px] font-semibold text-slate-500">Fin estimado</p>
+                    <p class="mt-1 wrap-break-word text-xs font-bold text-[#002d54]">{{ (a.fechaFinProgramada | date:'dd/MM/yyyy HH:mm') || 'Sin definir' }}</p>
+                  </div>
+
+                </div>
+
+              </div>
+
+              <!-- EJECUCIÓN -->
+              @if (a.fechaInicio || a.fechaFin) {
+
+                <div class="border-t border-slate-100 pt-4">
+
+                  <p class="mb-3 text-xs font-medium text-slate-500">Ejecución real</p>
+
+                  <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+
+                    @if (a.fechaInicio) {
+                      <div class="min-w-0">
+                        <p class="text-[11px] text-slate-500">Inicio real</p>
+                        <p class="mt-1 text-xs font-semibold text-slate-700">{{ a.fechaInicio | date:'dd/MM/yyyy HH:mm' }}</p>
+                      </div>
+                    }
+
+                    @if (a.fechaFin) {
+                      <div class="min-w-0">
+                        <p class="text-[11px] text-slate-500">Entrega</p>
+                        <p class="mt-1 text-xs font-semibold text-slate-700">{{ a.fechaFin | date:'dd/MM/yyyy HH:mm' }}</p>
+                      </div>
+                    }
+
+                  </div>
+
+                </div>
+
+              }
+
+              <!-- OBSERVACIONES -->
+              <div class="min-w-0 border-t border-slate-100 pt-4">
+
+                <p class="text-xs font-medium text-slate-500">
+                  {{ a.estado === 'CANCELADA' ? 'Motivo de cancelación' : 'Observaciones' }}
+                </p>
+
+                <p class="mt-2 whitespace-pre-wrap wrap-break-word text-xs leading-relaxed text-slate-600">
+                  {{ a.observaciones?.trim() || (a.estado === 'CANCELADA' ? 'Sin motivo registrado.' : 'Sin observaciones.') }}
+                </p>
+
+              </div>
+
+              <!-- ACCIONES -->
+              <div class="mt-auto border-t border-slate-100 pt-4">
+
+                @if (a.estado === 'PROGRAMADA') {
+
+                  <div class="grid grid-cols-1 gap-2 min-[380px]:grid-cols-2">
+
+                    <a [routerLink]="['/dashboard/atenciones', a.idAtencion, 'editar']" class="inline-flex min-h-11 w-full min-w-0 items-center justify-center gap-2 rounded-xl border border-sky-200 bg-sky-50 px-3 py-2.5 text-center text-sm font-semibold text-[#0077cc] transition-colors hover:bg-sky-100">
+                      <i class="pi pi-pencil shrink-0"></i>
+                      Editar
+                    </a>
+
+                    <a [routerLink]="['/dashboard/atenciones', a.idAtencion, 'cancelar']" class="inline-flex min-h-11 w-full min-w-0 items-center justify-center gap-2 rounded-xl border border-red-200 bg-white px-3 py-2.5 text-center text-sm font-semibold text-red-600 transition-colors hover:bg-red-50">
+                      <i class="pi pi-times-circle shrink-0"></i>
+                      Cancelar
+                    </a>
+
+                  </div>
+
+                } @else {
+
+                  <p class="flex items-center justify-center gap-2 rounded-lg bg-slate-50 px-3 py-3 text-xs text-slate-500">
+                    <i class="pi pi-lock"></i>
+                    Atención disponible solo para consulta
+                  </p>
+
+                }
+
+              </div>
+
+            </div>
+
+          </article>
+
+        } @empty {
+
+          <div class="col-span-full flex min-h-56 flex-col items-center justify-center gap-3 px-4 py-10 text-center">
+
+            <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100">
+              <i class="pi pi-inbox text-2xl text-slate-400"></i>
+            </div>
+
+            <p class="text-sm font-bold text-[#002d54]">No se encontraron atenciones</p>
+            <p class="text-xs text-slate-500">No hay resultados con los criterios seleccionados.</p>
+
+          </div>
+
+        }
+
+      </div>
+
+      <!-- PAGINACIÓN -->
+      <div class="flex min-w-0 flex-col gap-4 border-t border-slate-100 bg-slate-50/50 px-4 py-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
+
+        <p class="text-center text-xs text-slate-500 lg:text-left">
+          <span class="font-bold text-[#002d54]">{{ filtradas().length }}</span>
+          resultados encontrados
+        </p>
+
+        <div class="grid w-full grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 sm:gap-3 lg:w-auto">
+
+          <button type="button" (click)="cambiar({ pagina: actual() - 1 })" [disabled]="actual() === 1" class="flex min-h-10 min-w-0 items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40 sm:px-4">
+            <i class="pi pi-chevron-left shrink-0 text-[10px]"></i>
+            <span>Anterior</span>
+          </button>
+
+          <span class="whitespace-nowrap text-center text-xs font-medium text-slate-600">
+            {{ actual() }} / {{ paginas() }}
+          </span>
+
+          <button type="button" (click)="cambiar({ pagina: actual() + 1 })" [disabled]="actual() === paginas()" class="flex min-h-10 min-w-0 items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40 sm:px-4">
+            <span>Siguiente</span>
+            <i class="pi pi-chevron-right shrink-0 text-[10px]"></i>
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  }
+
+  <!-- NOTA INFORMATIVA -->
+  <div class="flex min-w-0 items-start gap-3 rounded-2xl border border-sky-100 bg-sky-50/70 p-4 sm:p-5">
+
+    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-[#0077cc] shadow-sm">
+      <i class="pi pi-info-circle text-lg"></i>
+    </div>
+
+    <div class="min-w-0">
+      <p class="text-sm font-bold text-[#002d54]">Información sobre las programaciones</p>
+
+      <p class="mt-1 text-xs leading-relaxed text-slate-600 sm:text-sm">
+        Solo las atenciones programadas admiten cambios. Cancelar una programación conserva su historial y devuelve el pedido a <span class="font-bold text-[#002d54]">RECIBIDO</span> para poder reprogramarlo.
+      </p>
+    </div>
+
+  </div>
+
+</section>

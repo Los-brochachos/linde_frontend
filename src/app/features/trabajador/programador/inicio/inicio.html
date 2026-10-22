@@ -1,0 +1,541 @@
+
+<section class="mx-auto flex w-full max-w-7xl min-w-0 flex-col gap-6 px-4 py-6 text-slate-800 sm:px-6">
+
+  <!-- ENCABEZADO -->
+  <div class="flex min-w-0 flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+
+    <div class="min-w-0 flex-1">
+      <div class="mb-2 flex items-center gap-2">
+        <span class="h-1.5 w-1.5 shrink-0 rounded-full bg-[#0077cc]"></span>
+        <span class="text-xs font-bold uppercase tracking-widest text-[#0077cc]">Programación de operaciones</span>
+      </div>
+
+      <h1 class="text-2xl font-bold tracking-tight text-[#002d54] sm:text-3xl">Resumen del programador</h1>
+
+      <p class="mt-2 max-w-2xl text-sm leading-relaxed text-slate-500">
+        Supervisa los pedidos pendientes, las entregas programadas, los recorridos activos y las alertas de operación.
+      </p>
+    </div>
+
+    <button type="button" (click)="cargar()" [disabled]="cargando()" class="inline-flex min-h-11 w-full shrink-0 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-[#002d54] shadow-sm transition-colors hover:border-[#0077cc] hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto">
+      <i class="pi pi-refresh shrink-0" [class.pi-spin]="cargando()"></i>
+      <span>{{ cargando() ? 'Actualizando...' : 'Actualizar resumen' }}</span>
+    </button>
+
+  </div>
+
+  <!-- ACCESOS RÁPIDOS -->
+  <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+
+    <a routerLink="/dashboard/pedidos" class="group flex min-w-0 items-center gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:border-sky-200 hover:bg-sky-50/50">
+      <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-[#0077cc] transition-colors group-hover:bg-sky-100">
+        <i class="pi pi-list text-lg"></i>
+      </div>
+      <div class="min-w-0 flex-1">
+        <p class="text-sm font-bold text-[#002d54]">Listar pedidos</p>
+        <p class="mt-0.5 text-xs text-slate-500">Gestionar solicitudes</p>
+      </div>
+      <i class="pi pi-arrow-right shrink-0 text-xs text-slate-400 transition-transform group-hover:translate-x-1"></i>
+    </a>
+
+    <a routerLink="/dashboard/atenciones/nueva" class="group flex min-w-0 items-center gap-3 rounded-xl bg-[#002d54] p-4 text-white shadow-sm transition-colors hover:bg-[#004477]">
+      <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/15 text-white">
+        <i class="pi pi-calendar-plus text-lg"></i>
+      </div>
+      <div class="min-w-0 flex-1">
+        <p class="text-sm font-bold text-white">Crear atención</p>
+        <p class="mt-0.5 text-xs text-sky-100">Nueva programación</p>
+      </div>
+      <i class="pi pi-arrow-right shrink-0 text-xs text-white/70 transition-transform group-hover:translate-x-1"></i>
+    </a>
+
+    <a routerLink="/dashboard/atenciones" class="group flex min-w-0 items-center gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:border-sky-200 hover:bg-sky-50/50">
+      <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-[#0077cc] transition-colors group-hover:bg-sky-100">
+        <i class="pi pi-calendar text-lg"></i>
+      </div>
+      <div class="min-w-0 flex-1">
+        <p class="text-sm font-bold text-[#002d54]">Listar atenciones</p>
+        <p class="mt-0.5 text-xs text-slate-500">Consultar programaciones</p>
+      </div>
+      <i class="pi pi-arrow-right shrink-0 text-xs text-slate-400 transition-transform group-hover:translate-x-1"></i>
+    </a>
+
+  </div>
+
+  @if (cargando()) {
+
+    <!-- CARGANDO -->
+    <div role="status" class="flex min-h-64 flex-col items-center justify-center gap-4 rounded-2xl border border-slate-200 bg-white px-6 py-12 text-center shadow-sm">
+
+      <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-sky-50">
+        <i class="pi pi-spin pi-spinner text-3xl text-[#0077cc]"></i>
+      </div>
+
+      <p class="text-sm font-bold text-[#002d54]">Consultando operaciones</p>
+      <p class="text-xs text-slate-500">Obteniendo pedidos, programaciones y alertas.</p>
+
+    </div>
+
+  } @else if (error()) {
+
+    <!-- ERROR -->
+    <div role="alert" class="flex min-w-0 items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 sm:p-5">
+
+      <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-red-100 text-red-600">
+        <i class="pi pi-exclamation-triangle text-lg"></i>
+      </div>
+
+      <div class="min-w-0 flex-1">
+        <h2 class="text-sm font-bold text-red-800">No se pudo cargar el resumen</h2>
+        <p class="mt-2 wrap-break-word text-sm leading-relaxed text-red-700">{{ error() }}</p>
+
+        <button type="button" (click)="cargar()" class="mt-4 inline-flex min-h-10 items-center gap-2 rounded-lg border border-red-200 bg-white px-4 py-2 text-xs font-semibold text-red-700 transition-colors hover:bg-red-100">
+          <i class="pi pi-refresh"></i>
+          Reintentar
+        </button>
+      </div>
+
+    </div>
+
+  } @else {
+
+    <!-- INDICADORES -->
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+
+      <!-- PEDIDOS PENDIENTES -->
+      <a routerLink="/dashboard/pedidos" class="group relative flex min-w-0 flex-col justify-between overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:border-sky-200 hover:shadow-md sm:p-6">
+
+        <div class="flex items-start justify-between gap-3">
+          <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-50 text-[#0077cc]">
+            <i class="pi pi-inbox text-xl"></i>
+          </div>
+          <i class="pi pi-arrow-up-right text-sm text-slate-300 transition-colors group-hover:text-[#0077cc]"></i>
+        </div>
+
+        <div class="mt-5">
+          <p class="text-sm font-medium text-slate-500">Pedidos por programar</p>
+          <p class="mt-2 text-3xl font-bold tracking-tight text-[#002d54]">{{ pendientes().length }}</p>
+          <p class="mt-2 text-xs text-slate-500">Solicitudes pendientes de atención</p>
+        </div>
+
+        <div class="absolute inset-x-0 bottom-0 h-1 bg-[#0077cc]"></div>
+      </a>
+
+      <!-- PROGRAMADAS -->
+      <a routerLink="/dashboard/atenciones" [queryParams]="{ grupo: 'PROGRAMADA' }" class="group relative flex min-w-0 flex-col justify-between overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:border-sky-200 hover:shadow-md sm:p-6">
+
+        <div class="flex items-start justify-between gap-3">
+          <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+            <i class="pi pi-calendar text-xl"></i>
+          </div>
+          <i class="pi pi-arrow-up-right text-sm text-slate-300 transition-colors group-hover:text-indigo-600"></i>
+        </div>
+
+        <div class="mt-5">
+          <p class="text-sm font-medium text-slate-500">Atenciones programadas</p>
+          <p class="mt-2 text-3xl font-bold tracking-tight text-[#002d54]">{{ programadas().length }}</p>
+          <p class="mt-2 text-xs text-slate-500">Entregas pendientes de iniciar</p>
+        </div>
+
+        <div class="absolute inset-x-0 bottom-0 h-1 bg-indigo-500"></div>
+      </a>
+
+      <!-- EN CURSO -->
+      <a routerLink="/dashboard/atenciones" [queryParams]="{ grupo: 'EN_CURSO' }" class="group relative flex min-w-0 flex-col justify-between overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:border-emerald-200 hover:shadow-md sm:p-6">
+
+        <div class="flex items-start justify-between gap-3">
+          <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+            <i class="pi pi-truck text-xl"></i>
+          </div>
+          <i class="pi pi-arrow-up-right text-sm text-slate-300 transition-colors group-hover:text-emerald-600"></i>
+        </div>
+
+        <div class="mt-5">
+          <p class="text-sm font-medium text-slate-500">Recorridos en curso</p>
+          <p class="mt-2 text-3xl font-bold tracking-tight text-[#002d54]">{{ enCurso().length }}</p>
+          <p class="mt-2 text-xs text-slate-500">Operaciones actualmente activas</p>
+        </div>
+
+        <div class="absolute inset-x-0 bottom-0 h-1 bg-emerald-500"></div>
+      </a>
+
+      <!-- ALERTAS -->
+      <a routerLink="/dashboard/alertas" class="group relative flex min-w-0 flex-col justify-between overflow-hidden rounded-2xl border border-amber-200 bg-amber-50/70 p-5 shadow-sm transition-all hover:border-amber-300 hover:shadow-md sm:p-6">
+
+        <div class="flex items-start justify-between gap-3">
+          <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-white text-amber-600 shadow-sm">
+            <i class="pi pi-exclamation-triangle text-xl"></i>
+          </div>
+          <i class="pi pi-arrow-up-right text-sm text-amber-400 transition-colors group-hover:text-amber-700"></i>
+        </div>
+
+        <div class="mt-5">
+          <p class="text-sm font-medium text-slate-600">Alertas pendientes</p>
+          <p class="mt-2 text-3xl font-bold tracking-tight text-amber-800">{{ alertasPendientes().length }}</p>
+          <p class="mt-2 text-xs leading-relaxed text-amber-800/80">{{ revisadas() }} revisadas pendientes de atención</p>
+        </div>
+
+        <div class="absolute inset-x-0 bottom-0 h-1 bg-amber-500"></div>
+      </a>
+
+    </div>
+
+    <!-- PEDIDOS POR PROGRAMAR -->
+    <article class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+      <div class="flex min-w-0 flex-col gap-4 border-b border-slate-100 px-4 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+
+        <div class="flex min-w-0 items-center gap-3">
+          <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-[#0077cc]">
+            <i class="pi pi-clipboard text-lg"></i>
+          </div>
+
+          <div class="min-w-0">
+            <h2 class="text-base font-bold text-[#002d54] sm:text-lg">Pedidos por programar</h2>
+            <p class="mt-1 text-xs leading-relaxed text-slate-500">Hasta cinco pedidos, priorizando ALTA y la fecha de entrega más cercana.</p>
+          </div>
+        </div>
+
+        <a routerLink="/dashboard/pedidos" class="inline-flex min-h-9 shrink-0 items-center justify-center gap-2 rounded-lg border border-sky-200 bg-sky-50 px-3 py-2 text-xs font-semibold text-[#0077cc] transition-colors hover:bg-sky-100">
+          Ver todos
+          <i class="pi pi-arrow-right text-[10px]"></i>
+        </a>
+
+      </div>
+
+      <!-- TABLA ESCRITORIO -->
+      <div class="hidden w-full min-w-0 overflow-x-auto lg:block">
+
+        <table class="w-full min-w-190 table-fixed border-collapse text-left text-sm">
+
+          <thead class="bg-[#f5f8fc]">
+            <tr class="border-b border-slate-200">
+              <th scope="col" class="w-[12%] px-3 py-3 text-[11px] font-bold uppercase tracking-normal text-slate-500">Pedido</th>
+              <th scope="col" class="w-[30%] px-3 py-3 text-[11px] font-bold uppercase tracking-normal text-slate-500">Empresa</th>
+              <th scope="col" class="w-[15%] px-3 py-3 text-[11px] font-bold uppercase tracking-normal text-slate-500">Prioridad</th>
+              <th scope="col" class="w-[20%] px-3 py-3 text-[11px] font-bold uppercase tracking-normal text-slate-500">Entrega estimada</th>
+              <th scope="col" class="w-[23%] px-3 py-3 text-[11px] font-bold uppercase tracking-normal text-slate-500">Acción</th>
+            </tr>
+          </thead>
+
+          <tbody class="divide-y divide-slate-100">
+
+            @for (p of pendientes().slice(0, 5); track p.idPedido) {
+
+              <tr class="align-middle transition-colors hover:bg-sky-50/40">
+
+                <td class="px-3 py-4">
+                  <span class="inline-flex rounded-lg bg-slate-100 px-2.5 py-1.5 text-xs font-bold text-[#002d54]">#{{ p.idPedido }}</span>
+                </td>
+
+                <td class="px-3 py-4">
+                  <div class="flex min-w-0 items-start gap-2">
+                    <i class="pi pi-building mt-0.5 shrink-0 text-xs text-slate-400"></i>
+                    <span class="min-w-0 wrap-break-word text-xs font-semibold leading-relaxed text-slate-700">{{ p.razonSocial || 'Empresa no disponible' }}</span>
+                  </div>
+                </td>
+
+                <td class="px-3 py-4">
+
+                  @if (p.prioridad === 'ALTA' || p.prioridad === 'URGENTE') {
+                    <span class="inline-flex max-w-full items-center gap-1 rounded-full bg-red-50 px-2.5 py-1 text-[11px] font-bold text-red-700">
+                      <i class="pi pi-exclamation-circle text-[10px]"></i>
+                      {{ p.prioridad }}
+                    </span>
+                  } @else if (p.prioridad === 'MEDIA') {
+                    <span class="inline-flex rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-bold text-amber-700">{{ p.prioridad }}</span>
+                  } @else if (p.prioridad === 'BAJA') {
+                    <span class="inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-700">{{ p.prioridad }}</span>
+                  } @else {
+                    <span class="text-xs text-slate-600">{{ p.prioridad }}</span>
+                  }
+
+                </td>
+
+                <td class="px-3 py-4">
+                  <div class="flex items-center gap-2 text-xs text-slate-600">
+                    <i class="pi pi-calendar shrink-0 text-[#0077cc]"></i>
+                    <span>{{ (p.fechaEntregaEstimada | date:'dd/MM/yyyy') || 'Sin definir' }}</span>
+                  </div>
+                </td>
+
+                <td class="px-3 py-4">
+                  <a routerLink="/dashboard/atenciones/nueva" [queryParams]="{ pedido: p.idPedido }" class="inline-flex min-h-9 w-full min-w-0 items-center justify-center gap-2 rounded-lg bg-[#0077cc] px-2.5 py-2 text-center text-[11px] font-semibold leading-snug text-white transition-colors hover:bg-[#0064a3]">
+                    <i class="pi pi-calendar-plus shrink-0"></i>
+                    <span>Programar atención</span>
+                  </a>
+                </td>
+
+              </tr>
+
+            } @empty {
+
+              <tr>
+                <td colspan="5" class="px-6 py-12 text-center">
+                  <i class="pi pi-check-circle text-2xl text-emerald-500"></i>
+                  <p class="mt-3 text-sm font-semibold text-[#002d54]">No hay pedidos pendientes de programación</p>
+                </td>
+              </tr>
+
+            }
+
+          </tbody>
+        </table>
+
+      </div>
+
+      <!-- TARJETAS MÓVIL Y TABLET -->
+      <div class="grid grid-cols-1 gap-3 p-4 sm:grid-cols-2 lg:hidden">
+
+        @for (p of pendientes().slice(0, 5); track p.idPedido) {
+
+          <div class="flex min-w-0 flex-col rounded-xl border border-slate-200 p-4">
+
+            <div class="flex items-center justify-between gap-3">
+              <span class="rounded-lg bg-slate-100 px-2.5 py-1.5 text-xs font-bold text-[#002d54]">Pedido #{{ p.idPedido }}</span>
+
+              @if (p.prioridad === 'ALTA' || p.prioridad === 'URGENTE') {
+                <span class="rounded-full bg-red-50 px-2.5 py-1 text-[11px] font-bold text-red-700">{{ p.prioridad }}</span>
+              } @else {
+                <span class="rounded-full bg-sky-50 px-2.5 py-1 text-[11px] font-semibold text-sky-700">{{ p.prioridad }}</span>
+              }
+            </div>
+
+            <p class="mt-4 wrap-break-word text-sm font-bold text-[#002d54]">{{ p.razonSocial || 'Empresa no disponible' }}</p>
+
+            <div class="mt-4 flex items-center gap-2 border-t border-slate-100 pt-4 text-xs text-slate-500">
+              <i class="pi pi-calendar text-[#0077cc]"></i>
+              Entrega: {{ (p.fechaEntregaEstimada | date:'dd/MM/yyyy') || 'Sin definir' }}
+            </div>
+
+            <a routerLink="/dashboard/atenciones/nueva" [queryParams]="{ pedido: p.idPedido }" class="mt-auto inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#0077cc] px-3 py-2.5 text-center text-xs font-semibold text-white transition-colors hover:bg-[#0064a3]">
+              <i class="pi pi-calendar-plus"></i>
+              Programar atención
+            </a>
+
+          </div>
+
+        } @empty {
+
+          <div class="col-span-full py-10 text-center text-sm text-slate-500">
+            No hay pedidos pendientes de programación.
+          </div>
+
+        }
+
+      </div>
+
+    </article>
+
+    <!-- PRÓXIMAS SALIDAS Y RECORRIDOS -->
+    <div class="grid min-w-0 grid-cols-1 gap-6 xl:grid-cols-2">
+
+      <!-- PRÓXIMAS SALIDAS -->
+      <article class="flex min-w-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+        <div class="flex items-start gap-3 border-b border-slate-100 px-5 py-5 sm:px-6">
+          <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+            <i class="pi pi-calendar-clock text-lg"></i>
+          </div>
+
+          <div class="min-w-0">
+            <h2 class="text-base font-bold text-[#002d54] sm:text-lg">Próximas salidas</h2>
+            <p class="mt-1 text-xs leading-relaxed text-slate-500">Las cinco programaciones más próximas, incluidas las pendientes con horario vencido.</p>
+          </div>
+        </div>
+
+        <div class="flex-1 divide-y divide-slate-100 px-5 sm:px-6">
+
+          @for (a of programadas().slice(0, 5); track a.idAtencion) {
+
+            <div class="py-4">
+
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <span class="rounded-lg bg-indigo-50 px-2.5 py-1.5 text-xs font-bold text-indigo-700">Atención #{{ a.idAtencion }}</span>
+                <span class="text-xs font-medium text-slate-500">Pedido #{{ a.idPedido }}</span>
+              </div>
+
+              <p class="mt-3 wrap-break-word text-sm font-semibold text-[#002d54]">{{ empresa(a) }}</p>
+
+              <div class="mt-3 flex flex-col gap-2 text-xs text-slate-500 sm:flex-row sm:flex-wrap sm:gap-x-5">
+
+                <span class="inline-flex items-center gap-2">
+                  <i class="pi pi-calendar text-[#0077cc]"></i>
+                  {{ a.fechaInicioProgramada | date:'dd/MM/yyyy HH:mm' }}
+                </span>
+
+                <span class="inline-flex items-center gap-2">
+                  <i class="pi pi-user text-[#0077cc]"></i>
+                  {{ a.nombreConductor || 'Conductor #' + a.idConductor }}
+                </span>
+
+              </div>
+
+              <a [routerLink]="['/dashboard/atenciones', a.idAtencion, 'editar']" class="mt-3 inline-flex min-h-9 items-center gap-2 text-xs font-bold text-[#0077cc] transition-colors hover:text-[#005491]">
+                <i class="pi pi-external-link text-[11px]"></i>
+                Ver programación
+                <i class="pi pi-arrow-right text-[10px]"></i>
+              </a>
+
+            </div>
+
+          } @empty {
+
+            <div class="flex min-h-48 flex-col items-center justify-center gap-3 py-8 text-center">
+              <i class="pi pi-calendar text-2xl text-slate-300"></i>
+              <p class="text-sm text-slate-500">No hay salidas programadas.</p>
+            </div>
+
+          }
+
+        </div>
+
+        <a routerLink="/dashboard/atenciones" [queryParams]="{ grupo: 'PROGRAMADA' }" class="flex items-center justify-between gap-2 border-t border-slate-100 bg-slate-50/60 px-5 py-4 text-xs font-bold text-[#0077cc] transition-colors hover:bg-sky-50 sm:px-6">
+          Consultar todas las salidas
+          <i class="pi pi-arrow-right text-xs"></i>
+        </a>
+
+      </article>
+
+      <!-- RECORRIDOS EN CURSO -->
+      <article class="flex min-w-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+        <div class="flex items-start gap-3 border-b border-slate-100 px-5 py-5 sm:px-6">
+          <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+            <i class="pi pi-truck text-lg"></i>
+          </div>
+
+          <div class="min-w-0">
+            <h2 class="text-base font-bold text-[#002d54] sm:text-lg">Recorridos en curso</h2>
+            <p class="mt-1 text-xs leading-relaxed text-slate-500">Seguimiento de las entregas que ya iniciaron su recorrido.</p>
+          </div>
+        </div>
+
+        <div class="flex-1 divide-y divide-slate-100 px-5 sm:px-6">
+
+          @for (a of enCurso().slice(0, 5); track a.idAtencion) {
+
+            <div class="py-4">
+
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <span class="rounded-lg bg-emerald-50 px-2.5 py-1.5 text-xs font-bold text-emerald-700">Atención #{{ a.idAtencion }}</span>
+                <span class="text-xs font-medium text-slate-500">Pedido #{{ a.idPedido }}</span>
+              </div>
+
+              <p class="mt-3 wrap-break-word text-sm font-semibold text-[#002d54]">{{ empresa(a) }}</p>
+
+              <div class="mt-3 grid grid-cols-1 gap-2 text-xs text-slate-500 sm:grid-cols-2">
+
+                <span class="flex min-w-0 items-start gap-2">
+                  <i class="pi pi-user mt-0.5 shrink-0 text-[#0077cc]"></i>
+                  <span class="wrap-break-word">{{ a.nombreConductor || 'Conductor #' + a.idConductor }}</span>
+                </span>
+
+                <span class="flex min-w-0 items-start gap-2">
+                  <i class="pi pi-truck mt-0.5 shrink-0 text-[#0077cc]"></i>
+                  <span class="wrap-break-word">{{ a.cisterna || 'Cisterna #' + a.idCisterna }}</span>
+                </span>
+
+              </div>
+
+              <div class="mt-3 flex items-center gap-2 rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-500">
+                <i class="pi pi-clock text-[#0077cc]"></i>
+                <span>Inicio: {{ (a.fechaInicio | date:'dd/MM/yyyy HH:mm') || 'Sin hora registrada' }}</span>
+              </div>
+
+            </div>
+
+          } @empty {
+
+            <div class="flex min-h-48 flex-col items-center justify-center gap-3 py-8 text-center">
+              <i class="pi pi-truck text-2xl text-slate-300"></i>
+              <p class="text-sm text-slate-500">No hay recorridos en curso.</p>
+            </div>
+
+          }
+
+        </div>
+
+        <a routerLink="/dashboard/atenciones" [queryParams]="{ grupo: 'EN_CURSO' }" class="flex items-center justify-between gap-2 border-t border-slate-100 bg-slate-50/60 px-5 py-4 text-xs font-bold text-[#0077cc] transition-colors hover:bg-sky-50 sm:px-6">
+          Consultar recorridos
+          <i class="pi pi-arrow-right text-xs"></i>
+        </a>
+
+      </article>
+
+    </div>
+
+    <!-- ALERTAS PENDIENTES -->
+    <article class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+      <div class="flex min-w-0 flex-col gap-4 border-b border-slate-100 px-4 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+
+        <div class="flex min-w-0 items-center gap-3">
+          <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
+            <i class="pi pi-bell text-lg"></i>
+          </div>
+
+          <div class="min-w-0">
+            <h2 class="text-base font-bold text-[#002d54] sm:text-lg">Alertas pendientes más recientes</h2>
+            <p class="mt-1 text-xs leading-relaxed text-slate-500">Incidencias que requieren seguimiento o revisión.</p>
+          </div>
+        </div>
+
+        <a routerLink="/dashboard/alertas" class="inline-flex min-h-9 shrink-0 items-center justify-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-700 transition-colors hover:bg-amber-100">
+          Consultar alertas
+          <i class="pi pi-arrow-right text-[10px]"></i>
+        </a>
+
+      </div>
+
+      <div class="divide-y divide-slate-100 px-4 sm:px-6">
+
+        @for (a of alertasPendientes().slice(0, 5); track a.idAlerta) {
+
+          <div class="flex min-w-0 items-start gap-3 py-4 sm:gap-4">
+
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
+              <i class="pi pi-exclamation-triangle"></i>
+            </div>
+
+            <div class="min-w-0 flex-1">
+
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="text-xs font-bold text-[#002d54]">Alerta #{{ a.idAlerta }}</span>
+                <span class="rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-semibold text-amber-700">{{ a.tipo }}</span>
+                <span class="text-xs text-slate-500">Atención #{{ a.idAtencion }}</span>
+              </div>
+
+              <p class="mt-2 whitespace-pre-wrap wrap-break-word text-sm leading-relaxed text-slate-600">{{ a.mensaje }}</p>
+
+              <p class="mt-2 inline-flex items-center gap-2 text-xs text-slate-400">
+                <i class="pi pi-clock"></i>
+                {{ a.fechaHora | date:'dd/MM/yyyy HH:mm' }}
+              </p>
+
+            </div>
+
+          </div>
+
+        } @empty {
+
+          <div class="flex min-h-48 flex-col items-center justify-center gap-3 py-10 text-center">
+
+            <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600">
+              <i class="pi pi-check-circle text-2xl"></i>
+            </div>
+
+            <p class="text-sm font-bold text-[#002d54]">Sin alertas pendientes</p>
+            <p class="text-xs text-slate-500">No hay alertas pendientes de revisión.</p>
+
+          </div>
+
+        }
+
+      </div>
+
+    </article>
+
+  }
+
+</section>

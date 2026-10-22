@@ -4,10 +4,10 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
 import { InputTextModule } from 'primeng/inputtext';
-import { ApiService } from '../../../core/services/api.service';
-import { PedidoResponse } from '../../../core/models/PedidoModel';
-import { AtencionResponse } from '../../../core/models/AtencionModel';
-import { CisternaResponse } from '../../../core/models/CisternaModel';
+import { ApiService } from '../../../../../core/services/api.service';
+import { PedidoResponse } from '../../../../../core/models/PedidoModel';
+import { AtencionResponse } from '../../../../../core/models/AtencionModel';
+import { CisternaResponse } from '../../../../../core/models/CisternaModel';
 
 interface Conductor { idTrabajador: number; nombres: string; apellidos: string; estado: string; }
 @Component({ selector: 'app-programar-atencion', imports: [ReactiveFormsModule, RouterLink, InputTextModule], templateUrl: './programar-atencion.html' })
@@ -76,6 +76,14 @@ export class ProgramarAtencion {
             }
             this.form.patchValue(datos.original);
             this.form.controls.idPedido.disable();
+          }
+          if (!datos.original) {
+            const pedido = Number(this.route.snapshot.queryParamMap.get('pedido'));
+            if (Number.isSafeInteger(pedido) && this.pendientes().some(p => p.idPedido === pedido)) {
+              this.form.controls.idPedido.setValue(pedido);
+            } else if (this.route.snapshot.queryParamMap.has('pedido')) {
+              this.error.set('El pedido seleccionado ya no est? disponible para programar. Selecciona otro pedido pendiente.');
+            }
           }
           this.cargando.set(false);
         },

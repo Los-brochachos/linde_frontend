@@ -1,83 +1,140 @@
-<header class="w-full bg-[#002d54] lg:h-20 h-15">
 
-    <nav class="w-full h-full max-w-7xl mx-auto flex justify-center">
+<header class="sticky top-0 z-50 h-15 w-full bg-[#002d54] lg:h-20">
 
-    <!-- ========================= -->
+  <nav class="mx-auto flex h-full w-full max-w-7xl items-center">
+
     <!-- LOGO -->
-    <!-- ========================= -->
-        <a routerLink="/inicio" class="relative w-27 md:w-36 lg:w-49 ml-4">
-            <img src="/images/logos/linde-logo-mobile.avif" class="absolute md:hidden  shadow-[0_4px_4px_#00000040]" alt="Linde">
-            <img src="/images/logos/linde-logo-tablet.avif" class="hidden md:block md:absolute lg:hidden  shadow-[0_4px_4px_#00000040]" alt="Linde">
-            <img src="/images/logos/linde-logo-desktop.avif" class="hidden lg:block lg:absolute  shadow-[0_4px_4px_#00000040]" alt="Linde">
+    <a routerLink="/inicio" (click)="cerrarPaneles()" class="relative ml-4 h-full w-27 shrink-0 md:w-36 lg:w-49">
+      <img src="/images/logos/linde-logo-mobile.avif" class="absolute z-50 w-full shadow-[0_4px_4px_#00000040] md:hidden" alt="Linde">
+      <img src="/images/logos/linde-logo-tablet.avif" class="absolute z-50 hidden w-full shadow-[0_4px_4px_#00000040] md:block lg:hidden" alt="Linde">
+      <img src="/images/logos/linde-logo-desktop.avif" class="absolute z-50 hidden w-full shadow-[0_4px_4px_#00000040] lg:block" alt="Linde">
+    </a>
 
-        </a>
+    <!-- CONTENIDO -->
+    <div class="flex h-full min-w-0 flex-1 items-center justify-end px-5 lg:pl-6">
 
-        <div class="flex w-full h-full items-center px-6 pr-5">
+      <!-- NAVEGACIÓN DESKTOP -->
+      <div class="hidden h-full min-w-0 flex-1 flex-col justify-center lg:flex">
 
-            <div class="flex w-full flex-col h-full justify-center pl-6 pr-5">
-                <!-- Barra superior -->
-                <div class="hidden lg:flex lg:flex-2/5 items-center justify-between text-sm">
+        <!-- ENLACES SUPERIORES -->
+        <div class="flex flex-2/5 items-center justify-end gap-6 text-sm">
+          <a routerLink="/contacto" class="text-white/70 transition-colors hover:text-white">Servicio al cliente</a>
+          <a href="https://www.linde.com" target="_blank" rel="noopener noreferrer" class="text-white/70 transition-colors hover:text-white">Linde Corporativo</a>
+        </div>
 
-                    <div class="flex items-center justify-end w-full gap-6">
+        <!-- ENLACES PRINCIPALES -->
+        <div class="flex flex-3/5 items-center justify-between">
+          <div class="flex items-center gap-6 text-lg text-white">
+            <a routerLink="/inicio" routerLinkActive="text-sky-300" (click)="cerrarPaneles()" class="font-medium transition-colors hover:text-sky-200">Inicio</a>
+            <a routerLink="/nosotros" routerLinkActive="text-sky-300" (click)="cerrarPaneles()" class="font-medium transition-colors hover:text-sky-200">Nosotros</a>
+            <a routerLink="/productos" routerLinkActive="text-sky-300" (click)="cerrarPaneles()" class="font-medium transition-colors hover:text-sky-200">Productos</a>
+            <a routerLink="/contacto" routerLinkActive="text-sky-300" (click)="cerrarPaneles()" class="font-medium transition-colors hover:text-sky-200">Contacto</a>
+          </div>
 
-                        <a routerLink="/contacto" class="text-[#ffffffb0]  transition-colors">
-                            Servicio al cliente
-                        </a>
+          <!-- BUSCADOR DESKTOP -->
+          <button type="button" (click)="toggleBuscador()" [attr.aria-expanded]="buscadorAbierto()" aria-controls="panel-busqueda" aria-label="Buscar productos" class="ml-3 flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-white transition-colors hover:bg-white/10">
+            <i [class]="buscadorAbierto() ? 'bi bi-x-lg text-xl' : 'bi bi-search text-lg'"></i>
+          </button>
+        </div>
+      </div>
 
-                        <a href="https://www.linde.com" target="_blank" rel="noopener noreferrer" class="text-[#ffffffb0] transition-colors">
-                            Linde Corporativo
-                        </a>
+      <!-- AUTENTICACIÓN DESKTOP -->
+      <div class="ml-3 hidden shrink-0 items-center gap-3 lg:flex">
+        <a routerLink="/register" pButton (click)="cerrarPaneles()" class="inline-flex! h-11! w-33! items-center! justify-center! rounded-md! border! border-white! bg-transparent! px-4! text-base! font-medium! text-white! transition-colors! hover:bg-white/10!">Registrarse</a>
+        <a routerLink="/login" pButton (click)="cerrarPaneles()" class="inline-flex! h-11! w-33! items-center! justify-center! rounded-md! border-0! bg-[#07c]! px-4! text-base! font-medium! text-white! transition-colors! hover:bg-[#005491]!">Iniciar sesión</a>
+      </div>
 
-                    </div>
-                </div>
+      <!-- ACCIONES MÓVILES -->
+      <div class="flex h-full items-center justify-end gap-2 lg:hidden">
 
+        <!-- BUSCAR -->
+        <button type="button" (click)="toggleBuscador()" [attr.aria-expanded]="buscadorAbierto()" aria-controls="panel-busqueda" aria-label="Buscar productos" class="flex h-11 w-11 items-center justify-center rounded-xl text-white transition-all hover:bg-white/10 active:scale-95">
+          <i [class]="buscadorAbierto() ? 'bi bi-x-lg text-xl' : 'bi bi-search text-xl'"></i>
+        </button>
 
-                <!-- Navegación principal -->
-                <div class="hidden lg:flex-3/5 lg:flex items-start justify-between">
-                        <!-- Links desktop -->
-                        <div class="hidden lg:flex items-center gap-8 text-lg  text-white ">
-                            <a routerLink="/inicio" routerLinkActive="" class="font-medium  hover:underline underline-offset-8 transition-colors">Inicio</a>
-                            <a routerLink="/nosotros" routerLinkActive="" class="font-medium  hover:underline underline-offset-8 transition-colors">Nosotros</a>
-                            <a routerLink="/productos" routerLinkActive="" class="font-medium hover:underline underline-offset-8 transition-colors">Productos</a>
-                            <a routerLink="/contacto" routerLinkActive="" class="font-medium hover:underline underline-offset-8 transition-colors">Contacto</a>
-                        </div>
+        <!-- MENÚ HAMBURGUESA -->
+        <button type="button" (click)="toggleMenu()" [attr.aria-expanded]="menuAbierto()" aria-controls="menu-movil" [attr.aria-label]="menuAbierto() ? 'Cerrar menú' : 'Abrir menú'" class="flex h-11 w-11 items-center justify-center rounded-xl text-white transition-all hover:bg-white/10 active:scale-95">
+          <i [class]="menuAbierto() ? 'bi bi-x-lg text-2xl' : 'bi bi-list text-3xl'"></i>
+        </button>
 
+      </div>
 
-                        <!-- Acciones -->
-                        <div class="hidden ml-auto lg:flex items-center gap-2">
-                            <!-- Buscar -->
-                            <button type="button" class="w-11 h-11 flex items-start pt-1 justify-end" aria-label="Buscar">
-                                <i class="bi bi-search text-white "></i>
-                            </button>
-                        </div>
+    </div>
+  </nav>
 
-                </div>
-            </div>
-            <button routerLink="/login" pButton class="hidden! lg:inline-flex! bg-[#07c]! border-0! text-white! font-normal! hover:bg-[#005491]! py-2! px-4! text-[1rem]! w-38 h-11">
-                <!-- <a routerLink="/login" class="hidden lg:flex items-center px-5 py-2.5bg-blue-700  text-white font-medium hover:bg-blue-800 transition-colors"> -->
-                    Iniciar sesión
-                <!-- </a> -->
-            </button>       
+  <!-- BUSCADOR DESPLEGABLE -->
+  @if (buscadorAbierto()) {
+    <div id="panel-busqueda" class="absolute left-0 top-full z-30 w-full border-b border-slate-200 bg-white shadow-[0_12px_30px_-8px_rgba(0,45,84,0.25)]">
+      <form (ngSubmit)="buscar()" role="search" class="mx-auto flex max-w-5xl items-center gap-3 px-5 py-5 sm:px-8">
+        <i class="bi bi-search text-xl text-[#007ac3]"></i>
+        <input #campoBusqueda type="search" name="busqueda" [value]="busqueda()" (input)="busqueda.set(campoBusqueda.value)" (keydown.escape)="cerrarPaneles()" placeholder="¿Qué producto estás buscando?" aria-label="Buscar productos" class="min-w-0 flex-1 border-0 border-b-2 border-[#007ac3] bg-transparent px-2 py-3 text-base text-slate-800 outline-none placeholder:text-slate-400 focus:border-[#002d54]">
+        <button type="submit" [disabled]="!busqueda().trim()" class="flex h-11 shrink-0 items-center justify-center rounded-lg bg-[#007ac3] px-4 font-semibold text-white transition-colors hover:bg-[#005491] disabled:cursor-not-allowed disabled:opacity-50">Buscar</button>
+      </form>
+    </div>
+  }
 
+  <!-- MENÚ MÓVIL -->
+  @if (menuAbierto()) {
+    <div id="menu-movil" class="absolute left-0 top-full z-30 w-full border-t border-white/10 bg-white shadow-[0_15px_35px_-8px_rgba(0,45,84,0.3)] lg:hidden">
 
+      <div class="mx-auto max-h-[calc(100dvh-60px)] max-w-7xl overflow-y-auto px-5 py-6 sm:px-8">
 
-            <!-- MOVIL -->
-            <div class="lg:hidden flex w-full h-full justify-end gap-5">
-                <!-- Buscar -->
-                <button type="button" class="flex items-center justify-center" aria-label="Buscar">
-                    <i class="bi bi-search flex items-center text-white text-xl "></i>
-                </button>
-                <!-- Menú móvil -->
-                <button type="button" class="flex items-center justify-center" aria-label="Abrir menú">
-                    <i class="bi bi-list flex items-center text-white text-4xl"></i>
-                </button>
+        <p class="mb-4 px-3 text-xs font-bold uppercase tracking-widest text-slate-400">Navegación</p>
 
-            </div>
+        <div class="space-y-1">
+
+          <a routerLink="/inicio" routerLinkActive="bg-sky-50! text-[#007ac3]!" (click)="cerrarPaneles()" class="flex items-center gap-4 rounded-xl px-4 py-3.5 font-medium text-slate-700 transition-colors hover:bg-slate-50">
+            <i class="bi bi-house text-lg text-[#007ac3]"></i>
+            <span class="flex-1">Inicio</span>
+            <i class="bi bi-chevron-right text-xs text-slate-400"></i>
+          </a>
+
+          <a routerLink="/nosotros" routerLinkActive="bg-sky-50! text-[#007ac3]!" (click)="cerrarPaneles()" class="flex items-center gap-4 rounded-xl px-4 py-3.5 font-medium text-slate-700 transition-colors hover:bg-slate-50">
+            <i class="bi bi-people text-lg text-[#007ac3]"></i>
+            <span class="flex-1">Nosotros</span>
+            <i class="bi bi-chevron-right text-xs text-slate-400"></i>
+          </a>
+
+          <a routerLink="/productos" routerLinkActive="bg-sky-50! text-[#007ac3]!" (click)="cerrarPaneles()" class="flex items-center gap-4 rounded-xl px-4 py-3.5 font-medium text-slate-700 transition-colors hover:bg-slate-50">
+            <i class="bi bi-box-seam text-lg text-[#007ac3]"></i>
+            <span class="flex-1">Productos</span>
+            <i class="bi bi-chevron-right text-xs text-slate-400"></i>
+          </a>
+
+          <a routerLink="/contacto" routerLinkActive="bg-sky-50! text-[#007ac3]!" (click)="cerrarPaneles()" class="flex items-center gap-4 rounded-xl px-4 py-3.5 font-medium text-slate-700 transition-colors hover:bg-slate-50">
+            <i class="bi bi-envelope text-lg text-[#007ac3]"></i>
+            <span class="flex-1">Contacto</span>
+            <i class="bi bi-chevron-right text-xs text-slate-400"></i>
+          </a>
 
         </div>
-    
 
+        <!-- SEPARADOR -->
+        <div class="my-5 border-t border-slate-200"></div>
 
-  </nav>
+        <!-- ACCESO A CUENTA -->
+        <p class="mb-4 px-3 text-xs font-bold uppercase tracking-widest text-slate-400">Mi cuenta</p>
+
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <a routerLink="/register" (click)="cerrarPaneles()" class="flex min-h-12 items-center justify-center gap-2 rounded-xl border-2 border-[#007ac3] bg-white px-4 font-semibold text-[#007ac3] transition-colors hover:bg-sky-50">
+            <i class="bi bi-person-plus"></i>
+            Registrarse
+          </a>
+
+          <a routerLink="/login" (click)="cerrarPaneles()" class="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#007ac3] px-4 font-semibold text-white transition-colors hover:bg-[#005491]">
+            <i class="bi bi-box-arrow-in-right"></i>
+            Iniciar sesión
+          </a>
+        </div>
+
+        <!-- ENLACES SECUNDARIOS -->
+        <div class="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-3 border-t border-slate-100 pt-5 text-xs text-slate-500">
+          <a routerLink="/contacto" (click)="cerrarPaneles()" class="hover:text-[#007ac3]">Servicio al cliente</a>
+          <a href="https://www.linde.com" target="_blank" rel="noopener noreferrer" (click)="cerrarPaneles()" class="hover:text-[#007ac3]">Linde Corporativo <i class="bi bi-box-arrow-up-right ml-1"></i></a>
+        </div>
+
+      </div>
+    </div>
+  }
 
 </header>

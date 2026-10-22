@@ -1,0 +1,297 @@
+
+<section class="relative overflow-hidden bg-[#f3f6fa] px-4 py-12 text-slate-900 sm:px-6 lg:py-16">
+
+  <!-- DECORACIÓN -->
+  <div class="pointer-events-none absolute -left-24 top-0 h-80 w-80 rounded-full bg-sky-200/40 blur-3xl"></div>
+  <div class="pointer-events-none absolute -bottom-20 right-0 h-80 w-80 rounded-full bg-blue-200/40 blur-3xl"></div>
+
+  <!-- CONTENEDOR PRINCIPAL -->
+  <div class="relative mx-auto grid w-full max-w-6xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_12px_35px_-5px_rgba(0,45,84,0.35)] lg:grid-cols-[0.85fr_1.15fr]">
+
+    <!-- PANEL IZQUIERDO -->
+    <aside class="relative hidden flex-col justify-between overflow-hidden bg-[#002d54] px-8 py-10 text-white lg:flex lg:px-10 lg:py-12">
+
+      <!-- DECORACIÓN -->
+      <div class="pointer-events-none absolute -right-32 top-16 h-80 w-80 rounded-full border border-white/10"></div>
+      <div class="pointer-events-none absolute -right-20 top-28 h-64 w-64 rounded-full border border-white/10"></div>
+      <div class="pointer-events-none absolute bottom-0 left-0 h-56 w-56 rounded-full bg-sky-400/10 blur-3xl"></div>
+
+      <!-- IDENTIDAD -->
+      <div class="relative z-10 flex items-center gap-3">
+        <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/10">
+          <i class="pi pi-building text-xl text-sky-200"></i>
+        </div>
+
+        <div>
+          <p class="text-lg font-semibold">Portal Linde</p>
+          <p class="text-xs text-blue-200">Registro de clientes</p>
+        </div>
+      </div>
+
+      <!-- CONTENIDO PRINCIPAL -->
+      <div class="relative z-10 my-10">
+
+        <span class="mb-5 inline-flex rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-medium text-blue-100">
+          Plataforma de gestión
+        </span>
+
+        <h2 class="text-3xl font-bold leading-tight tracking-tight xl:text-4xl">
+          Forma parte<br />
+          de Linde.
+        </h2>
+
+        <p class="mt-5 max-w-sm text-sm leading-relaxed text-blue-100/80 xl:text-base">
+          Registra tu empresa y accede a una plataforma diseñada para facilitar la gestión de tus solicitudes.
+        </p>
+
+        <!-- BENEFICIOS -->
+        <div class="mt-9 space-y-4">
+
+          <div class="flex items-start gap-4">
+            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10">
+              <i class="pi pi-shopping-cart text-lg text-sky-200"></i>
+            </div>
+
+            <div>
+              <p class="text-sm font-semibold">Gestión de solicitudes</p>
+              <p class="mt-1 text-xs leading-relaxed text-blue-100/70">
+                Centraliza tus pedidos y solicitudes en un solo lugar.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4">
+            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10">
+              <i class="pi pi-chart-line text-lg text-sky-200"></i>
+            </div>
+
+            <div>
+              <p class="text-sm font-semibold">Seguimiento de atención</p>
+              <p class="mt-1 text-xs leading-relaxed text-blue-100/70">
+                Consulta el estado y la información de tus solicitudes.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4">
+            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10">
+              <i class="pi pi-shield text-lg text-sky-200"></i>
+            </div>
+
+            <div>
+              <p class="text-sm font-semibold">Acceso seguro</p>
+              <p class="mt-1 text-xs leading-relaxed text-blue-100/70">
+                Accede a tu cuenta mediante credenciales personales.
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- MENSAJE FINAL -->
+        <div class="mt-9 rounded-xl border border-white/10 bg-white/5 px-5 py-4">
+          <div class="flex items-start gap-3">
+            <i class="pi pi-info-circle mt-0.5 text-sky-200"></i>
+
+            <div>
+              <p class="text-sm font-semibold">Comienza con tu registro</p>
+              <p class="mt-2 text-xs leading-relaxed text-blue-100/70">
+                Completa los datos de tu empresa para crear tu cuenta y comenzar a utilizar el portal.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- PIE -->
+      <p class="relative z-10 text-xs text-blue-200/60">
+        © 2026 Linde · Portal de clientes
+      </p>
+
+    </aside>
+
+    <!-- PANEL DERECHO -->
+    <div class="flex flex-col justify-center px-6 py-10 sm:px-10 lg:px-12 lg:py-12">
+
+      @if (registrado()) {
+
+        <!-- REGISTRO EXITOSO -->
+        <div class="flex flex-col items-center py-10 text-center" role="status">
+
+          <div class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-50">
+            <i class="pi pi-check-circle text-4xl text-emerald-600"></i>
+          </div>
+
+          <h1 class="text-2xl font-bold text-slate-900 sm:text-3xl">
+            ¡Cuenta creada!
+          </h1>
+
+          <p class="mt-4 max-w-sm text-sm leading-relaxed text-slate-500">
+            Tu cuenta de cliente se creó correctamente.
+            Ya puedes iniciar sesión para acceder al portal.
+          </p>
+
+          <a routerLink="/login" class="mt-8 inline-flex min-h-12 items-center justify-center gap-3 rounded-xl bg-[#007ac3] px-8 font-semibold text-white transition-colors hover:bg-[#0064a3]">
+            Iniciar sesión
+            <i class="pi pi-arrow-right"></i>
+          </a>
+
+        </div>
+
+      } @else {
+
+        <!-- ENCABEZADO -->
+        <div class="mb-8">
+          <h1 class="text-3xl font-bold tracking-tight text-slate-900">
+            Crear cuenta
+          </h1>
+
+          <p class="mt-3 text-sm leading-relaxed text-slate-500">
+            Completa los datos de tu empresa para registrarte como cliente.
+          </p>
+
+          <p class="mt-3 text-xs text-slate-400">
+            Los campos marcados con * son obligatorios.
+            El registro público es exclusivo para clientes.
+          </p>
+        </div>
+
+        <!-- FORMULARIO -->
+        <form [formGroup]="form" (ngSubmit)="registrar()" novalidate [attr.aria-busy]="guardando()" class="space-y-6">
+
+          <fieldset [disabled]="guardando()" class="grid gap-x-4 gap-y-5 sm:grid-cols-2">
+
+            <!-- CAMPOS DINÁMICOS -->
+            @for (campo of campos; track campo.key) {
+
+              <div class="min-w-0" [class.sm:col-span-2]="campo.key === 'correo'">
+
+                <label [for]="'registro-' + campo.key" class="mb-2 block text-sm font-semibold text-slate-700">
+                  {{ campo.label }}
+                  <span [class.text-red-500]="campo.required">
+                    {{ campo.required ? '*' : '(opcional)' }}
+                  </span>
+                </label>
+
+                @if (campo.key === 'telefono') {
+
+                  <!-- TELÉFONO -->
+                  <p-inputmask inputId="registro-telefono" formControlName="telefono" mask="999 999 99?9" [unmask]="true" [autoClear]="false" type="tel" autocomplete="tel-national" [pt]="{ root: { inputmode: 'numeric', 'aria-describedby': 'ayuda-telefono error-telefono' } }" placeholder="987 654 321" [invalid]="invalido('telefono')" styleClass="h-12! w-full! rounded-xl! border! border-slate-300! bg-white! px-4! py-0! text-sm! text-slate-900! shadow-none! placeholder:text-slate-400! focus:border-[#0077cc]!" class="block w-full" />
+
+                } @else {
+
+                  <!-- INPUTS DINÁMICOS -->
+                  <input pInputText [id]="'registro-' + campo.key" [type]="campo.type" [formControlName]="campo.key" [autocomplete]="campo.autocomplete" [maxlength]="campo.max" [placeholder]="campo.placeholder" [attr.inputmode]="campo.key === 'ruc' ? 'numeric' : null" [attr.aria-required]="campo.required" [attr.aria-invalid]="invalido(campo.key)" [attr.aria-describedby]="'error-' + campo.key" class="h-12! w-full! rounded-xl! border! border-slate-300! bg-white! px-4! py-0! text-sm! text-slate-900! shadow-none! placeholder:text-slate-400! focus:border-[#0077cc]!" />
+
+                }
+
+                <!-- VALIDACIONES -->
+                @if (invalido(campo.key)) {
+                  <p [id]="'error-' + campo.key" class="mt-2 flex items-start gap-2 text-xs text-red-600">
+                    <i class="pi pi-exclamation-circle mt-0.5"></i>
+                    <span>{{ mensaje(campo.key) }}</span>
+                  </p>
+                }
+
+              </div>
+
+            }
+
+            <!-- CONTRASEÑA -->
+            <div class="min-w-0">
+
+              <label for="registro-clave" class="mb-2 block text-sm font-semibold text-slate-700">
+                Contraseña <span class="text-red-500">*</span>
+              </label>
+
+              <input pInputText id="registro-clave" [type]="mostrarClave() ? 'text' : 'password'" formControlName="contraseña" autocomplete="new-password" maxlength="100" aria-required="true" [attr.aria-invalid]="invalido('contraseña')" aria-describedby="ayuda-clave error-clave" class="h-12! w-full! rounded-xl! border! border-slate-300! bg-white! px-4! py-0! text-sm! text-slate-900! shadow-none! placeholder:text-slate-400! focus:border-[#0077cc]!" />
+
+              <p id="ayuda-clave" class="mt-2 text-xs text-slate-500">
+                Entre 8 y 100 caracteres.
+              </p>
+
+              @if (invalido('contraseña')) {
+                <p id="error-clave" class="mt-2 flex items-start gap-2 text-xs text-red-600">
+                  <i class="pi pi-exclamation-circle mt-0.5"></i>
+                  <span>{{ mensaje('contraseña') }}</span>
+                </p>
+              }
+
+            </div>
+
+            <!-- CONFIRMAR CONTRASEÑA -->
+            <div class="min-w-0">
+
+              <label for="registro-confirmar" class="mb-2 block text-sm font-semibold text-slate-700">
+                Confirmar contraseña <span class="text-red-500">*</span>
+              </label>
+
+              <input pInputText id="registro-confirmar" [type]="mostrarClave() ? 'text' : 'password'" formControlName="confirmarContraseña" autocomplete="new-password" maxlength="100" aria-required="true" [attr.aria-invalid]="form.controls['confirmarContraseña'].touched && (form.controls['confirmarContraseña'].invalid || form.hasError('clavesDistintas'))" aria-describedby="error-confirmar" class="h-12! w-full! rounded-xl! border! border-slate-300! bg-white! px-4! py-0! text-sm! text-slate-900! shadow-none! placeholder:text-slate-400! focus:border-[#0077cc]!" />
+
+              @if (form.controls['confirmarContraseña'].touched && form.controls['confirmarContraseña'].invalid) {
+                <p id="error-confirmar" class="mt-2 flex items-start gap-2 text-xs text-red-600">
+                  <i class="pi pi-exclamation-circle mt-0.5"></i>
+                  Confirma tu contraseña.
+                </p>
+              } @else if (form.controls['confirmarContraseña'].touched && form.hasError('clavesDistintas')) {
+                <p id="error-confirmar" class="mt-2 flex items-start gap-2 text-xs text-red-600">
+                  <i class="pi pi-exclamation-circle mt-0.5"></i>
+                  Las contraseñas no coinciden.
+                </p>
+              }
+
+            </div>
+
+            <!-- MOSTRAR CONTRASEÑAS -->
+            <div class="sm:col-span-2">
+
+              <button type="button" (click)="mostrarClave.set(!mostrarClave())" [attr.aria-pressed]="mostrarClave()" class="inline-flex items-center gap-2 text-sm font-medium text-[#007ac3] transition-colors hover:text-[#005491]">
+                <i [class]="mostrarClave() ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
+                {{ mostrarClave() ? 'Ocultar contraseñas' : 'Mostrar contraseñas' }}
+              </button>
+
+            </div>
+
+          </fieldset>
+
+          <!-- ERROR DEL SERVIDOR -->
+          @if (error()) {
+            <div role="alert" class="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+              <i class="pi pi-exclamation-triangle mt-0.5"></i>
+              <span>{{ error() }}</span>
+            </div>
+          }
+
+          <!-- BOTÓN ENVIAR -->
+          <button pButton type="submit" [disabled]="guardando()" class="flex! min-h-13! w-full! items-center! justify-center! gap-3! rounded-xl! border-0! bg-[#007ac3]! px-6! py-3! font-semibold! text-white! shadow-lg! shadow-sky-600/15! transition-colors! hover:bg-[#0064a3]! disabled:cursor-not-allowed! disabled:opacity-60!">
+
+            @if (guardando()) {
+              <i class="pi pi-spin pi-spinner"></i>
+              <span>Creando cuenta...</span>
+            } @else {
+              <span>Crear cuenta de cliente</span>
+              <i class="pi pi-arrow-right"></i>
+            }
+
+          </button>
+
+        </form>
+
+        <!-- INICIAR SESIÓN -->
+        <div class="mt-8 border-t border-slate-100 pt-6 text-center">
+          <p class="text-sm text-slate-500">
+            ¿Ya tienes una cuenta?
+            <a routerLink="/login" class="ml-1 font-semibold text-[#007ac3] hover:underline">
+              Inicia sesión
+            </a>
+          </p>
+        </div>
+
+      }
+
+    </div>
+
+  </div>
+
+</section>

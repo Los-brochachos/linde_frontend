@@ -1,0 +1,373 @@
+
+<section class="mx-auto flex w-full max-w-5xl min-w-0 flex-col gap-6 px-4 py-6 text-slate-800 sm:px-6">
+
+  <!-- VOLVER -->
+  <div>
+    <button type="button" (click)="cerrar()" [disabled]="guardando()" class="inline-flex items-center gap-2 text-sm font-semibold text-[#0077cc] transition-colors hover:text-[#005491] disabled:cursor-not-allowed disabled:opacity-50">
+      <i class="pi pi-arrow-left text-xs"></i>
+      Volver al listado
+    </button>
+  </div>
+
+  <!-- CARGANDO -->
+  @if (cargando()) {
+    <div role="status" class="flex min-h-40 flex-col items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <i class="pi pi-spin pi-spinner text-3xl text-[#0077cc]"></i>
+      <p class="text-sm font-semibold text-[#002d54]">Consultando trabajador...</p>
+    </div>
+  }
+
+  <!-- ERROR DE CARGA -->
+  @if (errorCarga()) {
+    <div role="alert" class="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+      <i class="pi pi-exclamation-triangle mt-0.5 shrink-0"></i>
+      <p class="min-w-0 wrap-break-word">{{ errorCarga() }}</p>
+    </div>
+  }
+
+  @if (modo() !== 'cerrado') {
+
+    <!-- ENCABEZADO -->
+    <div class="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+
+      <div class="min-w-0">
+        <div class="mb-2 flex items-center gap-2">
+          <span class="h-1.5 w-1.5 rounded-full bg-[#0077cc]"></span>
+          <span class="text-xs font-bold uppercase tracking-widest text-[#0077cc]">Gestión de personal</span>
+        </div>
+
+        <h1 class="wrap-break-word text-2xl font-bold tracking-tight text-[#002d54] sm:text-3xl">
+          {{ modo() === 'crear' ? 'Crear trabajador' : modo() === 'editar' ? 'Editar trabajador #' + seleccionado()?.idTrabajador : 'Datos del trabajador #' + seleccionado()?.idTrabajador }}
+        </h1>
+
+        <p class="mt-2 text-sm leading-relaxed text-slate-500">
+          @if (modo() === 'crear') {
+            Registra la información personal, los datos de acceso y la especialidad del nuevo trabajador.
+          } @else if (modo() === 'editar') {
+            Actualiza los datos disponibles del trabajador seleccionado.
+          } @else {
+            Consulta la información registrada del trabajador.
+          }
+        </p>
+      </div>
+
+      @if (modo() === 'crear') {
+        <span class="inline-flex w-fit items-center gap-2 rounded-full bg-sky-50 px-3 py-2 text-xs font-bold text-[#0077cc]">
+          <i class="pi pi-user-plus"></i>
+          Nuevo registro
+        </span>
+      } @else if (modo() === 'editar') {
+        <span class="inline-flex w-fit items-center gap-2 rounded-full bg-amber-50 px-3 py-2 text-xs font-bold text-amber-700">
+          <i class="pi pi-pencil"></i>
+          Modo edición
+        </span>
+      } @else {
+        <span class="inline-flex w-fit items-center gap-2 rounded-full bg-slate-100 px-3 py-2 text-xs font-bold text-slate-600">
+          <i class="pi pi-eye"></i>
+          Solo consulta
+        </span>
+      }
+
+    </div>
+
+    <!-- FORMULARIO -->
+    <article class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+      <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+
+        <fieldset [disabled]="guardando()" class="min-w-0">
+
+          <!-- DATOS PERSONALES -->
+          <div class="border-b border-slate-100 px-4 py-5 sm:px-6">
+
+            <div class="mb-6 flex items-center gap-3">
+
+              <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-[#0077cc]">
+                <i class="pi pi-id-card text-lg"></i>
+              </div>
+
+              <div class="min-w-0">
+                <h2 class="text-base font-bold text-[#002d54]">Información del trabajador</h2>
+                <p class="mt-1 text-xs text-slate-500">Datos personales y de identificación.</p>
+              </div>
+
+            </div>
+
+            <div class="grid grid-cols-1 gap-x-5 gap-y-5 sm:grid-cols-2">
+
+              @for (campo of campos; track campo.key) {
+
+                <div class="min-w-0">
+
+                  <label [for]="'trabajador-' + campo.key" class="mb-2 block text-sm font-semibold text-slate-700">
+                    {{ campo.titulo }}
+                  </label>
+
+                  <input pInputText [id]="'trabajador-' + campo.key" [type]="campo.tipo" [formControlName]="campo.key" [maxlength]="campo.max" [attr.inputmode]="campo.key === 'dni' || campo.key === 'telefono' ? 'numeric' : null" [attr.aria-invalid]="invalido(campo.key)" [attr.aria-describedby]="'ayuda-' + campo.key" class="h-12! w-full! min-w-0! rounded-xl! border! border-slate-300! bg-white! px-4! text-sm! text-slate-900! shadow-none! focus:border-[#0077cc]!" [class.border-red-400!]="invalido(campo.key)" />
+
+                  <p [id]="'ayuda-' + campo.key" class="mt-2 flex items-start gap-1.5 text-xs leading-relaxed" [class.text-red-700]="invalido(campo.key)" [class.text-slate-500]="!invalido(campo.key)">
+                    @if (invalido(campo.key)) {
+                      <i class="pi pi-exclamation-circle mt-0.5 shrink-0 text-[11px]"></i>
+                    } @else {
+                      <i class="pi pi-info-circle mt-0.5 shrink-0 text-[11px]"></i>
+                    }
+                    <span>{{ campo.ayuda }}</span>
+                  </p>
+
+                </div>
+
+              }
+
+            </div>
+
+          </div>
+
+          <!-- ACCESO Y ROL -->
+          <div class="border-b border-slate-100 px-4 py-5 sm:px-6">
+
+            <div class="mb-6 flex items-center gap-3">
+
+              <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+                <i class="pi pi-shield text-lg"></i>
+              </div>
+
+              <div class="min-w-0">
+                <h2 class="text-base font-bold text-[#002d54]">Acceso y permisos</h2>
+                <p class="mt-1 text-xs text-slate-500">Rol asignado y credenciales de acceso al sistema.</p>
+              </div>
+
+            </div>
+
+            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+
+              <!-- ROL -->
+              <div class="min-w-0">
+
+                <label for="trabajador-rol" class="mb-2 block text-sm font-semibold text-slate-700">Rol del trabajador</label>
+
+                <div class="relative">
+
+                  <select id="trabajador-rol" formControlName="rol" class="h-12 w-full min-w-0 appearance-none rounded-xl border border-slate-300 bg-white px-4 pr-10 text-sm text-slate-900 outline-none transition-colors focus:border-[#0077cc] focus:ring-2 focus:ring-sky-100 disabled:bg-slate-100">
+                    @for (rol of roles; track rol) {
+                      <option [value]="rol">{{ rol }}</option>
+                    }
+                  </select>
+
+                  <i class="pi pi-chevron-down pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-400"></i>
+
+                </div>
+
+                @if (modo() !== 'crear') {
+                  <p class="mt-2 flex items-start gap-1.5 text-xs leading-relaxed text-slate-500">
+                    <i class="pi pi-lock mt-0.5 shrink-0 text-[11px]"></i>
+                    El rol se conserva para mantener los datos de su especialidad.
+                  </p>
+                }
+
+              </div>
+
+              <!-- CORREO -->
+              <div class="min-w-0">
+
+                <label for="trabajador-correo" class="mb-2 block text-sm font-semibold text-slate-700">Correo de acceso</label>
+
+                <div class="relative">
+                  <i class="pi pi-envelope pointer-events-none absolute left-4 top-1/2 z-10 -translate-y-1/2 text-sm text-slate-400"></i>
+
+                  <input pInputText id="trabajador-correo" type="email" formControlName="correo" maxlength="100" autocomplete="off" [attr.aria-invalid]="invalido('correo')" class="h-12! w-full! min-w-0! rounded-xl! border! border-slate-300! bg-white! py-0! pl-11! pr-4! text-sm! text-slate-900! shadow-none! focus:border-[#0077cc]!" [class.border-red-400!]="invalido('correo')" />
+                </div>
+
+                @if (invalido('correo')) {
+                  <p class="mt-2 flex items-start gap-1.5 text-xs text-red-700">
+                    <i class="pi pi-exclamation-circle mt-0.5 shrink-0"></i>
+                    Ingresa un correo válido, hasta 100 caracteres.
+                  </p>
+                }
+
+                @if (modo() !== 'crear') {
+                  <p class="mt-2 flex items-start gap-1.5 text-xs text-slate-500">
+                    <i class="pi pi-lock mt-0.5 shrink-0"></i>
+                    El correo de acceso se conserva en esta edición.
+                  </p>
+                }
+
+              </div>
+
+              <!-- CONTRASEÑA -->
+              @if (modo() === 'crear') {
+
+                <div class="min-w-0 sm:col-span-2">
+
+                  <label for="trabajador-clave" class="mb-2 block text-sm font-semibold text-slate-700">Contraseña inicial</label>
+
+                  <div class="relative">
+                    <i class="pi pi-lock pointer-events-none absolute left-4 top-1/2 z-10 -translate-y-1/2 text-sm text-slate-400"></i>
+
+                    <input pInputText id="trabajador-clave" type="password" formControlName="contraseña" minlength="8" maxlength="72" autocomplete="new-password" [attr.aria-invalid]="invalido('contraseña')" class="h-12! w-full! min-w-0! rounded-xl! border! border-slate-300! bg-white! py-0! pl-11! pr-4! text-sm! text-slate-900! shadow-none! focus:border-[#0077cc]!" [class.border-red-400!]="invalido('contraseña')" />
+                  </div>
+
+                  <p class="mt-2 flex items-start gap-1.5 text-xs leading-relaxed" [class.text-red-700]="invalido('contraseña')" [class.text-slate-500]="!invalido('contraseña')">
+                    <i class="pi pi-info-circle mt-0.5 shrink-0"></i>
+                    Entre 8 y 72 caracteres; máximo 72 bytes.
+                  </p>
+
+                </div>
+
+              }
+
+            </div>
+
+          </div>
+
+          <!-- DATOS DE ESPECIALIDAD -->
+          @if (modo() === 'crear') {
+
+            <div class="border-b border-slate-100 px-4 py-5 sm:px-6">
+
+              <div class="mb-6 flex items-center gap-3">
+
+                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+                  <i class="pi pi-briefcase text-lg"></i>
+                </div>
+
+                <div class="min-w-0">
+                  <h2 class="text-base font-bold text-[#002d54]">Datos de especialidad</h2>
+                  <p class="mt-1 text-xs text-slate-500">Información adicional según el rol seleccionado.</p>
+                </div>
+
+              </div>
+
+              <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+
+                @for (campo of extra; track campo.key) {
+
+                  @if (campo.roles.includes(rolFormulario())) {
+
+                    <div class="min-w-0">
+
+                      <label [for]="'trabajador-' + campo.key" class="mb-2 block text-sm font-semibold text-slate-700">{{ campo.titulo }}</label>
+
+                      @if (campo.opciones) {
+
+                        <div class="relative">
+
+                          <select [id]="'trabajador-' + campo.key" [formControlName]="campo.key" [attr.aria-invalid]="invalido(campo.key)" class="h-12 w-full min-w-0 appearance-none rounded-xl border border-slate-300 bg-white px-4 pr-10 text-sm text-slate-900 outline-none transition-colors focus:border-[#0077cc] focus:ring-2 focus:ring-sky-100" [class.border-red-400]="invalido(campo.key)">
+                            <option value="">Selecciona una opción</option>
+                            @for (opcion of campo.opciones; track opcion) {
+                              <option [value]="opcion">{{ opcion }}</option>
+                            }
+                          </select>
+
+                          <i class="pi pi-chevron-down pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-400"></i>
+
+                        </div>
+
+                      } @else {
+
+                        <input pInputText [id]="'trabajador-' + campo.key" [type]="campo.tipo || 'text'" [formControlName]="campo.key" [maxlength]="campo.key === 'licenciaConducir' ? 30 : 10" [attr.aria-invalid]="invalido(campo.key)" class="h-12! w-full! min-w-0! rounded-xl! border! border-slate-300! bg-white! px-4! text-sm! text-slate-900! shadow-none! focus:border-[#0077cc]!" [class.border-red-400!]="invalido(campo.key)" />
+
+                      }
+
+                      @if (invalido(campo.key)) {
+                        <p class="mt-2 flex items-center gap-1.5 text-xs text-red-700">
+                          <i class="pi pi-exclamation-circle"></i>
+                          Completa {{ campo.titulo.toLocaleLowerCase() }}.
+                        </p>
+                      }
+
+                    </div>
+
+                  }
+
+                }
+
+              </div>
+
+            </div>
+
+          }
+
+        </fieldset>
+
+        <!-- ESTADO DEL TRABAJADOR -->
+        @if (seleccionado(); as t) {
+
+          <div class="border-b border-slate-100 px-4 py-5 sm:px-6">
+
+            <div class="flex min-w-0 flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50/70 p-4">
+
+              <div class="flex min-w-0 items-center gap-3">
+
+                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white text-[#0077cc] shadow-sm">
+                  <i class="pi pi-user text-lg"></i>
+                </div>
+
+                <div class="min-w-0">
+                  <p class="text-xs font-semibold text-slate-500">Estado del trabajador</p>
+                  <p class="mt-1 text-sm font-bold text-[#002d54]">{{ t.estado }}</p>
+                </div>
+
+              </div>
+
+              @if (t.estado === 'ACTIVO') {
+                <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-3 py-1.5 text-xs font-bold text-emerald-700">
+                  <i class="pi pi-check-circle"></i>
+                  Activo
+                </span>
+              } @else {
+                <span class="inline-flex items-center gap-1.5 rounded-full bg-slate-200 px-3 py-1.5 text-xs font-bold text-slate-600">
+                  <i class="pi pi-info-circle"></i>
+                  {{ t.estado }}
+                </span>
+              }
+
+            </div>
+
+            <p class="mt-3 text-xs leading-relaxed text-slate-500">
+              Esta pantalla permite consultar y editar los datos comunes del trabajador.
+            </p>
+
+          </div>
+
+        }
+
+        <!-- ERROR DEL FORMULARIO -->
+        @if (errorFormulario()) {
+
+          <div class="px-4 pt-5 sm:px-6">
+
+            <div role="alert" class="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+              <i class="pi pi-exclamation-triangle mt-0.5 shrink-0"></i>
+              <span class="min-w-0 wrap-break-word">{{ errorFormulario() }}</span>
+            </div>
+
+          </div>
+
+        }
+
+        <!-- ACCIONES -->
+        <div class="flex flex-col-reverse gap-3 bg-slate-50/70 px-4 py-5 sm:flex-row sm:items-center sm:justify-end sm:px-6">
+
+          <button type="button" (click)="cerrar()" [disabled]="guardando()" class="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto">
+            <i class="pi pi-arrow-left text-xs"></i>
+            {{ modo() === 'ver' ? 'Volver al listado' : 'Descartar cambios' }}
+          </button>
+
+          @if (modo() !== 'ver') {
+
+            <button type="submit" (click)="guardar()" [disabled]="guardando()" class="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#002d54] px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#004477] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto">
+              <i class="pi shrink-0" [class.pi-save]="!guardando()" [class.pi-spin]="guardando()" [class.pi-spinner]="guardando()"></i>
+              {{ guardando() ? 'Guardando...' : 'Guardar trabajador' }}
+            </button>
+
+          }
+
+        </div>
+
+      </form>
+
+    </article>
+
+  }
+
+</section>

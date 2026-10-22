@@ -1,116 +1,351 @@
-<div class="w-full min-h-screen bg-slate-50 pb-12">
-  
-  <!-- ========================================================================= -->
-  <!-- BIENVENIDA HERO -->
-  <!-- ========================================================================= -->
-  <section class="w-full bg-[#002d54] text-white py-12 px-6 shadow-md">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-      <div>
-        <span class="text-sky-400 font-semibold tracking-wide uppercase text-xs">Panel del Cliente</span>
-        <h1 class="text-3xl font-bold tracking-tight mt-1">
-          ¡Hola, <span class="text-white">{{ cliente()?.razonSocial ?? usuario()?.correo }}</span>!
+
+<section class="mx-auto flex w-full max-w-7xl flex-col gap-7 px-4 py-6 text-slate-800 sm:px-6 lg:py-9">
+
+  <!-- BIENVENIDA -->
+  <header class="relative overflow-hidden rounded-2xl bg-[#002d54] px-6 py-8 text-white shadow-sm sm:px-9 sm:py-10">
+    <div class="pointer-events-none absolute -right-24 -top-32 h-80 w-80 rounded-full border border-white/10"></div>
+    <div class="pointer-events-none absolute -right-5 -top-14 h-56 w-56 rounded-full border border-white/10"></div>
+    <div class="pointer-events-none absolute bottom-0 right-1/4 h-32 w-32 rounded-full bg-[#0077cc]/25 blur-3xl"></div>
+
+    <div class="relative flex flex-col items-start justify-between gap-7 lg:flex-row lg:items-center">
+      <div class="min-w-0">
+        <div class="mb-5 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-semibold text-sky-200">
+          <i class="pi pi-home"></i>
+          Portal del cliente
+        </div>
+
+        <h1 class="wrap-break-word text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl">
+          ¡Hola, {{ cliente()?.razonSocial || usuario()?.correo || 'Bienvenido' }}!
         </h1>
-        <p class="text-slate-300 text-sm mt-2 max-w-xl">
-          Bienvenido de vuelta a tu portal de Linde. Aquí puedes gestionar tus citas de manera ágil y segura.
+
+        <p class="mt-4 max-w-xl text-sm leading-7 text-blue-100 sm:text-base">
+          Gestiona tus pedidos, consulta su seguimiento y revisa las atenciones programadas desde un solo lugar.
         </p>
       </div>
-      
-      <!-- Card resumen rápido de citas -->
-      <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg p-4 flex items-center gap-4 shadow-sm w-full md:w-auto">
-        <div class="w-12 h-12 bg-sky-500 rounded-full flex items-center justify-center text-white text-xl">
-          <i class="bi bi-calendar-event"></i>
+
+      <a routerLink="/cliente/pedidos/nuevo" class="inline-flex shrink-0 items-center justify-center gap-3 rounded-xl bg-white px-6 py-3.5 text-sm font-bold text-[#002d54] shadow-sm transition-all hover:-translate-y-0.5 hover:bg-sky-50">
+        <i class="pi pi-plus-circle text-lg"></i>
+        Crear nuevo pedido
+        <i class="pi pi-arrow-right text-xs"></i>
+      </a>
+    </div>
+  </header>
+
+  <!-- TÍTULO DEL RESUMEN -->
+  <div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+    <div>
+      <p class="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-[#0077cc]">Vista general</p>
+      <h2 class="text-2xl font-bold tracking-tight text-[#002d54]">Resumen de mis pedidos</h2>
+      <p class="mt-2 text-sm text-slate-500">Consulta el estado general de tus solicitudes.</p>
+    </div>
+
+    <button type="button" (click)="load()" [disabled]="loading()" class="inline-flex items-center justify-center gap-2 self-start rounded-lg border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-[#002d54] shadow-sm transition-colors hover:border-sky-200 hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50">
+      <i class="pi pi-refresh" [class.pi-spin]="loading()"></i>
+      Actualizar resumen
+    </button>
+  </div>
+
+  <!-- CARGANDO -->
+  @if (loading()) {
+    <div role="status" class="flex min-h-64 flex-col items-center justify-center rounded-2xl border border-slate-200 bg-white p-10 text-center shadow-sm">
+      <i class="pi pi-spin pi-spinner mb-5 text-4xl text-[#0077cc]"></i>
+      <h3 class="text-lg font-bold text-[#002d54]">Cargando tu resumen</h3>
+      <p class="mt-2 text-sm text-slate-500">Estamos consultando tus pedidos y atenciones.</p>
+    </div>
+  }
+
+  <!-- ERROR -->
+  @else if (error()) {
+    <div role="alert" class="flex flex-col gap-5 rounded-2xl border border-red-200 bg-white p-7 shadow-sm sm:flex-row sm:items-center">
+      <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-600">
+        <i class="pi pi-exclamation-triangle text-2xl"></i>
+      </div>
+
+      <div class="flex-1">
+        <h3 class="text-lg font-bold text-slate-900">No pudimos cargar tu información</h3>
+        <p class="mt-2 text-sm leading-6 text-red-700">{{ error() }}</p>
+      </div>
+
+      <button type="button" (click)="load()" class="inline-flex items-center justify-center gap-2 rounded-lg bg-[#002d54] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#004477]">
+        <i class="pi pi-refresh"></i>
+        Reintentar
+      </button>
+    </div>
+  }
+
+  @else {
+
+    <!-- INDICADORES -->
+    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+
+      <!-- TOTAL -->
+      <a routerLink="/cliente/pedidos" class="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-1 hover:border-sky-200 hover:shadow-md">
+        <div class="flex items-start justify-between">
+          <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-[#eaf4fc] text-[#0077cc]">
+            <i class="pi pi-shopping-bag text-xl"></i>
+          </div>
+          <i class="pi pi-arrow-up-right text-sm text-slate-300 transition-colors group-hover:text-[#0077cc]"></i>
+        </div>
+        <p class="mt-6 text-sm font-medium text-slate-500">Total de pedidos</p>
+        <p class="mt-2 text-3xl font-bold tracking-tight text-[#002d54]">{{ pedidos().length }}</p>
+        <p class="mt-3 text-xs text-slate-400">Solicitudes registradas</p>
+      </a>
+
+      <!-- RECIBIDOS -->
+      <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-50 text-sky-700">
+          <i class="pi pi-inbox text-xl"></i>
+        </div>
+        <p class="mt-6 text-sm font-medium text-slate-500">Recibidos</p>
+        <p class="mt-2 text-3xl font-bold tracking-tight text-sky-700">{{ recibidos() }}</p>
+        <p class="mt-3 text-xs text-slate-400">Pendientes de atención</p>
+      </div>
+
+      <!-- EN ATENCIÓN -->
+      <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-50 text-amber-700">
+          <i class="pi pi-cog text-xl"></i>
+        </div>
+        <p class="mt-6 text-sm font-medium text-slate-500">En preparación / despacho</p>
+        <p class="mt-2 text-3xl font-bold tracking-tight text-amber-700">{{ enAtencion() }}</p>
+        <p class="mt-3 text-xs text-slate-400">Pedidos en proceso</p>
+      </div>
+
+      <!-- ENTREGADOS -->
+      <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
+          <i class="pi pi-check-circle text-xl"></i>
+        </div>
+        <p class="mt-6 text-sm font-medium text-slate-500">Entregados</p>
+        <p class="mt-2 text-3xl font-bold tracking-tight text-emerald-700">{{ entregados() }}</p>
+        <p class="mt-3 text-xs text-slate-400">Pedidos completados</p>
+      </div>
+
+      <!-- CANCELADOS -->
+      <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-red-50 text-red-700">
+          <i class="pi pi-times-circle text-xl"></i>
+        </div>
+        <p class="mt-6 text-sm font-medium text-slate-500">Cancelados</p>
+        <p class="mt-2 text-3xl font-bold tracking-tight text-red-700">{{ cancelados() }}</p>
+        <p class="mt-3 text-xs text-slate-400">Solicitudes canceladas</p>
+      </div>
+
+    </div>
+
+    <!-- PEDIDOS RECIENTES -->
+    <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+      <div class="flex flex-col justify-between gap-4 border-b border-slate-100 px-6 py-6 sm:flex-row sm:items-center sm:px-8">
+        <div>
+          <h2 class="flex items-center gap-3 text-xl font-bold text-[#002d54]">
+            <i class="pi pi-list text-[#0077cc]"></i>
+            Pedidos recientes
+          </h2>
+          <p class="mt-2 text-sm text-slate-500">Tus solicitudes más recientes y su estado actual.</p>
+        </div>
+
+        <a routerLink="/cliente/pedidos" class="inline-flex items-center gap-2 self-start text-sm font-bold text-[#0077cc] transition-colors hover:text-[#002d54]">
+          Ver todos los pedidos
+          <i class="pi pi-arrow-right text-xs"></i>
+        </a>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full min-w-190 text-left text-sm">
+          <thead class="bg-[#f4f7fb] text-xs font-bold uppercase tracking-wider text-slate-500">
+            <tr>
+              <th scope="col" class="px-6 py-4 sm:pl-8">Pedido</th>
+              <th scope="col" class="px-6 py-4">Registro</th>
+              <th scope="col" class="px-6 py-4">Entrega estimada</th>
+              <th scope="col" class="px-6 py-4">Estado</th>
+              <th scope="col" class="px-6 py-4 text-right sm:pr-8">Acción</th>
+            </tr>
+          </thead>
+
+          <tbody class="divide-y divide-slate-100">
+            @for (p of recientes(); track p.idPedido) {
+              <tr class="transition-colors hover:bg-slate-50/70">
+
+                <td class="px-6 py-5 sm:pl-8">
+                  <div class="flex items-center gap-3">
+                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-sky-50 text-[#0077cc]">
+                      <i class="pi pi-box"></i>
+                    </div>
+                    <span class="font-bold text-[#002d54]">#{{ p.idPedido }}</span>
+                  </div>
+                </td>
+
+                <td class="px-6 py-5 text-slate-600">
+                  {{ p.fechaRegistro ? (p.fechaRegistro | date:preferencias.formato()) : 'Sin fecha' }}
+                </td>
+
+                <td class="px-6 py-5 text-slate-600">
+                  {{ p.fechaEntregaEstimada ? (p.fechaEntregaEstimada | date:preferencias.formato()) : 'Por confirmar' }}
+                </td>
+
+                <td class="px-6 py-5">
+                  <span class="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-bold"
+                    [class]="p.estado === 'ENTREGADO'
+                      ? 'bg-emerald-50 text-emerald-700'
+                      : p.estado === 'CANCELADO'
+                      ? 'bg-red-50 text-red-700'
+                      : p.estado === 'RECIBIDO'
+                      ? 'bg-sky-50 text-sky-700'
+                      : 'bg-amber-50 text-amber-700'">
+                    <i class="pi pi-circle-fill text-[6px]"></i>
+                    {{ p.estado }}
+                  </span>
+                </td>
+
+                <td class="px-6 py-5 text-right sm:pr-8">
+                  <a [routerLink]="['/cliente/pedidos', p.idPedido]" class="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-bold text-[#0077cc] transition-colors hover:bg-sky-50">
+                    Ver detalle
+                    <i class="pi pi-arrow-right text-xs"></i>
+                  </a>
+                </td>
+
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5" class="px-6 py-14 text-center">
+                  <i class="pi pi-inbox mb-4 block text-4xl text-slate-300"></i>
+                  <p class="font-semibold text-slate-700">Todavía no tienes pedidos</p>
+                  <p class="mt-2 text-sm text-slate-500">Crea tu primera solicitud para comenzar.</p>
+                  <a routerLink="/cliente/pedidos/nuevo" class="mt-5 inline-flex items-center gap-2 text-sm font-bold text-[#0077cc] hover:underline">
+                    <i class="pi pi-plus"></i>
+                    Crear pedido
+                  </a>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ATENCIONES -->
+    <div class="grid gap-6 lg:grid-cols-2">
+
+      <!-- PROGRAMADAS -->
+      <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div class="flex items-center justify-between gap-4 border-b border-slate-100 px-6 py-6">
+          <div class="flex items-center gap-3">
+            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-[#0077cc]">
+              <i class="pi pi-calendar text-lg"></i>
+            </div>
+            <div>
+              <h2 class="text-lg font-bold text-[#002d54]">Atenciones programadas</h2>
+              <p class="mt-1 text-xs text-slate-500">Próximas visitas y servicios</p>
+            </div>
+          </div>
+
+          <a routerLink="/cliente/citas" class="shrink-0 text-xs font-bold text-[#0077cc] hover:underline">Ver citas</a>
+        </div>
+
+        <ul class="divide-y divide-slate-100">
+          @for (a of programadas(); track a.idAtencion) {
+            <li class="px-6 py-5">
+              <div class="flex items-start gap-4">
+                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-[#0077cc]">
+                  <i class="pi pi-calendar-clock"></i>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <a [routerLink]="['/cliente/seguimiento', a.idPedido]" class="text-sm font-bold text-[#002d54] hover:text-[#0077cc]">
+                    Pedido #{{ a.idPedido }}
+                  </a>
+                  <p class="mt-2 text-sm text-slate-500">
+                    {{ a.fechaInicioProgramada ? (a.fechaInicioProgramada | date:preferencias.formatoHora()) : 'Fecha por confirmar' }}
+                  </p>
+                  <span class="mt-3 inline-flex rounded-full bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-700">{{ a.estado }}</span>
+                </div>
+                <a [routerLink]="['/cliente/seguimiento', a.idPedido]" aria-label="Ver seguimiento" class="text-slate-400 hover:text-[#0077cc]">
+                  <i class="pi pi-arrow-up-right"></i>
+                </a>
+              </div>
+            </li>
+          } @empty {
+            <li class="flex flex-col items-center px-6 py-12 text-center">
+              <i class="pi pi-calendar mb-4 text-3xl text-slate-300"></i>
+              <p class="text-sm font-semibold text-slate-600">Sin atenciones programadas</p>
+              <p class="mt-2 text-xs text-slate-400">Tus próximas atenciones aparecerán aquí.</p>
+            </li>
+          }
+        </ul>
+      </section>
+
+      <!-- EN CURSO -->
+      <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div class="flex items-center justify-between gap-4 border-b border-slate-100 px-6 py-6">
+          <div class="flex items-center gap-3">
+            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-700">
+              <i class="pi pi-truck text-lg"></i>
+            </div>
+            <div>
+              <h2 class="text-lg font-bold text-[#002d54]">Atenciones en curso</h2>
+              <p class="mt-1 text-xs text-slate-500">Servicios que se están realizando</p>
+            </div>
+          </div>
+
+          <span class="rounded-full bg-amber-50 px-3 py-1.5 text-xs font-bold text-amber-700">
+            {{ enCurso().length }} activas
+          </span>
+        </div>
+
+        <ul class="divide-y divide-slate-100">
+          @for (a of enCurso(); track a.idAtencion) {
+            <li class="px-6 py-5">
+              <div class="flex items-start gap-4">
+                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-700">
+                  <i class="pi pi-cog"></i>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <a [routerLink]="['/cliente/seguimiento', a.idPedido]" class="text-sm font-bold text-[#002d54] hover:text-[#0077cc]">
+                    Pedido #{{ a.idPedido }}
+                  </a>
+                  <p class="mt-2 text-sm text-slate-500">
+                    Inicio real: {{ a.fechaInicio ? (a.fechaInicio | date:preferencias.formatoHora()) : 'No registrado' }}
+                  </p>
+                  <span class="mt-3 inline-flex items-center gap-2 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
+                    <i class="pi pi-circle-fill text-[6px]"></i>
+                    En curso
+                  </span>
+                </div>
+                <a [routerLink]="['/cliente/seguimiento', a.idPedido]" aria-label="Ver seguimiento" class="text-slate-400 hover:text-[#0077cc]">
+                  <i class="pi pi-arrow-up-right"></i>
+                </a>
+              </div>
+            </li>
+          } @empty {
+            <li class="flex flex-col items-center px-6 py-12 text-center">
+              <i class="pi pi-clock mb-4 text-3xl text-slate-300"></i>
+              <p class="text-sm font-semibold text-slate-600">No hay atenciones en curso</p>
+              <p class="mt-2 text-xs text-slate-400">Cuando comience una atención, aparecerá aquí.</p>
+            </li>
+          }
+        </ul>
+      </section>
+
+    </div>
+
+    <!-- AYUDA -->
+    <div class="flex flex-col items-start justify-between gap-4 rounded-2xl border border-sky-100 bg-[#eaf4fc] px-6 py-6 sm:flex-row sm:items-center">
+      <div class="flex items-center gap-4">
+        <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white text-[#0077cc]">
+          <i class="pi pi-question-circle text-xl"></i>
         </div>
         <div>
-          <div class="text-2xl font-bold text-white">{{ loading() ? '…' : error() ? '—' : pendientes().length }}</div>
-          <div class="text-xs text-slate-300 font-medium uppercase tracking-wider">Citas pendientes</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========================================================================= -->
-  <!-- CONTENIDO PRINCIPAL -->
-  <!-- ========================================================================= -->
-  <div class="max-w-7xl mx-auto px-6 mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
-    
-    <!-- BLOQUE IZQUIERDO: CITAS PENDIENTES (Ocupa 2 columnas en pantallas grandes) -->
-    <div class="lg:col-span-2 space-y-6">
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-        <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
-          <h2 class="text-lg font-bold text-[#002d54] flex items-center gap-2">
-            <i class="bi bi-clock-history text-sky-500"></i> Citas
-          </h2>
-          <button routerLink="/cliente/citas" class="text-sm font-semibold text-[#007cc0] hover:underline">
-            Ver todas
-          </button>
-        </div>
-
-          <!-- Template si no hay citas -->
-                    @if (loading()) {
-            <p role="status" class="p-6 text-slate-600">Cargando tus citas…</p>
-          } @else if (error()) {
-            <div role="alert" class="p-6 text-red-700">{{ error() }} <button type="button" (click)="load()" class="ml-2 underline">Reintentar</button></div>
-          } @else {
-            @for (cita of pendientes().slice(0, 5); track cita.idAtencion) {
-              <a [routerLink]="['/cliente/seguimiento', cita.idPedido]" class="block border-b border-slate-100 p-6 hover:bg-sky-50">
-                <strong class="text-[#002d54]">Pedido #{{ cita.idPedido }}</strong>
-                <p class="mt-1 text-sm text-slate-600">{{ cita.fechaInicioProgramada | date:'dd/MM/yyyy HH:mm' }} · {{ cita.estado }}</p>
-              </a>
-            } @empty {
-              <div class="space-y-3 py-12 text-center"><i class="bi bi-calendar-x text-3xl text-slate-400"></i>
-                <h3 class="font-semibold text-slate-700">No tienes citas pendientes</h3>
-                <p class="text-sm text-slate-500">Consulta tus pedidos y su seguimiento desde el portal.</p>
-                <a routerLink="/cliente/pedidos" class="inline-block rounded bg-[#007cc0] px-4 py-2 text-sm text-white">Ver mis pedidos</a>
-              </div>
-            }
-          }
+          <h2 class="text-sm font-bold text-[#002d54]">¿Necesitas ayuda?</h2>
+          <p class="mt-1 text-sm leading-6 text-slate-600">Encuentra información sobre pedidos, seguimiento y uso del portal.</p>
         </div>
       </div>
 
-    <!-- BLOQUE DERECHO: CONTACTO DE LINDE Y UBICACIÓN -->
-    <div class="space-y-6">
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-        <div class="bg-[#007cc0] text-white px-6 py-4">
-          <h2 class="text-base font-bold flex items-center gap-2">
-            <i class="bi bi-headset"></i> Central de Atención Linde
-          </h2>
-          <p class="text-blue-100 text-xs mt-0.5">Soporte exclusivo para clientes registrados.</p>
-        </div>
-
-        <div class="p-6 space-y-5">
-          <div class="flex gap-4 items-start">
-            <div class="w-8 h-8 bg-slate-100 rounded flex items-center justify-center text-[#002d54]">
-              <i class="bi bi-telephone"></i>
-            </div>
-            <div>
-              <div class="text-xs text-slate-400 font-medium">Número de contacto para citas</div>
-              <div class="text-sm font-bold text-slate-800 hover:text-[#007cc0] transition-colors">987654321</div>
-              <div class="text-[11px] text-slate-400">Lunes a Domingo de 8:00 am a 6:00 pm</div>
-            </div>
-          </div>
-
-          <div class="flex gap-4 items-start">
-            <div class="w-8 h-8 bg-slate-100 rounded flex items-center justify-center text-[#002d54] shrink-0">
-              <i class="bi bi-envelope"></i>
-            </div>
-            <div>
-              <div class="text-xs text-slate-400 font-medium">Correo electrónico corporativo</div>
-              <div class="text-sm font-bold text-slate-800 hover:text-[#007cc0] transition-colors">clientes.peru&#64;linde.com</div>
-            </div>
-          </div>
-
-          <div class="flex gap-4 items-start">
-            <div class="w-8 h-8 bg-slate-100 rounded flex items-center justify-center text-[#002d54] shrink-0">
-              <i class="bi bi-geo-alt"></i>
-            </div>
-            <div>
-              <div class="text-xs text-slate-400 font-medium">Sede principal</div>
-              <div class="text-sm font-bold text-slate-800">Lima, Perú</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <a routerLink="/cliente/ayuda" class="inline-flex shrink-0 items-center gap-2 text-sm font-bold text-[#0077cc] hover:text-[#002d54]">
+        Centro de ayuda
+        <i class="pi pi-arrow-right text-xs"></i>
+      </a>
     </div>
 
-  </div>
-</div>
+  }
+
+</section>

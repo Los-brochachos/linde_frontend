@@ -3,8 +3,8 @@ import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
-import { Auth } from '../../core/auth/auth';
-import { environment } from '../../../environments/environment';
+import { Auth } from '../../../core/auth/auth';
+import { environment } from '../../../../environments/environment';
 
 const DETAIL: Record<string, string> = { CLIENTE: 'clientes', CONDUCTOR: 'conductores', TECNICO: 'tecnicos', PROGRAMADOR: 'programadores' };
 const LABELS: Record<string, string> = {

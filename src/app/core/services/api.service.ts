@@ -18,6 +18,16 @@ export class ApiService {
       headers: { Authorization: `Bearer ${this.auth.getAccessToken()}` },
     });
   }
+  put<T>(path: string, body: unknown) {
+    return this.http.put<T>(`${environment.apiUrl}/api/v1/${path}`, body, {
+      headers: { Authorization: `Bearer ${this.auth.getAccessToken()}` },
+    });
+  }
+  delete<T>(path: string) {
+    return this.http.delete<T>(`${environment.apiUrl}/api/v1/${path}`, {
+      headers: { Authorization: `Bearer ${this.auth.getAccessToken()}` },
+    });
+  }
   patch<T>(path: string, body: unknown) {
     return this.http.patch<T>(`${environment.apiUrl}/api/v1/${path}`, body, {
       headers: { Authorization: `Bearer ${this.auth.getAccessToken()}` },

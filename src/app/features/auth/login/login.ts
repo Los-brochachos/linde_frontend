@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators} from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
@@ -24,6 +25,7 @@ import { switchMap, finalize } from 'rxjs';
   templateUrl: './login.html',
 })
 export class Login {
+  readonly claveActualizada = !!(inject(Location).getState() as { claveActualizada?: boolean }).claveActualizada;
 
   private readonly formBuilder = inject(FormBuilder);
   private readonly auth = inject(Auth);

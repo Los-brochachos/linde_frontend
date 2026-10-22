@@ -1,6 +1,45 @@
-<app-header />
 
-<div class="min-h-screen bg-gray-50 lg:flex">
-  <app-sidebar class="block shrink-0 lg:w-64" />
-  <main class="min-w-0 flex-1"><div class="mx-auto max-w-7xl p-4 md:p-6"><router-outlet /></div></main>
+<div class="flex h-dvh flex-col overflow-hidden bg-[#f4f7fb]">
+
+  <!-- HEADER ORIGINAL -->
+  <app-header />
+
+  <!-- ESTRUCTURA DEL DASHBOARD -->
+  <div class="relative flex min-h-0 flex-1 overflow-hidden">
+
+    <!-- BOTÓN FLOTANTE PARA ABRIR EL SIDEBAR -->
+    @if (!sidebarOpen()) {
+      <button type="button" (click)="toggleSidebar()" aria-label="Abrir menú de navegación" aria-controls="dashboard-sidebar" [attr.aria-expanded]="sidebarOpen()" class="absolute left-3 top-3 z-30 flex h-11 w-11 items-center justify-center rounded-xl bg-[#0c4d85] text-white shadow-lg transition-all duration-200 hover:bg-[#0077cc] active:scale-95 lg:hidden">
+        <i class="pi pi-bolt text-xl"></i>
+      </button>
+    }
+
+    <!-- FONDO OSCURO EN MÓVILES -->
+    @if (sidebarOpen()) {
+      <div class="fixed inset-0 z-40 bg-slate-950/55 lg:hidden" (click)="closeSidebar()" aria-hidden="true"></div>
+    }
+
+    <!-- SIDEBAR RESPONSIVE -->
+    <div id="dashboard-sidebar" class="fixed inset-y-0 left-0 z-50 w-70 max-w-[85vw] transform shadow-2xl transition-transform duration-300 ease-in-out lg:static lg:z-auto lg:w-65 lg:max-w-none lg:translate-x-0 lg:shadow-none" [class.translate-x-0]="sidebarOpen()" [class.-translate-x-full]="!sidebarOpen()">
+
+      <!-- BOTÓN PARA CERRAR -->
+      <button type="button" (click)="closeSidebar()" aria-label="Cerrar menú de navegación" class="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-md bg-white/15 text-white hover:bg-white/25 lg:hidden">
+        <i class="pi pi-times"></i>
+      </button>
+
+      <app-sidebar />
+
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="min-w-0 flex-1 overflow-y-auto bg-[#f4f7fb] text-slate-900">
+
+      <div class="min-h-full p-4 pt-20 md:p-6 md:pt-20 lg:p-8">
+        <router-outlet />
+      </div>
+
+    </main>
+
+  </div>
+
 </div>

@@ -1,13 +1,15 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
 import { PedidoService } from '../../../core/services/pedido/pedido-service';
 import { ProductoService } from '../../../core/services/pedido/producto-service';
 import { ProductoResponse } from '../../../core/models/ProductoModel';
 
-@Component({ selector: 'app-nuevo-pedido', imports: [ReactiveFormsModule, RouterLink, InputTextModule], templateUrl: './nuevo-pedido.html' })
+@Component({ selector: 'app-nuevo-pedido', imports: [ReactiveFormsModule, RouterLink, InputTextModule, ButtonModule, DecimalPipe], templateUrl: './nuevo-pedido.html' })
 export class NuevoPedido {
   private readonly fb = inject(FormBuilder);
   private readonly pedidos = inject(PedidoService);
@@ -27,6 +29,14 @@ export class NuevoPedido {
     detalles: this.fb.array([this.linea()]),
   });
   get detalles() { return this.form.controls.detalles; }
+  private readonly borrador = toSignal(this.form.valueChanges, { initialValue: this.form.value });
+  readonly resumen = computed(() => (this.borrador().detalles ?? []).map(detalle => {
+    const producto = this.productos().find(p => p.idProducto === detalle.idProducto);
+    const cantidad = Number(detalle.cantidad);
+    return { producto, cantidad, importe: producto && Number.isFinite(cantidad) && cantidad > 0 ? Math.round(producto.precioUnitario * cantidad * 100) / 100 : 0 };
+  }).filter(linea => !!linea.producto));
+  readonly totalEstimado = computed(() => this.resumen().reduce((total, linea) => total + linea.importe, 0));
+  producto(id: number | null) { return this.productos().find(p => p.idProducto === id); }
   constructor() { this.cargarProductos(); }
   private linea() {
     return this.fb.group({

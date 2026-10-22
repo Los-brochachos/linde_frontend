@@ -1,0 +1,606 @@
+
+<section class="mx-auto flex w-full max-w-5xl min-w-0 flex-col gap-6 px-4 py-6 text-slate-900 sm:px-6">
+
+  <!-- VOLVER -->
+  <div>
+    <a routerLink="/dashboard/atenciones" class="inline-flex items-center gap-2 text-sm font-semibold text-[#0077cc] transition-colors hover:text-[#005491]">
+      <i class="pi pi-arrow-left text-xs"></i>
+      Volver a Atenciones
+    </a>
+  </div>
+
+  <!-- ENCABEZADO -->
+  <div class="flex min-w-0 items-start gap-3 sm:gap-4">
+
+    <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#002d54] text-white shadow-sm sm:h-14 sm:w-14">
+      <i class="pi pi-calendar-plus text-xl"></i>
+    </div>
+
+    <div class="min-w-0 flex-1">
+
+      <div class="mb-1 flex items-center gap-2">
+        <span class="h-1.5 w-1.5 shrink-0 rounded-full bg-[#0077cc]"></span>
+        <span class="text-[11px] font-bold uppercase tracking-widest text-[#0077cc]">
+          Programación de operaciones
+        </span>
+      </div>
+
+      <h1 class="wrap-break-word text-2xl font-bold tracking-tight text-[#002d54] sm:text-3xl">
+        {{ idEdicion() === null ? 'Programar atención' : 'Editar atención #' + idEdicion() }}
+      </h1>
+
+      <p class="mt-2 text-sm leading-relaxed text-slate-500">
+        {{ idEdicion() === null ? 'Asigna un pedido, define el horario y selecciona los recursos disponibles.' : 'Actualiza el horario y los recursos asignados a esta atención.' }}
+      </p>
+
+    </div>
+
+  </div>
+
+  <!-- CARGANDO -->
+  @if (cargando()) {
+
+    <div role="status" class="flex min-h-64 flex-col items-center justify-center gap-4 rounded-2xl border border-slate-200 bg-white px-5 py-12 text-center shadow-sm">
+
+      <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-sky-50">
+        <i class="pi pi-spin pi-spinner text-3xl text-[#0077cc]"></i>
+      </div>
+
+      <div>
+        <p class="text-sm font-bold text-[#002d54]">
+          Cargando información
+        </p>
+
+        <p class="mt-2 text-xs text-slate-500">
+          Consultando pedidos, cisternas y conductores disponibles.
+        </p>
+      </div>
+
+    </div>
+
+  } @else if (errorCarga()) {
+
+    <!-- ERROR DE CARGA -->
+    <div role="alert" class="flex min-w-0 items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 sm:gap-4 sm:p-5">
+
+      <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-red-100 text-red-600">
+        <i class="pi pi-exclamation-triangle text-lg"></i>
+      </div>
+
+      <div class="min-w-0 flex-1">
+
+        <h2 class="text-sm font-bold text-red-800">
+          No se pudo cargar la información
+        </h2>
+
+        <p class="mt-2 wrap-break-word text-sm leading-relaxed text-red-700">
+          {{ errorCarga() }}
+        </p>
+
+        <button type="button" (click)="cargar()" class="mt-4 inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-red-200 bg-white px-4 py-2 text-xs font-semibold text-red-700 transition-colors hover:bg-red-100">
+          <i class="pi pi-refresh"></i>
+          Reintentar
+        </button>
+
+      </div>
+
+    </div>
+
+  } @else if (creada(); as atencion) {
+
+    <!-- CONFIRMACIÓN -->
+    <div class="overflow-hidden rounded-2xl border border-emerald-200 bg-white shadow-sm">
+
+      <div class="flex flex-col items-center gap-4 border-b border-emerald-100 bg-emerald-50/70 px-5 py-8 text-center sm:px-8">
+
+        <div class="flex h-17 w-17 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+          <i class="pi pi-check-circle text-3xl"></i>
+        </div>
+
+        <div>
+          <p class="text-xs font-bold uppercase tracking-widest text-emerald-700">
+            Operación exitosa
+          </p>
+
+          <h2 role="status" class="mt-2 text-xl font-bold text-[#002d54] sm:text-2xl">
+            {{ idEdicion() === null ? 'Atención programada' : 'Atención actualizada' }}
+          </h2>
+
+          <p class="mt-2 text-sm text-slate-600">
+            La atención #{{ atencion.idAtencion }} se ha {{ idEdicion() === null ? 'programado' : 'actualizado' }} correctamente.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- DATOS GUARDADOS -->
+      <div class="p-4 sm:p-6">
+
+        <h3 class="mb-4 text-sm font-bold text-[#002d54]">
+          Resumen de la atención
+        </h3>
+
+        <dl class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+
+          <div class="min-w-0 rounded-xl border border-slate-100 bg-slate-50/70 p-4">
+            <dt class="flex items-center gap-2 text-xs font-medium text-slate-500">
+              <i class="pi pi-shopping-bag text-[#0077cc]"></i>
+              Pedido
+            </dt>
+            <dd class="mt-2 text-sm font-bold text-[#002d54]">
+              #{{ atencion.idPedido }}
+            </dd>
+          </div>
+
+          <div class="min-w-0 rounded-xl border border-slate-100 bg-slate-50/70 p-4">
+            <dt class="flex items-center gap-2 text-xs font-medium text-slate-500">
+              <i class="pi pi-info-circle text-[#0077cc]"></i>
+              Estado
+            </dt>
+            <dd class="mt-2 text-sm font-bold text-[#002d54]">
+              {{ atencion.estado }}
+            </dd>
+          </div>
+
+          <div class="min-w-0 rounded-xl border border-slate-100 bg-slate-50/70 p-4">
+            <dt class="flex items-center gap-2 text-xs font-medium text-slate-500">
+              <i class="pi pi-calendar text-[#0077cc]"></i>
+              Inicio programado
+            </dt>
+            <dd class="mt-2 wrap-break-word text-sm font-semibold text-slate-700">
+              {{ atencion.fechaInicioProgramada }}
+            </dd>
+          </div>
+
+          <div class="min-w-0 rounded-xl border border-slate-100 bg-slate-50/70 p-4">
+            <dt class="flex items-center gap-2 text-xs font-medium text-slate-500">
+              <i class="pi pi-calendar text-[#0077cc]"></i>
+              Fin programado
+            </dt>
+            <dd class="mt-2 wrap-break-word text-sm font-semibold text-slate-700">
+              {{ atencion.fechaFinProgramada }}
+            </dd>
+          </div>
+
+          <div class="min-w-0 rounded-xl border border-slate-100 bg-slate-50/70 p-4">
+            <dt class="flex items-center gap-2 text-xs font-medium text-slate-500">
+              <i class="pi pi-truck text-[#0077cc]"></i>
+              Cisterna asignada
+            </dt>
+            <dd class="mt-2 text-sm font-bold text-[#002d54]">
+              #{{ atencion.idCisterna }}
+            </dd>
+          </div>
+
+          <div class="min-w-0 rounded-xl border border-slate-100 bg-slate-50/70 p-4">
+            <dt class="flex items-center gap-2 text-xs font-medium text-slate-500">
+              <i class="pi pi-user text-[#0077cc]"></i>
+              Conductor asignado
+            </dt>
+            <dd class="mt-2 text-sm font-bold text-[#002d54]">
+              #{{ atencion.idConductor }}
+            </dd>
+          </div>
+
+        </dl>
+
+        <a routerLink="/dashboard/atenciones" [queryParams]="{ q: atencion.idAtencion }" class="mt-6 flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#002d54] px-5 py-3 text-center text-sm font-semibold text-white transition-colors hover:bg-[#004477] sm:w-auto">
+          <i class="pi pi-list shrink-0"></i>
+          Consultar atenciones
+          <i class="pi pi-arrow-right shrink-0 text-xs"></i>
+        </a>
+
+      </div>
+
+    </div>
+
+  } @else if (idEdicion() === null && !pendientes().length) {
+
+    <!-- SIN PEDIDOS PENDIENTES -->
+    <div role="status" class="flex min-h-60 flex-col items-center justify-center rounded-2xl border border-slate-200 bg-white px-5 py-10 text-center shadow-sm">
+
+      <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100">
+        <i class="pi pi-calendar-times text-3xl text-slate-400"></i>
+      </div>
+
+      <h2 class="text-base font-bold text-[#002d54]">
+        No hay pedidos para programar
+      </h2>
+
+      <p class="mt-2 max-w-sm text-sm leading-relaxed text-slate-500">
+        No hay pedidos pendientes sin atención activa para programar.
+      </p>
+
+      <a routerLink="/dashboard/atenciones" class="mt-5 inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-sky-200 bg-sky-50 px-4 py-2 text-sm font-semibold text-[#0077cc] hover:bg-sky-100">
+        <i class="pi pi-arrow-left text-xs"></i>
+        Volver a Atenciones
+      </a>
+
+    </div>
+
+  } @else {
+
+    <!-- FORMULARIO -->
+    <form [formGroup]="form" (ngSubmit)="guardar()" novalidate class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+      <!-- INTRODUCCIÓN -->
+      <div class="flex items-start gap-3 border-b border-slate-100 bg-[#f8fafd] px-4 py-5 sm:px-6">
+
+        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-[#0077cc]">
+          <i class="pi pi-info-circle text-lg"></i>
+        </div>
+
+        <div class="min-w-0">
+          <h2 class="text-base font-bold text-[#002d54]">
+            Datos de programación
+          </h2>
+
+          <p class="mt-1 text-xs leading-relaxed text-slate-500">
+            Selecciona el pedido y el intervalo de atención. Las horas corresponden al horario local. Los recursos se filtran según las programaciones registradas.
+          </p>
+        </div>
+
+      </div>
+
+      <fieldset [disabled]="guardando()" class="min-w-0 space-y-7 border-0 p-4 sm:p-6">
+
+        <!-- SECCIÓN 1: PEDIDO -->
+        <div class="min-w-0 space-y-4">
+
+          <div class="flex items-center gap-3">
+            <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#002d54] text-xs font-bold text-white">
+              1
+            </div>
+
+            <div>
+              <h3 class="text-sm font-bold text-[#002d54]">
+                Pedido asociado
+              </h3>
+              <p class="mt-0.5 text-xs text-slate-500">
+                Identifica el pedido que recibirá la atención.
+              </p>
+            </div>
+          </div>
+
+          @if (original(); as actual) {
+
+            <!-- PEDIDO BLOQUEADO EN EDICIÓN -->
+            <div class="flex min-w-0 items-start gap-3 rounded-xl border border-sky-100 bg-sky-50/70 p-4">
+
+              <i class="pi pi-lock mt-0.5 shrink-0 text-[#0077cc]"></i>
+
+              <div class="min-w-0">
+                <p class="text-sm font-bold text-[#002d54]">
+                  Pedido #{{ actual.idPedido }}
+                </p>
+
+                <p class="mt-1 text-xs leading-relaxed text-slate-600">
+                  El pedido asociado se conserva al editar esta atención.
+                </p>
+              </div>
+
+            </div>
+
+          } @else {
+
+            <div class="min-w-0">
+
+              <label for="pedido" class="mb-2 block text-sm font-semibold text-slate-700">
+                Pedido pendiente <span class="text-red-500">*</span>
+              </label>
+
+              <div class="relative min-w-0">
+
+                <select id="pedido" formControlName="idPedido" [attr.aria-invalid]="form.controls.idPedido.touched && form.controls.idPedido.invalid" class="h-12 w-full min-w-0 appearance-none rounded-xl border border-slate-300 bg-white px-4 pr-10 text-sm text-slate-900 outline-none transition-colors focus:border-[#0077cc] focus:ring-2 focus:ring-sky-100">
+
+                  <option [ngValue]="null">Selecciona un pedido</option>
+
+                  @for (p of pendientes(); track p.idPedido) {
+                    <option [ngValue]="p.idPedido">
+                      Pedido #{{ p.idPedido }} · {{ p.prioridad }} · {{ p.fechaEntregaEstimada }}
+                    </option>
+                  }
+
+                </select>
+
+                <i class="pi pi-chevron-down pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-400"></i>
+
+              </div>
+
+              @if (form.controls.idPedido.touched && form.controls.idPedido.invalid) {
+                <p class="mt-2 flex items-center gap-1.5 text-xs text-red-700">
+                  <i class="pi pi-exclamation-circle"></i>
+                  Selecciona un pedido.
+                </p>
+              }
+
+            </div>
+
+          }
+
+        </div>
+
+        <div class="border-t border-slate-100"></div>
+
+        <!-- SECCIÓN 2: HORARIO -->
+        <div class="min-w-0 space-y-4">
+
+          <div class="flex items-center gap-3">
+            <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#002d54] text-xs font-bold text-white">
+              2
+            </div>
+
+            <div>
+              <h3 class="text-sm font-bold text-[#002d54]">
+                Horario de atención
+              </h3>
+
+              <p class="mt-0.5 text-xs text-slate-500">
+                Define el inicio y la finalización programados.
+              </p>
+            </div>
+          </div>
+
+          <div class="grid min-w-0 grid-cols-1 gap-5 md:grid-cols-2">
+
+            <!-- FECHA INICIO -->
+            <div class="min-w-0">
+
+              <label for="inicio-programado" class="mb-2 block text-sm font-semibold text-slate-700">
+                Inicio programado <span class="text-red-500">*</span>
+              </label>
+
+              <input pInputText id="inicio-programado" type="datetime-local" formControlName="fechaInicioProgramada" [attr.aria-invalid]="form.controls.fechaInicioProgramada.touched && form.controls.fechaInicioProgramada.invalid" class="block! h-12! w-full! min-w-0! max-w-full! rounded-xl! border! border-slate-300! bg-white! px-3! py-0! text-sm! text-slate-900! shadow-none! focus:border-[#0077cc]!" />
+
+              @if (form.controls.fechaInicioProgramada.touched && form.controls.fechaInicioProgramada.invalid) {
+                <p class="mt-2 flex items-center gap-1.5 text-xs text-red-700">
+                  <i class="pi pi-exclamation-circle"></i>
+                  Indica la fecha y hora de inicio.
+                </p>
+              }
+
+            </div>
+
+            <!-- FECHA FIN -->
+            <div class="min-w-0">
+
+              <label for="fin-programado" class="mb-2 block text-sm font-semibold text-slate-700">
+                Fin programado <span class="text-red-500">*</span>
+              </label>
+
+              <input pInputText id="fin-programado" type="datetime-local" formControlName="fechaFinProgramada" [attr.aria-invalid]="form.controls.fechaFinProgramada.touched && form.controls.fechaFinProgramada.invalid" class="block! h-12! w-full! min-w-0! max-w-full! rounded-xl! border! border-slate-300! bg-white! px-3! py-0! text-sm! text-slate-900! shadow-none! focus:border-[#0077cc]!" />
+
+              @if (form.controls.fechaFinProgramada.touched && form.controls.fechaFinProgramada.invalid) {
+                <p class="mt-2 flex items-center gap-1.5 text-xs text-red-700">
+                  <i class="pi pi-exclamation-circle"></i>
+                  Indica la fecha y hora de fin.
+                </p>
+              }
+
+            </div>
+
+          </div>
+
+          <!-- ERROR DE INTERVALO -->
+          @if (intervalo().inicio && intervalo().fin && !intervaloValido()) {
+
+            <div role="alert" class="flex items-start gap-3 rounded-xl border border-red-100 bg-red-50 px-4 py-3">
+              <i class="pi pi-exclamation-triangle mt-0.5 shrink-0 text-red-600"></i>
+
+              <p class="text-xs leading-relaxed text-red-700">
+                La hora de fin debe ser posterior a la hora de inicio.
+              </p>
+            </div>
+
+          }
+
+        </div>
+
+        <div class="border-t border-slate-100"></div>
+
+        <!-- SECCIÓN 3: RECURSOS -->
+        <div class="min-w-0 space-y-4">
+
+          <div class="flex items-center gap-3">
+
+            <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#002d54] text-xs font-bold text-white">
+              3
+            </div>
+
+            <div>
+              <h3 class="text-sm font-bold text-[#002d54]">
+                Asignación de recursos
+              </h3>
+
+              <p class="mt-0.5 text-xs text-slate-500">
+                Selecciona una cisterna y un conductor disponibles.
+              </p>
+            </div>
+
+          </div>
+
+          <div class="grid min-w-0 grid-cols-1 gap-5 md:grid-cols-2">
+
+            <!-- CISTERNA -->
+            <div class="min-w-0">
+
+              <label for="cisterna" class="mb-2 block text-sm font-semibold text-slate-700">
+                Cisterna disponible <span class="text-red-500">*</span>
+              </label>
+
+              <div class="relative min-w-0">
+
+                <select id="cisterna" formControlName="idCisterna" [attr.aria-invalid]="form.controls.idCisterna.touched && form.controls.idCisterna.invalid" class="h-12 w-full min-w-0 appearance-none rounded-xl border border-slate-300 bg-white px-4 pr-10 text-sm text-slate-900 outline-none transition-colors focus:border-[#0077cc] focus:ring-2 focus:ring-sky-100">
+
+                  <option [ngValue]="null">Selecciona una cisterna</option>
+
+                  @for (c of cisternasDisponibles(); track c.idCisterna) {
+                    <option [ngValue]="c.idCisterna">
+                      {{ c.placa }} · {{ c.nombre }}
+                    </option>
+                  }
+
+                </select>
+
+                <i class="pi pi-chevron-down pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-400"></i>
+
+              </div>
+
+              @if (intervaloValido() && !cisternasDisponibles().length) {
+                <p class="mt-2 flex items-start gap-1.5 text-xs leading-relaxed text-red-700">
+                  <i class="pi pi-exclamation-circle mt-0.5 shrink-0"></i>
+                  No hay cisternas disponibles en ese horario.
+                </p>
+              }
+
+              @if (form.controls.idCisterna.touched && form.controls.idCisterna.invalid) {
+                <p class="mt-2 flex items-center gap-1.5 text-xs text-red-700">
+                  <i class="pi pi-exclamation-circle"></i>
+                  Selecciona una cisterna.
+                </p>
+              }
+
+            </div>
+
+            <!-- CONDUCTOR -->
+            <div class="min-w-0">
+
+              <label for="conductor" class="mb-2 block text-sm font-semibold text-slate-700">
+                Conductor disponible <span class="text-red-500">*</span>
+              </label>
+
+              <div class="relative min-w-0">
+
+                <select id="conductor" formControlName="idConductor" [attr.aria-invalid]="form.controls.idConductor.touched && form.controls.idConductor.invalid" class="h-12 w-full min-w-0 appearance-none rounded-xl border border-slate-300 bg-white px-4 pr-10 text-sm text-slate-900 outline-none transition-colors focus:border-[#0077cc] focus:ring-2 focus:ring-sky-100">
+
+                  <option [ngValue]="null">Selecciona un conductor</option>
+
+                  @for (c of conductoresDisponibles(); track c.idTrabajador) {
+                    <option [ngValue]="c.idTrabajador">
+                      {{ c.nombres }} {{ c.apellidos }}
+                    </option>
+                  }
+
+                </select>
+
+                <i class="pi pi-chevron-down pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-400"></i>
+
+              </div>
+
+              @if (intervaloValido() && !conductoresDisponibles().length) {
+                <p class="mt-2 flex items-start gap-1.5 text-xs leading-relaxed text-red-700">
+                  <i class="pi pi-exclamation-circle mt-0.5 shrink-0"></i>
+                  No hay conductores disponibles en ese horario.
+                </p>
+              }
+
+              @if (form.controls.idConductor.touched && form.controls.idConductor.invalid) {
+                <p class="mt-2 flex items-center gap-1.5 text-xs text-red-700">
+                  <i class="pi pi-exclamation-circle"></i>
+                  Selecciona un conductor.
+                </p>
+              }
+
+            </div>
+
+          </div>
+
+          @if (!intervaloValido()) {
+
+            <div class="flex items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+              <i class="pi pi-info-circle mt-0.5 shrink-0 text-slate-500"></i>
+
+              <p class="text-xs leading-relaxed text-slate-600">
+                Completa un horario válido para consultar los recursos disponibles.
+              </p>
+            </div>
+
+          }
+
+        </div>
+
+        <div class="border-t border-slate-100"></div>
+
+        <!-- SECCIÓN 4: OBSERVACIONES -->
+        <div class="min-w-0 space-y-4">
+
+          <div class="flex items-center gap-3">
+
+            <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#002d54] text-xs font-bold text-white">
+              4
+            </div>
+
+            <div>
+              <h3 class="text-sm font-bold text-[#002d54]">
+                Información adicional
+              </h3>
+
+              <p class="mt-0.5 text-xs text-slate-500">
+                Agrega indicaciones relevantes para la atención.
+              </p>
+            </div>
+
+          </div>
+
+          <div class="min-w-0">
+
+            <label for="observaciones" class="mb-2 block text-sm font-semibold text-slate-700">
+              Observaciones <span class="font-normal text-slate-400">(opcional)</span>
+            </label>
+
+            <textarea id="observaciones" formControlName="observaciones" maxlength="250" rows="4" placeholder="Escribe alguna indicación importante para la atención..." class="block w-full min-w-0 resize-y rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm leading-relaxed text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-[#0077cc] focus:ring-2 focus:ring-sky-100"></textarea>
+
+            <p class="mt-2 text-right text-xs text-slate-500">
+              Máximo 250 caracteres.
+            </p>
+
+          </div>
+
+        </div>
+
+      </fieldset>
+
+      <!-- ERROR AL GUARDAR -->
+      @if (error()) {
+
+        <div role="alert" class="mx-4 mb-5 flex min-w-0 items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 sm:mx-6">
+
+          <i class="pi pi-exclamation-triangle mt-0.5 shrink-0 text-red-600"></i>
+
+          <p class="min-w-0 wrap-break-word text-sm leading-relaxed text-red-700">
+            {{ error() }}
+          </p>
+
+        </div>
+
+      }
+
+      <!-- ACCIONES DEL FORMULARIO -->
+      <div class="flex min-w-0 flex-col-reverse gap-3 border-t border-slate-100 bg-slate-50/50 px-4 py-5 sm:flex-row sm:items-center sm:justify-end sm:px-6">
+
+        <a routerLink="/dashboard/atenciones" class="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-center text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-100 sm:w-auto">
+          <i class="pi pi-arrow-left shrink-0 text-xs"></i>
+          Cancelar
+        </a>
+
+        <button type="submit" [disabled]="guardando()" class="inline-flex min-h-12 w-full min-w-0 items-center justify-center gap-2 rounded-xl bg-[#002d54] px-5 py-3 text-center text-sm font-semibold leading-snug text-white shadow-sm transition-colors hover:bg-[#004477] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:min-w-48">
+
+          @if (guardando()) {
+            <i class="pi pi-spin pi-spinner shrink-0"></i>
+          } @else {
+            <i class="pi pi-check shrink-0"></i>
+          }
+
+          <span>
+            {{ guardando() ? 'Guardando…' : (idEdicion() === null ? 'Guardar programación' : 'Guardar cambios') }}
+          </span>
+
+        </button>
+
+      </div>
+
+    </form>
+
+  }
+
+</section>

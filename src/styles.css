@@ -3,3 +3,57 @@
 @import 'tailwindcss';
 @import 'bootstrap-icons/font/bootstrap-icons.css';
 @import "primeicons/primeicons.css";
+
+
+/* ========================================
+   LINDE SYSTEM - FORMULARIOS
+   ======================================== */
+
+/* Inputs normales y PrimeNG */
+input.p-inputtext,
+input.p-password-input,
+.p-inputmask,
+input[type="email"],
+input[type="password"],
+input[type="text"],
+input[type="tel"] {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1;
+  caret-color: #0077cc;
+}
+
+/* Texto de ejemplo */
+input::placeholder {
+  color: #94a3b8 !important;
+  opacity: 1;
+}
+
+/* Al enfocar */
+input.p-inputtext:focus,
+input.p-password-input:focus,
+.p-inputmask:focus {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #0077cc !important;
+  box-shadow: 0 0 0 3px rgba(0, 119, 204, 0.12) !important;
+  outline: none;
+}
+
+/* Autocompletado de Chrome y Edge */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: #0f172a !important;
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+  box-shadow: 0 0 0 1000px #ffffff inset !important;
+  caret-color: #0077cc !important;
+  transition: background-color 9999s ease-out 0s;
+}
+
+/* Inputs deshabilitados */
+input:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}

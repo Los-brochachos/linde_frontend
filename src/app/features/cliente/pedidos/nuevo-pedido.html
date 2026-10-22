@@ -1,45 +1,319 @@
-<section class="mx-auto max-w-4xl space-y-6 p-4 text-slate-900 md:p-6">
-  <a routerLink="/cliente/pedidos" class="text-sky-700">Volver a Mis pedidos</a>
-  <h1 class="text-3xl font-semibold">Nuevo pedido</h1>
-  @if (cargando()) { <p role="status">Cargando productos…</p> }
-  @else if (errorCatalogo()) { <p role="alert" class="text-red-700">{{ errorCatalogo() }}</p><button type="button" (click)="cargarProductos()" class="rounded border px-4 py-2">Reintentar</button> }
-  @else if (!productos().length) { <p role="status">No hay productos activos disponibles para registrar un pedido.</p> }
-  @else if (creado(); as id) { <p role="status">Pedido #{{ id }} registrado correctamente.</p><a [routerLink]="['/cliente/pedidos', id]" class="text-sky-700">Ver pedido</a> }
+
+<section class="mx-auto flex w-full max-w-7xl flex-col gap-7 px-4 py-6 text-slate-800 sm:px-6 lg:py-9">
+
+  <!-- VOLVER -->
+  <a routerLink="/cliente/pedidos" class="inline-flex w-fit items-center gap-2 text-sm font-semibold text-[#0077cc] transition-colors hover:text-[#002d54]">
+    <i class="pi pi-arrow-left text-xs"></i>
+    Volver a Mis pedidos
+  </a>
+
+  <!-- ENCABEZADO -->
+  <header class="relative overflow-hidden rounded-2xl bg-[#002d54] px-6 py-8 text-white shadow-sm sm:px-9 sm:py-10">
+    <div class="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full border border-white/10"></div>
+    <div class="pointer-events-none absolute right-12 top-10 h-40 w-40 rounded-full border border-white/10"></div>
+
+    <div class="relative flex items-start gap-5">
+      <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-white/15 bg-white/10">
+        <i class="pi pi-shopping-cart text-2xl"></i>
+      </div>
+      <div>
+        <p class="text-xs font-bold uppercase tracking-[0.18em] text-sky-200">Pedidos · Nuevo registro</p>
+        <h1 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">Crear pedido</h1>
+        <p class="mt-3 max-w-2xl text-sm leading-7 text-blue-100">Indica la fecha de entrega, selecciona los productos y revisa el resumen antes de registrar tu solicitud.</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- CARGANDO -->
+  @if (cargando()) {
+    <div role="status" class="flex min-h-60 flex-col items-center justify-center rounded-2xl border border-slate-200 bg-white p-10 shadow-sm">
+      <i class="pi pi-spin pi-spinner mb-5 text-4xl text-[#0077cc]"></i>
+      <h2 class="text-lg font-bold text-[#002d54]">Cargando productos</h2>
+      <p class="mt-2 text-sm text-slate-500">Estamos consultando el catálogo disponible.</p>
+    </div>
+  }
+
+  <!-- ERROR DE CATÁLOGO -->
+  @else if (errorCatalogo()) {
+    <div role="alert" class="flex flex-col gap-4 rounded-2xl border border-red-200 bg-white p-7 shadow-sm sm:flex-row sm:items-center">
+      <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-600">
+        <i class="pi pi-exclamation-triangle text-xl"></i>
+      </div>
+      <div class="flex-1">
+        <h2 class="font-bold text-slate-900">No se pudo cargar el catálogo</h2>
+        <p class="mt-2 text-sm text-red-700">{{ errorCatalogo() }}</p>
+      </div>
+      <button type="button" (click)="cargarProductos()" class="inline-flex items-center justify-center gap-2 rounded-lg bg-[#002d54] px-5 py-3 text-sm font-semibold text-white hover:bg-[#004477]">
+        <i class="pi pi-refresh"></i>
+        Reintentar
+      </button>
+    </div>
+  }
+
+  <!-- SIN PRODUCTOS -->
+  @else if (!productos().length) {
+    <div role="status" class="rounded-2xl border border-slate-200 bg-white px-6 py-14 text-center shadow-sm">
+      <i class="pi pi-inbox mb-4 block text-4xl text-slate-300"></i>
+      <h2 class="text-lg font-bold text-[#002d54]">No hay productos disponibles</h2>
+      <p class="mt-2 text-sm text-slate-500">Actualmente no hay productos activos para registrar un pedido.</p>
+    </div>
+  }
+
+  <!-- PEDIDO CREADO -->
+  @else if (creado(); as id) {
+    <div role="status" class="flex flex-col items-center rounded-2xl border border-emerald-200 bg-white px-6 py-12 text-center shadow-sm">
+      <div class="mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+        <i class="pi pi-check-circle text-3xl"></i>
+      </div>
+      <h2 class="text-2xl font-bold text-[#002d54]">¡Pedido registrado correctamente!</h2>
+      <p class="mt-3 text-sm text-slate-600">Tu pedido #{{ id }} fue registrado con éxito.</p>
+      <a [routerLink]="['/cliente/pedidos', id]" class="mt-6 inline-flex items-center gap-2 rounded-lg bg-[#002d54] px-6 py-3 text-sm font-semibold text-white hover:bg-[#004477]">
+        Ver detalle del pedido
+        <i class="pi pi-arrow-right text-xs"></i>
+      </a>
+    </div>
+  }
+
   @else {
-    <form [formGroup]="form" (ngSubmit)="guardar()" class="space-y-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm" novalidate>
-      <p class="text-sm text-slate-600">Todos los campos son obligatorios. Las cantidades se expresan en la unidad del producto.</p>
-      <fieldset [disabled]="guardando()" class="space-y-6">
-        <div class="grid gap-4 sm:grid-cols-2">
-          <div><label for="fecha-entrega" class="mb-2 block font-medium">Fecha estimada de entrega</label>
-            <input pInputText id="fecha-entrega" type="date" formControlName="fechaEntregaEstimada" class="w-full bg-white! text-slate-900!" [attr.aria-invalid]="form.controls.fechaEntregaEstimada.touched && form.controls.fechaEntregaEstimada.invalid" aria-describedby="error-fecha" />
-            @if (form.controls.fechaEntregaEstimada.touched && form.controls.fechaEntregaEstimada.invalid) { <p id="error-fecha" class="mt-1 text-sm text-red-700">Selecciona la fecha de entrega.</p> }
-          </div>
-          <div><label for="prioridad" class="mb-2 block font-medium">Prioridad</label>
-            <select id="prioridad" formControlName="prioridad" class="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900" [attr.aria-invalid]="form.controls.prioridad.touched && form.controls.prioridad.invalid" aria-describedby="error-prioridad"><option value="">Selecciona una prioridad</option><option value="BAJA">Baja</option><option value="MEDIA">Media</option><option value="ALTA">Alta</option></select>
-            @if (form.controls.prioridad.touched && form.controls.prioridad.invalid) { <p id="error-prioridad" class="mt-1 text-sm text-red-700">Selecciona la prioridad.</p> }
-          </div>
-        </div>
-        <div formArrayName="detalles" class="space-y-4">
-          <h2 class="text-xl font-semibold">Productos del pedido</h2>
-          @for (linea of detalles.controls; track linea; let i = $index) {
-            <div [formGroupName]="i" class="grid items-start gap-4 rounded-lg border border-slate-200 p-4 sm:grid-cols-[1fr_10rem_auto]">
-              <div><label [for]="'producto-' + i" class="mb-2 block font-medium">Producto {{ i + 1 }}</label>
-                <select [id]="'producto-' + i" formControlName="idProducto" class="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900" [attr.aria-invalid]="linea.controls.idProducto.touched && linea.controls.idProducto.invalid" [attr.aria-describedby]="'error-producto-' + i"><option [ngValue]="null">Selecciona un producto</option>
-                  @for (producto of productos(); track producto.idProducto) { <option [ngValue]="producto.idProducto" [disabled]="ocupado(producto.idProducto, i)">{{ producto.nombre }} · {{ producto.unidadMedida }}</option> }
-                </select>
-                @if (linea.controls.idProducto.touched && linea.controls.idProducto.invalid) { <p [id]="'error-producto-' + i" class="mt-1 text-sm text-red-700">Selecciona un producto.</p> }
-              </div>
-              <div><label [for]="'cantidad-' + i" class="mb-2 block font-medium">Cantidad</label><input pInputText [id]="'cantidad-' + i" type="number" min="0.01" max="99999999.99" step="0.01" formControlName="cantidad" class="w-full bg-white! text-slate-900!" [attr.aria-invalid]="linea.controls.cantidad.touched && linea.controls.cantidad.invalid" [attr.aria-describedby]="'error-cantidad-' + i" />
-                @if (linea.controls.cantidad.touched && linea.controls.cantidad.invalid) { <p [id]="'error-cantidad-' + i" class="mt-1 text-sm text-red-700">Ingresa entre 0.01 y 99999999.99, con hasta dos decimales.</p> }
-              </div>
-              <button type="button" (click)="quitar(i)" [disabled]="detalles.length === 1" class="rounded border px-3 py-2 text-red-700 disabled:opacity-40 sm:mt-8" [attr.aria-label]="'Quitar producto ' + (i + 1)">Quitar</button>
+
+    <!-- FORMULARIO PRINCIPAL -->
+    <form [formGroup]="form" (ngSubmit)="guardar()" novalidate [attr.aria-busy]="guardando()" class="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_21rem]">
+
+      <!-- COLUMNA IZQUIERDA -->
+      <fieldset [disabled]="guardando()" class="min-w-0 space-y-6">
+
+        <!-- DATOS DE ENTREGA -->
+        <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+          <div class="flex items-center gap-4 border-b border-slate-100 px-6 py-6 sm:px-8">
+            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#eaf4fc] text-[#0077cc]">
+              <i class="pi pi-calendar text-xl"></i>
             </div>
-          }
-          <button type="button" (click)="agregar()" [disabled]="detalles.length >= productos().length" class="rounded-lg border border-sky-700 px-4 py-2 text-sky-700 disabled:opacity-40">Agregar producto</button>
-        </div>
+            <div>
+              <h2 class="text-lg font-bold text-[#002d54]">1. Datos de entrega</h2>
+              <p class="mt-1 text-xs text-slate-500">Selecciona la fecha y prioridad de tu solicitud.</p>
+            </div>
+          </div>
+
+          <div class="grid items-start gap-6 p-6 sm:grid-cols-2 sm:p-8">
+
+            <!-- FECHA -->
+            <div class="flex min-w-0 flex-col">
+              <label for="fecha-entrega" class="mb-2 flex min-h-5 items-center gap-2 text-sm font-semibold text-slate-700">
+                Fecha estimada de entrega
+                <span class="text-red-500">*</span>
+              </label>
+
+              <input pInputText id="fecha-entrega" type="date" formControlName="fechaEntregaEstimada" aria-required="true" [attr.aria-invalid]="form.controls.fechaEntregaEstimada.touched && form.controls.fechaEntregaEstimada.invalid" aria-describedby="error-fecha" class="block h-12! w-full! min-w-0! rounded-lg! border! border-slate-300! bg-white! px-4! py-0! text-sm! text-slate-800! shadow-none! focus:border-[#0077cc]! focus:ring-2! focus:ring-sky-100!" />
+
+              @if (form.controls.fechaEntregaEstimada.touched && form.controls.fechaEntregaEstimada.invalid) {
+                <p id="error-fecha" class="mt-2 text-xs font-medium text-red-700">Selecciona una fecha de entrega válida.</p>
+              }
+            </div>
+
+            <!-- PRIORIDAD -->
+            <div class="flex min-w-0 flex-col">
+              <label for="prioridad" class="mb-2 flex min-h-5 items-center gap-2 text-sm font-semibold text-slate-700">
+                Prioridad
+                <span class="text-red-500">*</span>
+              </label>
+
+              <select id="prioridad" formControlName="prioridad" aria-required="true" [attr.aria-invalid]="form.controls.prioridad.touched && form.controls.prioridad.invalid" aria-describedby="error-prioridad" class="block h-12 w-full min-w-0 appearance-none rounded-lg border border-slate-300 bg-white px-4 pr-10 text-sm text-slate-800 outline-none transition-colors focus:border-[#0077cc] focus:ring-2 focus:ring-sky-100">
+                <option value="">Selecciona una prioridad</option>
+                <option value="BAJA">Baja</option>
+                <option value="MEDIA">Media</option>
+                <option value="ALTA">Alta</option>
+              </select>
+
+              @if (form.controls.prioridad.touched && form.controls.prioridad.invalid) {
+                <p id="error-prioridad" class="mt-2 text-xs font-medium text-red-700">Selecciona una prioridad.</p>
+              }
+            </div>
+
+          </div>
+        </section>
+
+        <!-- PRODUCTOS -->
+        <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+          <div class="flex items-center gap-4 border-b border-slate-100 px-6 py-6 sm:px-8">
+            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#eaf4fc] text-[#0077cc]">
+              <i class="pi pi-box text-xl"></i>
+            </div>
+            <div>
+              <h2 class="text-lg font-bold text-[#002d54]">2. Productos del pedido</h2>
+              <p class="mt-1 text-xs leading-5 text-slate-500">Selecciona los productos y especifica las cantidades solicitadas.</p>
+            </div>
+          </div>
+
+          <div formArrayName="detalles" class="space-y-5 p-4 sm:p-6">
+
+            @for (linea of detalles.controls; track linea; let i = $index) {
+
+              <div [formGroupName]="i" class="overflow-hidden rounded-xl border border-slate-200 bg-slate-50/60">
+
+                <!-- ENCABEZADO DEL PRODUCTO -->
+                <div class="flex items-center justify-between border-b border-slate-200/70 px-5 py-4">
+                  <div class="flex items-center gap-3">
+                    <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#002d54] text-xs font-bold text-white">{{ i + 1 }}</span>
+                    <h3 class="text-sm font-bold text-[#002d54]">Producto {{ i + 1 }}</h3>
+                  </div>
+
+                  <button type="button" (click)="quitar(i)" [disabled]="detalles.length === 1" [attr.aria-label]="'Quitar producto ' + (i + 1)" class="flex h-9 w-9 items-center justify-center rounded-lg text-red-600 transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-30">
+                    <i class="pi pi-trash"></i>
+                  </button>
+                </div>
+
+                <!-- CAMPOS DEL PRODUCTO -->
+                <div class="grid items-start gap-5 p-5 md:grid-cols-[minmax(0,1fr)_10rem]">
+
+                  <!-- SELECT PRODUCTO -->
+                  <div class="flex min-w-0 flex-col">
+                    <label [for]="'producto-' + i" class="mb-2 flex min-h-5 items-center gap-2 text-sm font-semibold text-slate-700">
+                      Seleccionar producto
+                      <span class="text-red-500">*</span>
+                    </label>
+
+                    <select [id]="'producto-' + i" formControlName="idProducto" aria-required="true" [attr.aria-invalid]="linea.controls.idProducto.touched && linea.controls.idProducto.invalid" [attr.aria-describedby]="'error-producto-' + i" class="block h-12 w-full min-w-0 appearance-none rounded-lg border border-slate-300 bg-white px-4 pr-10 text-sm text-slate-800 outline-none transition-colors focus:border-[#0077cc] focus:ring-2 focus:ring-sky-100">
+                      <option [ngValue]="null">Selecciona un producto</option>
+                      @for (p of productos(); track p.idProducto) {
+                        <option [ngValue]="p.idProducto" [disabled]="ocupado(p.idProducto, i)">{{ p.nombre }} · {{ p.unidadMedida }}</option>
+                      }
+                    </select>
+
+                    @if (linea.controls.idProducto.touched && linea.controls.idProducto.invalid) {
+                      <p [id]="'error-producto-' + i" class="mt-2 text-xs font-medium text-red-700">Selecciona un producto válido.</p>
+                    }
+                  </div>
+
+                  <!-- CANTIDAD -->
+                  <div class="flex min-w-0 flex-col">
+                    <label [for]="'cantidad-' + i" class="mb-2 flex min-h-5 items-center gap-2 text-sm font-semibold text-slate-700">
+                      Cantidad
+                      <span class="text-red-500">*</span>
+                    </label>
+
+                    <input pInputText [id]="'cantidad-' + i" type="number" min="0.01" max="99999999.99" step="0.01" formControlName="cantidad" aria-required="true" [attr.aria-invalid]="linea.controls.cantidad.touched && linea.controls.cantidad.invalid" [attr.aria-describedby]="'error-cantidad-' + i" class="block h-12! w-full! min-w-0! rounded-lg! border! border-slate-300! bg-white! px-4! py-0! text-sm! text-slate-800! shadow-none! focus:border-[#0077cc]! focus:ring-2! focus:ring-sky-100!" />
+
+                    @if (linea.controls.cantidad.touched && linea.controls.cantidad.invalid) {
+                      <p [id]="'error-cantidad-' + i" class="mt-2 text-xs font-medium text-red-700">Ingresa entre 0.01 y 99999999.99, con hasta dos decimales.</p>
+                    }
+                  </div>
+
+                </div>
+
+                <!-- INFORMACIÓN DEL PRODUCTO -->
+                @if (producto(linea.controls.idProducto.value); as p) {
+                  <div class="flex flex-wrap gap-x-6 gap-y-3 border-t border-slate-200/70 bg-white px-5 py-4 text-xs text-slate-600">
+                    <span class="inline-flex items-center gap-2">
+                      <i class="pi pi-box text-[#0077cc]"></i>
+                      Unidad: <strong class="text-slate-800">{{ p.unidadMedida }}</strong>
+                    </span>
+                    <span class="inline-flex items-center gap-2">
+                      <i class="pi pi-tag text-[#0077cc]"></i>
+                      Precio unitario: <strong class="text-slate-800">{{ p.precioUnitario | number:'1.2-2' }}</strong>
+                    </span>
+                    <span class="inline-flex items-center gap-2">
+                      <i class="pi pi-info-circle text-[#0077cc]"></i>
+                      Gas: <strong class="text-slate-800">{{ p.tipoGas }}</strong>
+                    </span>
+                  </div>
+                }
+
+              </div>
+            }
+
+            <!-- AGREGAR PRODUCTO -->
+            <button type="button" (click)="agregar()" [disabled]="detalles.length >= productos().length" class="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-[#0077cc]/40 bg-sky-50/50 px-5 py-4 text-sm font-bold text-[#0077cc] transition-colors hover:border-[#0077cc] hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-40">
+              <i class="pi pi-plus-circle text-lg"></i>
+              Agregar otro producto
+            </button>
+
+          </div>
+        </section>
+
       </fieldset>
-      @if (error()) { <p role="alert" class="rounded-lg bg-red-50 p-3 text-red-700">{{ error() }}</p> }
-      <div class="flex flex-wrap items-center gap-4"><button type="submit" [disabled]="guardando()" class="rounded-lg bg-[#002d54] px-5 py-3 font-medium text-white disabled:opacity-50">{{ guardando() ? 'Guardando pedido…' : 'Registrar pedido' }}</button><a routerLink="/cliente/pedidos" class="text-sky-700">Volver al listado</a></div>
+
+      <!-- RESUMEN DEL PEDIDO -->
+      <aside class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm xl:sticky xl:top-6">
+
+        <div class="border-b border-slate-100 px-6 py-6">
+          <div class="flex items-center gap-3">
+            <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-[#eaf4fc] text-[#0077cc]">
+              <i class="pi pi-file-edit text-lg"></i>
+            </div>
+            <div>
+              <h2 class="text-lg font-bold text-[#002d54]">Resumen del pedido</h2>
+              <p class="mt-1 text-xs text-slate-500">Revisa tu solicitud</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-5 p-6">
+
+          <!-- DATOS DE ENTREGA -->
+          <dl class="space-y-4 text-sm">
+            <div class="flex items-start justify-between gap-4">
+              <dt class="text-slate-500">Entrega estimada</dt>
+              <dd class="text-right font-semibold text-[#002d54]">{{ form.controls.fechaEntregaEstimada.value || 'Por seleccionar' }}</dd>
+            </div>
+            <div class="flex items-start justify-between gap-4">
+              <dt class="text-slate-500">Prioridad</dt>
+              <dd class="text-right font-semibold text-[#002d54]">{{ form.controls.prioridad.value || 'Por seleccionar' }}</dd>
+            </div>
+          </dl>
+
+          <div class="border-t border-slate-100"></div>
+
+          <!-- PRODUCTOS SELECCIONADOS -->
+          <div>
+            <h3 class="mb-4 text-xs font-bold uppercase tracking-wider text-slate-500">Productos seleccionados</h3>
+
+            <div class="space-y-4">
+              @for (linea of resumen(); track $index) {
+                <div class="flex items-start justify-between gap-4 text-sm">
+                  <div class="min-w-0">
+                    <p class="wrap-break-word font-semibold text-slate-800">{{ linea.producto?.nombre }}</p>
+                    <p class="mt-1 text-xs text-slate-500">{{ linea.cantidad > 0 ? linea.cantidad : 0 }} {{ linea.producto?.unidadMedida }}</p>
+                  </div>
+                  <span class="shrink-0 font-bold text-[#002d54]">{{ linea.importe | number:'1.2-2' }}</span>
+                </div>
+              } @empty {
+                <div class="rounded-xl bg-slate-50 px-4 py-6 text-center">
+                  <i class="pi pi-shopping-bag mb-3 block text-2xl text-slate-300"></i>
+                  <p class="text-xs leading-6 text-slate-500">Los productos que selecciones aparecerán aquí.</p>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- TOTAL -->
+          <div class="rounded-xl bg-[#002d54] px-5 py-5 text-white">
+            <p class="text-xs font-medium text-blue-100">Importe total estimado</p>
+            <p class="mt-2 break-all text-3xl font-bold tracking-tight">{{ totalEstimado() | number:'1.2-2' }}</p>
+          </div>
+
+          <p class="text-xs leading-6 text-slate-500">El importe es referencial según el catálogo actual. Los precios se confirman al guardar el pedido.</p>
+
+          <!-- ERROR -->
+          @if (error()) {
+            <div role="alert" class="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">{{ error() }}</div>
+          }
+
+          <!-- GUARDAR -->
+          <button type="submit" [disabled]="guardando()" class="flex w-full items-center justify-center gap-3 rounded-xl bg-[#0077cc] px-5 py-4 text-sm font-bold text-white transition-colors hover:bg-[#005491] disabled:cursor-not-allowed disabled:opacity-50">
+            <i [class]="guardando() ? 'pi pi-spin pi-spinner' : 'pi pi-check-circle'"></i>
+            {{ guardando() ? 'Guardando pedido…' : 'Registrar pedido' }}
+          </button>
+
+          <a routerLink="/cliente/pedidos" class="block text-center text-sm font-semibold text-[#0077cc] hover:underline">Volver al listado</a>
+
+          <p class="text-center text-xs leading-5 text-slate-400">El pedido se registrará a nombre de tu cuenta de cliente.</p>
+
+        </div>
+      </aside>
+
     </form>
   }
+
 </section>

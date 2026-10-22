@@ -1,0 +1,513 @@
+
+<section class="mx-auto flex w-full max-w-7xl min-w-0 flex-col gap-6 px-4 py-6 text-slate-800 sm:px-6">
+
+  <!-- ENCABEZADO PRINCIPAL -->
+  <div class="flex min-w-0 flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+
+    <div class="min-w-0 flex-1">
+
+      <div class="mb-2 flex items-center gap-2">
+        <span class="h-1.5 w-1.5 shrink-0 rounded-full bg-[#0077cc]"></span>
+        <span class="text-xs font-bold uppercase tracking-widest text-[#0077cc]">Administración del personal</span>
+      </div>
+
+      <h1 class="text-2xl font-bold tracking-tight text-[#002d54] sm:text-3xl">Listar trabajadores</h1>
+
+      <p class="mt-2 max-w-2xl text-sm leading-relaxed text-slate-500">
+        Registra nuevos trabajadores, consulta su información y administra el estado de sus cuentas.
+      </p>
+
+    </div>
+
+    <!-- ACCIONES -->
+    <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+
+      <button type="button" (click)="cargar()" [disabled]="cargando() || guardando()" class="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-[#002d54] shadow-sm transition-colors hover:border-[#0077cc] hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto">
+        <i class="pi pi-refresh" [class.pi-spin]="cargando()"></i>
+        <span>{{ cargando() ? 'Actualizando...' : 'Actualizar listado' }}</span>
+      </button>
+
+      <!-- BOTÓN PRINCIPAL: CREAR TRABAJADOR -->
+      <a routerLink="/dashboard/trabajadores/nuevo" [queryParams]="filtros()" class="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#002d54] px-5 py-2.5 text-sm font-bold text-white shadow-sm ring-2 ring-[#002d54]/10 transition-all hover:-translate-y-0.5 hover:bg-[#004477] hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0077cc] sm:w-auto">
+        <i class="pi pi-user-plus text-base"></i>
+        Crear trabajador
+        <i class="pi pi-arrow-right text-xs"></i>
+      </a>
+
+    </div>
+
+  </div>
+
+  <!-- MENSAJE DE ÉXITO -->
+  @if (mensaje()) {
+
+    <div role="status" class="flex min-w-0 items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+
+      <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
+        <i class="pi pi-check-circle"></i>
+      </div>
+
+      <div class="min-w-0 flex-1">
+        <p class="text-sm font-bold text-emerald-800">Operación realizada</p>
+        <p class="mt-1 wrap-break-word text-sm text-emerald-700">{{ mensaje() }}</p>
+      </div>
+
+    </div>
+
+  }
+
+  <!-- MENSAJE DE ERROR -->
+  @if (error()) {
+
+    <div role="alert" class="flex min-w-0 items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4">
+
+      <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-700">
+        <i class="pi pi-exclamation-triangle"></i>
+      </div>
+
+      <div class="min-w-0 flex-1">
+        <p class="text-sm font-bold text-red-800">No se pudo completar la operación</p>
+        <p class="mt-1 wrap-break-word text-sm text-red-700">{{ error() }}</p>
+      </div>
+
+    </div>
+
+  }
+
+  <!-- CONFIRMAR ACTIVACIÓN / DESACTIVACIÓN -->
+  @if (confirmar(); as c) {
+
+    <div class="overflow-hidden rounded-2xl border border-amber-200 bg-white shadow-sm">
+
+      <div class="flex min-w-0 items-start gap-3 border-b border-amber-100 bg-amber-50 px-4 py-4 sm:px-6">
+
+        <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-amber-600 shadow-sm">
+          <i class="pi pi-exclamation-triangle text-lg"></i>
+        </div>
+
+        <div class="min-w-0 flex-1">
+
+          <h2 class="text-base font-bold text-[#002d54]">
+            {{ c.activar ? 'Reactivar trabajador' : 'Desactivar trabajador' }}
+          </h2>
+
+          <p class="mt-1 text-xs leading-relaxed text-slate-600">
+            Confirma el cambio de estado del trabajador seleccionado.
+          </p>
+
+        </div>
+
+      </div>
+
+      <div class="space-y-4 p-4 sm:p-6">
+
+        <!-- DATOS DEL TRABAJADOR -->
+        <div class="flex min-w-0 items-start gap-3 rounded-xl border border-slate-100 bg-slate-50 p-4">
+
+          <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#002d54] text-white">
+            <i class="pi pi-user"></i>
+          </div>
+
+          <div class="min-w-0">
+            <p class="wrap-break-word text-sm font-bold text-[#002d54]">{{ c.trabajador.nombres }} {{ c.trabajador.apellidos }}</p>
+            <p class="mt-1 break-all text-xs text-slate-500">{{ c.trabajador.correo }}</p>
+          </div>
+
+        </div>
+
+        <p class="text-sm leading-relaxed text-slate-600">
+          {{ c.activar ? 'Se habilitarán el trabajador y su cuenta de acceso.' : 'Se deshabilitarán el trabajador y su cuenta. No se eliminarán sus registros ni su historial.' }}
+        </p>
+
+        <!-- ACCIONES -->
+        <div class="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+
+          <button type="button" (click)="confirmar.set(null)" [disabled]="guardando()" class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-100 disabled:opacity-50">
+            <i class="pi pi-arrow-left text-xs"></i>
+            Volver
+          </button>
+
+          <button type="button" (click)="cambiarEstado()" [disabled]="guardando()" class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-white transition-colors disabled:opacity-50" [class.bg-emerald-600]="c.activar" [class.hover:bg-emerald-700]="c.activar" [class.bg-red-600]="!c.activar" [class.hover:bg-red-700]="!c.activar">
+            <i class="pi" [class.pi-check-circle]="!guardando() && c.activar" [class.pi-ban]="!guardando() && !c.activar" [class.pi-spinner]="guardando()" [class.pi-spin]="guardando()"></i>
+            {{ guardando() ? 'Guardando...' : c.activar ? 'Confirmar reactivación' : 'Confirmar desactivación' }}
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  }
+
+  <!-- FILTROS -->
+  <div class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+    <div class="flex items-center gap-3 border-b border-slate-100 px-4 py-4 sm:px-6">
+
+      <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-[#0077cc]">
+        <i class="pi pi-filter text-lg"></i>
+      </div>
+
+      <div class="min-w-0">
+        <h2 class="text-base font-bold text-[#002d54]">Buscar y filtrar trabajadores</h2>
+        <p class="mt-1 text-xs text-slate-500">Encuentra personal por nombre, documento, correo, rol o estado.</p>
+      </div>
+
+    </div>
+
+    <div class="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 sm:p-6 xl:grid-cols-3">
+
+      <!-- BÚSQUEDA -->
+      <div class="min-w-0">
+
+        <label for="buscar-trabajadores" class="mb-2 block text-sm font-semibold text-slate-700">Buscar trabajador</label>
+
+        <div class="relative">
+
+          <i class="pi pi-search pointer-events-none absolute left-4 top-1/2 z-10 -translate-y-1/2 text-sm text-slate-400"></i>
+
+          <input pInputText id="buscar-trabajadores" type="search" placeholder="Nombre, DNI o correo" [value]="consulta()" (input)="consulta.set($any($event.target).value); pagina.set(1)" class="h-12! w-full! min-w-0! rounded-xl! border! border-slate-300! bg-white! py-0! pl-11! pr-4! text-sm! text-slate-900! shadow-none! focus:border-[#0077cc]!" />
+
+        </div>
+
+      </div>
+
+      <!-- ROL -->
+      <div class="min-w-0">
+
+        <label for="filtro-rol" class="mb-2 block text-sm font-semibold text-slate-700">Rol</label>
+
+        <div class="relative">
+
+          <select id="filtro-rol" [value]="filtroRol()" (change)="filtroRol.set($any($event.target).value); pagina.set(1)" class="h-12 w-full min-w-0 appearance-none rounded-xl border border-slate-300 bg-white px-4 pr-10 text-sm text-slate-700 outline-none transition-colors focus:border-[#0077cc] focus:ring-2 focus:ring-sky-100">
+            <option value="TODOS">Todos los roles</option>
+            @for (rol of roles; track rol) {
+              <option [value]="rol">{{ rol }}</option>
+            }
+          </select>
+
+          <i class="pi pi-chevron-down pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-400"></i>
+
+        </div>
+
+      </div>
+
+      <!-- ESTADO -->
+      <div class="min-w-0">
+
+        <label for="filtro-estado" class="mb-2 block text-sm font-semibold text-slate-700">Estado</label>
+
+        <div class="relative">
+
+          <select id="filtro-estado" [value]="estado()" (change)="estado.set($any($event.target).value); pagina.set(1)" class="h-12 w-full min-w-0 appearance-none rounded-xl border border-slate-300 bg-white px-4 pr-10 text-sm text-slate-700 outline-none transition-colors focus:border-[#0077cc] focus:ring-2 focus:ring-sky-100">
+            <option value="ACTIVO">Activos</option>
+            <option value="INACTIVO">Inactivos</option>
+            <option value="TODOS">Todos los estados</option>
+          </select>
+
+          <i class="pi pi-chevron-down pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-400"></i>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- LISTADO -->
+  <div class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+    <!-- ENCABEZADO DEL LISTADO -->
+    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-4 py-5 sm:px-6">
+
+      <div class="flex min-w-0 items-center gap-3">
+
+        <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#002d54] text-white">
+          <i class="pi pi-users text-lg"></i>
+        </div>
+
+        <div class="min-w-0">
+          <h2 class="text-base font-bold text-[#002d54] sm:text-lg">Personal registrado</h2>
+          <p class="mt-1 text-xs text-slate-500">Consulta y administra los trabajadores del sistema.</p>
+        </div>
+
+      </div>
+
+      @if (!cargando()) {
+        <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600">
+          <i class="pi pi-database text-[11px]"></i>
+          {{ filtrados().length }} resultados
+        </span>
+      }
+
+    </div>
+
+    @if (cargando()) {
+
+      <!-- CARGANDO -->
+      <div role="status" class="flex min-h-64 flex-col items-center justify-center gap-4 px-6 py-12 text-center">
+
+        <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-sky-50">
+          <i class="pi pi-spin pi-spinner text-3xl text-[#0077cc]"></i>
+        </div>
+
+        <p class="text-sm font-bold text-[#002d54]">Consultando trabajadores</p>
+        <p class="text-xs text-slate-500">Obteniendo la información del personal registrado.</p>
+
+      </div>
+
+    } @else {
+
+      <!-- TABLA ESCRITORIO -->
+      <div class="hidden w-full min-w-0 overflow-x-auto xl:block">
+
+        <table class="w-full  table-fixed border-collapse text-left text-sm">
+
+          <caption class="sr-only">Trabajadores registrados</caption>
+
+          <thead class="bg-[#f5f8fc]">
+
+            <tr class="border-b border-slate-200">
+              <th scope="col" class="w-[19%] px-3 py-3 text-[11px] font-bold uppercase tracking-normal text-slate-500">Nombre / DNI</th>
+              <th scope="col" class="w-[14%] px-3 py-3 text-[11px] font-bold uppercase tracking-normal text-slate-500">Rol</th>
+              <th scope="col" class="w-[24%] px-3 py-3 text-[11px] font-bold uppercase tracking-normal text-slate-500">Correo / Teléfono</th>
+              <th scope="col" class="w-[10%] px-3 py-3 text-[11px] font-bold uppercase tracking-normal text-slate-500">Estado</th>
+              <th scope="col" class="w-[28%] px-3 py-3 text-[11px] font-bold uppercase tracking-normal text-slate-500">Acciones</th>
+            </tr>
+
+          </thead>
+
+          <tbody class="divide-y divide-slate-100">
+
+            @for (t of visibles(); track t.idTrabajador) {
+
+              <tr class="align-middle transition-colors hover:bg-sky-50/40">
+
+                <!-- NOMBRE -->
+                <td class="px-3 py-4">
+
+                  <div class="flex min-w-0 items-start gap-3">
+
+                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-sky-50 text-[#0077cc]">
+                      <i class="pi pi-user"></i>
+                    </div>
+
+                    <div class="min-w-0">
+                      <p class="wrap-break-word text-xs font-bold leading-relaxed text-[#002d54]">{{ t.nombres }} {{ t.apellidos }}</p>
+                      <p class="mt-1 text-xs text-slate-500">DNI {{ t.dni }}</p>
+                    </div>
+
+                  </div>
+
+                </td>
+
+                <!-- ROL -->
+                <td class="px-3 py-4">
+                  <span class="inline-flex max-w-full wrap-break-word rounded-lg bg-slate-100 px-2.5 py-1.5 text-[11px] font-semibold text-slate-700">{{ t.rol }}</span>
+                </td>
+
+                <!-- CONTACTO -->
+                <td class="px-3 py-4">
+
+                  <div class="min-w-0 space-y-2">
+
+                    <p class="flex min-w-0 items-start gap-2 text-xs text-slate-700">
+                      <i class="pi pi-envelope mt-0.5 shrink-0 text-[#0077cc]"></i>
+                      <span class="min-w-0 break-all">{{ t.correo }}</span>
+                    </p>
+
+                    <p class="flex items-center gap-2 text-xs text-slate-500">
+                      <i class="pi pi-phone shrink-0 text-slate-400"></i>
+                      <span>{{ t.telefono || 'Sin teléfono' }}</span>
+                    </p>
+
+                  </div>
+
+                </td>
+
+                <!-- ESTADO -->
+                <td class="px-3 py-4">
+
+                  @if (t.estado === 'ACTIVO') {
+                    <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1.5 text-[11px] font-bold text-emerald-700">
+                      <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                      Activo
+                    </span>
+                  } @else {
+                    <span class="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1.5 text-[11px] font-bold text-slate-600">
+                      <span class="h-1.5 w-1.5 rounded-full bg-slate-400"></span>
+                      {{ t.estado }}
+                    </span>
+                  }
+
+                </td>
+
+                <!-- ACCIONES -->
+                <td class="px-3 py-4">
+
+                  <div class="flex flex-wrap items-center gap-2">
+
+                    <a [routerLink]="['/dashboard/trabajadores', t.idTrabajador]" [queryParams]="filtros()" class="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg border border-sky-100 bg-sky-50 px-2.5 py-2 text-[11px] font-bold text-[#0077cc] transition-colors hover:bg-sky-100">
+                      <i class="pi pi-eye"></i>
+                      Ver
+                    </a>
+
+                    <a [routerLink]="['/dashboard/trabajadores', t.idTrabajador, 'editar']" [queryParams]="filtros()" class="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-[11px] font-bold text-slate-700 transition-colors hover:bg-slate-100">
+                      <i class="pi pi-pencil"></i>
+                      Editar
+                    </a>
+
+                    <button type="button" (click)="solicitarEstado(t)" [disabled]="guardando() || t.correo === usuario()?.correo" class="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg border px-2.5 py-2 text-[11px] font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-40" [class.border-red-100]="t.estado === 'ACTIVO'" [class.bg-red-50]="t.estado === 'ACTIVO'" [class.text-red-700]="t.estado === 'ACTIVO'" [class.border-emerald-100]="t.estado !== 'ACTIVO'" [class.bg-emerald-50]="t.estado !== 'ACTIVO'" [class.text-emerald-700]="t.estado !== 'ACTIVO'">
+                      <i class="pi" [class.pi-ban]="t.estado === 'ACTIVO'" [class.pi-check-circle]="t.estado !== 'ACTIVO'"></i>
+                      {{ t.estado === 'ACTIVO' ? 'Desactivar' : 'Reactivar' }}
+                    </button>
+
+                  </div>
+
+                </td>
+
+              </tr>
+
+            } @empty {
+
+              <tr>
+                <td colspan="5" class="px-6 py-12 text-center">
+
+                  <i class="pi pi-users text-3xl text-slate-300"></i>
+
+                  <p class="mt-3 text-sm font-bold text-[#002d54]">No se encontraron trabajadores</p>
+
+                  <p class="mt-1 text-xs text-slate-500">No hay trabajadores que coincidan con los criterios seleccionados.</p>
+
+                </td>
+              </tr>
+
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+      <!-- TARJETAS MÓVIL Y TABLET -->
+      <div class="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 xl:hidden">
+
+        @for (t of visibles(); track t.idTrabajador) {
+
+          <article class="flex min-w-0 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white">
+
+            <!-- CABECERA -->
+            <div class="flex min-w-0 items-start gap-3 border-b border-slate-100 bg-slate-50/60 p-4">
+
+              <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-sky-50 text-[#0077cc]">
+                <i class="pi pi-user text-lg"></i>
+              </div>
+
+              <div class="min-w-0 flex-1">
+
+                <p class="wrap-break-word text-sm font-bold text-[#002d54]">{{ t.nombres }} {{ t.apellidos }}</p>
+                <p class="mt-1 text-xs text-slate-500">DNI {{ t.dni }}</p>
+
+              </div>
+
+              @if (t.estado === 'ACTIVO') {
+                <span class="shrink-0 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-700">Activo</span>
+              } @else {
+                <span class="shrink-0 rounded-full bg-slate-200 px-2.5 py-1 text-[11px] font-bold text-slate-600">{{ t.estado }}</span>
+              }
+
+            </div>
+
+            <!-- DATOS -->
+            <div class="flex flex-1 flex-col gap-4 p-4">
+
+              <div class="flex items-center justify-between gap-3">
+                <span class="text-xs text-slate-500">Rol</span>
+                <span class="rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700">{{ t.rol }}</span>
+              </div>
+
+              <div class="min-w-0 border-t border-slate-100 pt-3">
+
+                <p class="flex min-w-0 items-start gap-2 text-xs text-slate-600">
+                  <i class="pi pi-envelope mt-0.5 shrink-0 text-[#0077cc]"></i>
+                  <span class="min-w-0 break-all">{{ t.correo }}</span>
+                </p>
+
+                <p class="mt-3 flex items-center gap-2 text-xs text-slate-500">
+                  <i class="pi pi-phone shrink-0 text-[#0077cc]"></i>
+                  {{ t.telefono || 'Sin teléfono' }}
+                </p>
+
+              </div>
+
+              <!-- ACCIONES -->
+              <div class="mt-auto grid grid-cols-2 gap-2 border-t border-slate-100 pt-4">
+
+                <a [routerLink]="['/dashboard/trabajadores', t.idTrabajador]" [queryParams]="filtros()" class="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-sky-100 bg-sky-50 px-3 py-2 text-xs font-bold text-[#0077cc]">
+                  <i class="pi pi-eye"></i>
+                  Ver
+                </a>
+
+                <a [routerLink]="['/dashboard/trabajadores', t.idTrabajador, 'editar']" [queryParams]="filtros()" class="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700">
+                  <i class="pi pi-pencil"></i>
+                  Editar
+                </a>
+
+                <button type="button" (click)="solicitarEstado(t)" [disabled]="guardando() || t.correo === usuario()?.correo" class="col-span-2 inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border px-3 py-2 text-xs font-bold disabled:cursor-not-allowed disabled:opacity-40" [class.border-red-100]="t.estado === 'ACTIVO'" [class.bg-red-50]="t.estado === 'ACTIVO'" [class.text-red-700]="t.estado === 'ACTIVO'" [class.border-emerald-100]="t.estado !== 'ACTIVO'" [class.bg-emerald-50]="t.estado !== 'ACTIVO'" [class.text-emerald-700]="t.estado !== 'ACTIVO'">
+                  <i class="pi" [class.pi-ban]="t.estado === 'ACTIVO'" [class.pi-check-circle]="t.estado !== 'ACTIVO'"></i>
+                  {{ t.estado === 'ACTIVO' ? 'Desactivar trabajador' : 'Reactivar trabajador' }}
+                </button>
+
+              </div>
+
+            </div>
+
+          </article>
+
+        } @empty {
+
+          <div class="col-span-full py-12 text-center">
+            <i class="pi pi-users text-3xl text-slate-300"></i>
+            <p class="mt-3 text-sm font-bold text-[#002d54]">No se encontraron trabajadores</p>
+            <p class="mt-1 text-xs text-slate-500">Prueba modificando los filtros de búsqueda.</p>
+          </div>
+
+        }
+
+      </div>
+
+      <!-- PAGINACIÓN -->
+      <div class="flex min-w-0 flex-col gap-4 border-t border-slate-100 bg-slate-50/60 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+
+        <p class="text-xs text-slate-500">
+          <span class="font-bold text-[#002d54]">{{ filtrados().length }}</span> resultados encontrados
+        </p>
+
+        <div class="flex flex-wrap items-center gap-2">
+
+          <button type="button" (click)="pagina.set(actual() - 1)" [disabled]="actual() === 1" class="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40">
+            <i class="pi pi-chevron-left text-[10px]"></i>
+            Anterior
+          </button>
+
+          <span class="px-2 text-center text-xs font-medium text-slate-600">
+            Página <strong class="text-[#002d54]">{{ actual() }}</strong> de <strong class="text-[#002d54]">{{ paginas() }}</strong>
+          </span>
+
+          <button type="button" (click)="pagina.set(actual() + 1)" [disabled]="actual() === paginas()" class="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40">
+            Siguiente
+            <i class="pi pi-chevron-right text-[10px]"></i>
+          </button>
+
+        </div>
+
+      </div>
+
+    }
+
+  </div>
+
+</section>

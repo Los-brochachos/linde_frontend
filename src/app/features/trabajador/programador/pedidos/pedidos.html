@@ -1,0 +1,1049 @@
+
+
+<section class="mx-auto flex w-full max-w-7xl min-w-0 flex-col gap-6 px-4 py-6 text-slate-900 sm:px-6">
+
+  <!-- VOLVER AL INICIO -->
+
+  <div>
+
+    <a routerLink="/dashboard" class="inline-flex items-center gap-2 text-sm font-semibold text-[#0077cc] transition-colors hover:text-[#005491]">
+
+      <i class="pi pi-arrow-left text-xs"></i>
+
+      Volver al inicio
+
+    </a>
+
+  </div>
+
+  <!-- ENCABEZADO -->
+
+  <div class="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+
+    <div class="min-w-0 flex-1">
+
+      <div class="mb-2 flex items-center gap-2">
+
+        <span class="h-1.5 w-1.5 shrink-0 rounded-full bg-[#0077cc]"></span>
+
+        <span class="text-xs font-bold uppercase tracking-widest text-[#0077cc]">
+
+          Programación de operaciones
+
+        </span>
+
+      </div>
+
+      <h1 class="text-2xl font-bold tracking-tight text-[#002d54] sm:text-3xl">
+
+        Pedidos
+
+      </h1>
+
+      <p class="mt-2 max-w-2xl text-sm leading-relaxed text-slate-500">
+
+        Consulta las empresas y productos solicitados para organizar cada entrega.
+
+      </p>
+
+    </div>
+
+    <!-- ACTUALIZAR -->
+
+    <button type="button" (click)="cargar()" [disabled]="cargando()" class="inline-flex min-h-11 w-full shrink-0 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-center text-sm font-semibold text-[#002d54] shadow-sm transition-colors hover:border-[#0077cc] hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:px-5">
+
+      <i class="pi pi-refresh shrink-0 text-sm" [class.pi-spin]="cargando()"></i>
+
+      <span>{{ cargando() ? 'Actualizando...' : 'Actualizar listado' }}</span>
+
+    </button>
+
+  </div>
+
+  <!-- CARGANDO -->
+
+  @if (cargando()) {
+
+    <div role="status" class="flex min-h-64 flex-col items-center justify-center gap-4 rounded-2xl border border-slate-200 bg-white px-6 py-12 text-center shadow-sm">
+
+      <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-sky-50">
+
+        <i class="pi pi-spin pi-spinner text-3xl text-[#0077cc]"></i>
+
+      </div>
+
+      <p class="text-sm font-bold text-[#002d54]">Consultando pedidos</p>
+
+      <p class="text-xs text-slate-500">Obteniendo pedidos y programaciones disponibles.</p>
+
+    </div>
+
+  } @else if (error()) {
+
+    <!-- ERROR -->
+
+    <div role="alert" class="flex min-w-0 items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 sm:gap-4 sm:p-5">
+
+      <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-red-100 text-red-600">
+
+        <i class="pi pi-exclamation-triangle text-lg"></i>
+
+      </div>
+
+      <div class="min-w-0 flex-1">
+
+        <h2 class="text-sm font-bold text-red-800">
+
+          No se pudieron cargar los pedidos
+
+        </h2>
+
+        <p class="mt-2 wrap-break-word text-sm leading-relaxed text-red-700">
+
+          {{ error() }}
+
+        </p>
+
+        <button type="button" (click)="cargar()" class="mt-4 inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-red-200 bg-white px-4 py-2 text-xs font-semibold text-red-700 transition-colors hover:bg-red-100">
+
+          <i class="pi pi-refresh"></i>
+
+          Reintentar
+
+        </button>
+
+      </div>
+
+    </div>
+
+  } @else {
+
+    <!-- RESUMEN DE PEDIDOS PENDIENTES -->
+
+    <div class="flex min-w-0 flex-col gap-4 rounded-2xl border border-sky-100 bg-sky-50/70 p-4 sm:flex-row sm:items-center sm:p-5">
+
+      <div class="flex h-13 w-13 shrink-0 items-center justify-center rounded-xl bg-white text-[#0077cc] shadow-sm">
+
+        <i class="pi pi-calendar-plus text-2xl"></i>
+
+      </div>
+
+      <div class="min-w-0 flex-1">
+
+        <p class="text-xs font-bold uppercase tracking-wide text-[#0077cc]">
+
+          Pendientes de programación
+
+        </p>
+
+        <div class="mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-1">
+
+          <span class="text-3xl font-bold tracking-tight text-[#002d54]">
+
+            {{ pendientes() }}
+
+          </span>
+
+          <span class="text-sm font-semibold text-[#002d54]">
+
+            pedidos disponibles para programar
+
+          </span>
+
+        </div>
+
+        <p class="mt-1 text-xs leading-relaxed text-slate-500">
+
+          Cada pedido admite una sola atención activa.
+
+        </p>
+
+      </div>
+
+    </div>
+
+    <!-- FILTROS -->
+
+    <div class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+      <div class="flex items-center gap-3 border-b border-slate-100 px-4 py-4 sm:px-6">
+
+        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-[#0077cc]">
+
+          <i class="pi pi-filter text-lg"></i>
+
+        </div>
+
+        <div class="min-w-0">
+
+          <h2 class="text-base font-bold text-[#002d54]">
+
+            Buscar y filtrar pedidos
+
+          </h2>
+
+          <p class="mt-1 text-xs leading-relaxed text-slate-500">
+
+            Encuentra rápidamente los pedidos que necesitas gestionar.
+
+          </p>
+
+        </div>
+
+      </div>
+
+      <div class="grid grid-cols-1 gap-5 p-4 md:grid-cols-2 sm:p-5 lg:p-6">
+
+        <!-- BUSCADOR -->
+
+        <div class="min-w-0">
+
+          <label for="buscar-pedidos" class="mb-2 block text-sm font-semibold text-slate-700">
+
+            Buscar pedido o empresa
+
+          </label>
+
+          <div class="relative">
+
+            <i class="pi pi-search pointer-events-none absolute left-4 top-1/2 z-10 -translate-y-1/2 text-sm text-slate-400"></i>
+
+            <input pInputText id="buscar-pedidos" type="search" [value]="consulta()" (input)="consulta.set($any($event.target).value); pagina.set(1)" placeholder="Número, empresa, prioridad o estado" class="h-12! w-full! min-w-0! rounded-xl! border! border-slate-300! bg-white! py-0! pl-11! pr-4! text-sm! text-slate-900! shadow-none! placeholder:text-slate-400! focus:border-[#0077cc]!" />
+
+          </div>
+
+        </div>
+
+        <!-- FILTRO ESTADO -->
+
+        <div class="min-w-0">
+
+          <label for="estado-pedidos" class="mb-2 block text-sm font-semibold text-slate-700">
+
+            Estado del pedido
+
+          </label>
+
+          <div class="relative">
+
+            <select id="estado-pedidos" [value]="estado()" (change)="estado.set($any($event.target).value); pagina.set(1)" class="h-12 w-full min-w-0 appearance-none rounded-xl border border-slate-300 bg-white px-4 pr-10 text-sm text-slate-900 outline-none transition-colors focus:border-[#0077cc] focus:ring-2 focus:ring-sky-100">
+
+              <option value="TODOS">Todos los estados</option>
+
+              @for (e of estados; track e) {
+
+                <option [value]="e">{{ e }}</option>
+
+              }
+
+            </select>
+
+            <i class="pi pi-chevron-down pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-400"></i>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- LISTADO DE PEDIDOS -->
+
+    <div class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+      <!-- ENCABEZADO -->
+
+      <div class="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-4 py-4 sm:px-6 sm:py-5">
+
+        <div class="flex min-w-0 items-center gap-3">
+
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#002d54] text-white">
+
+            <i class="pi pi-list"></i>
+
+          </div>
+
+          <div class="min-w-0">
+
+            <h2 class="text-base font-bold text-[#002d54]">
+
+              Listado de pedidos
+
+            </h2>
+
+            <p class="mt-1 text-xs text-slate-500">
+
+              Información y acciones de programación.
+
+            </p>
+
+          </div>
+
+        </div>
+
+        <span class="inline-flex shrink-0 items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600">
+
+          <i class="pi pi-database text-[11px]"></i>
+
+          {{ filtrados().length }} resultados
+
+        </span>
+
+      </div>
+
+      @if (visibles().length === 0) {
+
+        <!-- SIN RESULTADOS -->
+
+        <div class="flex min-h-64 flex-col items-center justify-center px-5 py-12 text-center">
+
+          <div class="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100">
+
+            <i class="pi pi-inbox text-3xl text-slate-400"></i>
+
+          </div>
+
+          <h3 class="text-base font-bold text-[#002d54]">
+
+            No se encontraron pedidos
+
+          </h3>
+
+          <p class="mt-2 max-w-sm text-sm leading-relaxed text-slate-500">
+
+            No hay pedidos con los criterios seleccionados. Prueba con otra búsqueda o estado.
+
+          </p>
+
+        </div>
+
+      } @else {
+
+        <!-- TABLA EN ESCRITORIO -->
+
+        <div class="hidden w-full p-8 min-w-0 max-w-full overflow-x-auto xl:block">
+
+          <table class="w-full min-w-212.5 border-collapse text-left text-xs">
+
+            <caption class="sr-only">
+
+              Pedidos para programación
+
+            </caption>
+
+          <thead class="bg-[#f5f8fc]">
+            <tr class="border-b border-slate-200">
+              <th scope="col" class="w-[9%] px-2 py-3 text-[11px] font-bold uppercase tracking-normal text-slate-500">Pedido</th>
+              
+              <th scope="col" class="w-[30%] px-2 py-3 text-[11px] font-bold uppercase tracking-normal text-slate-500">Empresa</th>
+              
+              <th scope="col" class="w-[13%] px-2 py-3 text-[11px] font-bold uppercase tracking-normal text-slate-500">Estado</th>
+              
+              <th scope="col" class="w-[12%] px-2 py-3 text-[11px] font-bold uppercase tracking-normal text-slate-500">Prioridad</th>
+              
+              <th scope="col" class="w-[16%] px-2 py-3 text-[11px] font-bold uppercase tracking-normal text-slate-500">Entrega estimada</th>
+              
+              <th scope="col" class="w-[20%] px-2 py-3 text-[11px] font-bold uppercase tracking-normal text-slate-500">Acciones</th>
+            </tr>
+          </thead>
+
+            <tbody class="divide-y divide-slate-100">
+
+              @for (p of visibles(); track p.idPedido) {
+
+                <tr class="align-top transition-colors hover:bg-sky-50/40">
+
+                  <!-- PEDIDO -->
+
+                  <td class="px-2.5 py-3">
+
+                    <span class="inline-flex rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-bold text-[#002d54]">
+
+                      #{{ p.idPedido }}
+
+                    </span>
+
+                  </td>
+
+                  <!-- EMPRESA -->
+
+                  <td class="px-2.5 py-3">
+
+                    <div class="flex min-w-0 items-start gap-2">
+
+                      <i class="pi pi-building mt-0.5 shrink-0 text-xs text-slate-400"></i>
+
+                      <span class="max-w-36 wrap-break-word font-semibold text-slate-700">
+
+                        {{ p.razonSocial || 'Empresa no disponible' }}
+
+                      </span>
+
+                    </div>
+
+                  </td>
+
+                  <!-- ESTADO -->
+
+                  <td class="px-2.5 py-3">
+
+                    @if (p.estado === 'PENDIENTE') {
+
+                      <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1.5 text-xs font-bold text-amber-700">
+
+                        <i class="pi pi-clock text-[11px]"></i>
+
+                        Pendiente
+
+                      </span>
+
+                    } @else if (p.estado === 'PROGRAMADO' || p.estado === 'PROGRAMADA') {
+
+                      <span class="inline-flex items-center gap-1.5 rounded-full bg-sky-50 px-3 py-1.5 text-xs font-bold text-sky-700">
+
+                        <i class="pi pi-calendar text-[11px]"></i>
+
+                        {{ p.estado }}
+
+                      </span>
+
+                    } @else if (p.estado === 'FINALIZADO' || p.estado === 'FINALIZADA') {
+
+                      <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700">
+
+                        <i class="pi pi-check-circle text-[11px]"></i>
+
+                        {{ p.estado }}
+
+                      </span>
+
+                    } @else if (p.estado === 'CANCELADO' || p.estado === 'CANCELADA') {
+
+                      <span class="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1.5 text-xs font-bold text-red-700">
+
+                        <i class="pi pi-times-circle text-[11px]"></i>
+
+                        {{ p.estado }}
+
+                      </span>
+
+                    } @else {
+
+                      <span class="inline-flex rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600">
+
+                        {{ p.estado }}
+
+                      </span>
+
+                    }
+
+                  </td>
+
+                  <!-- PRIORIDAD -->
+
+                  <td class="px-2.5 py-3">
+
+                    @if (p.prioridad === 'ALTA' || p.prioridad === 'URGENTE') {
+
+                      <span class="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1.5 text-xs font-bold text-red-700">
+
+                        <i class="pi pi-exclamation-circle text-[11px]"></i>
+
+                        {{ p.prioridad }}
+
+                      </span>
+
+                    } @else if (p.prioridad === 'MEDIA') {
+
+                      <span class="inline-flex rounded-full bg-amber-50 px-3 py-1.5 text-xs font-bold text-amber-700">
+
+                        {{ p.prioridad }}
+
+                      </span>
+
+                    } @else if (p.prioridad === 'BAJA') {
+
+                      <span class="inline-flex rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700">
+
+                        {{ p.prioridad }}
+
+                      </span>
+
+                    } @else {
+
+                      <span class="text-xs font-medium text-slate-600">
+
+                        {{ p.prioridad }}
+
+                      </span>
+
+                    }
+
+                  </td>
+
+                  <!-- ENTREGA ESTIMADA -->
+
+                  <td class="whitespace-nowrap px-2.5 py-3">
+
+                    <span class="inline-flex items-center gap-2 text-xs text-slate-600">
+
+                      <i class="pi pi-calendar shrink-0 text-xs text-[#0077cc]"></i>
+
+                      {{ (p.fechaEntregaEstimada | date:'dd/MM/yyyy') || 'Sin definir' }}
+
+                    </span>
+
+                  </td>
+
+                  <!-- ACCIONES -->
+
+                  <td class="w-39.5 min-w-39.5 px-2.5 py-3">
+
+                    <div class="flex w-full min-w-0 flex-col items-stretch gap-1.5">
+
+                      <button type="button" (click)="ver(p)" class="flex min-h-9 w-full items-center justify-center gap-1.5 rounded-lg border border-sky-200 bg-sky-50 px-1.5 py-1.5 text-center text-[11px] font-bold leading-snug text-[#0077cc] transition-colors hover:bg-sky-100">
+
+                        <i class="pi pi-eye shrink-0"></i>
+
+                        <span>Ver productos</span>
+
+                      </button>
+
+                      @if (puedeProgramar(p)) {
+
+                        <a routerLink="/dashboard/atenciones/nueva" [queryParams]="{ pedido: p.idPedido }" class="flex min-h-9 w-full items-center justify-center gap-1.5 rounded-lg bg-[#0077cc] px-1.5 py-1.5 text-center text-[11px] font-semibold leading-snug text-white transition-colors hover:bg-[#0064a3]">
+
+                          <i class="pi pi-calendar-plus shrink-0"></i>
+
+                          <span>Programar atención</span>
+
+                        </a>
+
+                      } @else if (activa(p); as cita) {
+
+                        @if (cita.estado === 'PROGRAMADA') {
+
+                          <a [routerLink]="['/dashboard/atenciones', cita.idAtencion, 'editar']" class="flex min-h-9 w-full items-center justify-center gap-1.5 rounded-lg border border-slate-200 px-1.5 py-1.5 text-center text-[11px] font-semibold leading-snug text-[#0077cc] hover:bg-slate-50">
+
+                            <i class="pi pi-calendar shrink-0"></i>
+
+                            <span>Ver programación #{{ cita.idAtencion }}</span>
+
+                          </a>
+
+                        } @else {
+
+                          <span class="inline-flex items-start gap-2 text-xs leading-snug text-slate-500">
+
+                            <i class="pi pi-clock mt-0.5 shrink-0"></i>
+
+                            <span>Atención #{{ cita.idAtencion }} en curso</span>
+
+                          </span>
+
+                        }
+
+                      } @else {
+
+                        <span class="text-xs leading-snug text-slate-400">
+
+                          Sin programación disponible
+
+                        </span>
+
+                      }
+
+                    </div>
+
+                  </td>
+
+                </tr>
+
+              }
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+        <!-- TARJETAS RESPONSIVE -->
+
+        <div class="grid grid-cols-1 gap-4 p-4 sm:p-5 md:grid-cols-2 xl:hidden">
+
+          @for (p of visibles(); track p.idPedido) {
+
+            <article class="flex min-w-0 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+
+              <!-- ENCABEZADO DE TARJETA -->
+
+              <div class="flex min-w-0 flex-wrap items-center justify-between gap-2 border-b border-slate-100 bg-slate-50/70 px-4 py-3">
+
+                <div class="min-w-0">
+
+                  <p class="text-xs text-slate-500">Pedido</p>
+
+                  <p class="mt-1 text-base font-bold text-[#002d54]">
+
+                    #{{ p.idPedido }}
+
+                  </p>
+
+                </div>
+
+                <span class="inline-flex max-w-full items-center rounded-full bg-sky-50 px-3 py-1.5 text-xs font-semibold text-sky-700">
+
+                  {{ p.estado }}
+
+                </span>
+
+              </div>
+
+              <!-- INFORMACIÓN -->
+
+              <div class="flex flex-1 flex-col gap-4 p-4">
+
+                <div class="min-w-0">
+
+                  <p class="text-xs font-medium text-slate-500">Empresa</p>
+
+                  <p class="mt-1 wrap-break-word text-sm font-semibold text-slate-700">
+
+                    {{ p.razonSocial || 'Empresa no disponible' }}
+
+                  </p>
+
+                </div>
+
+                <div class="grid grid-cols-1 gap-4 border-t border-slate-100 pt-4 min-[380px]:grid-cols-2">
+
+                  <!-- PRIORIDAD -->
+
+                  <div class="min-w-0">
+
+                    <p class="text-xs font-medium text-slate-500">Prioridad</p>
+
+                    @if (p.prioridad === 'ALTA' || p.prioridad === 'URGENTE') {
+
+                      <span class="mt-2 inline-flex max-w-full rounded-full bg-red-50 px-2.5 py-1 text-xs font-bold text-red-700">
+
+                        {{ p.prioridad }}
+
+                      </span>
+
+                    } @else if (p.prioridad === 'MEDIA') {
+
+                      <span class="mt-2 inline-flex max-w-full rounded-full bg-amber-50 px-2.5 py-1 text-xs font-bold text-amber-700">
+
+                        {{ p.prioridad }}
+
+                      </span>
+
+                    } @else if (p.prioridad === 'BAJA') {
+
+                      <span class="mt-2 inline-flex max-w-full rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-700">
+
+                        {{ p.prioridad }}
+
+                      </span>
+
+                    } @else {
+
+                      <span class="mt-2 inline-flex max-w-full rounded-full bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-600">
+
+                        {{ p.prioridad }}
+
+                      </span>
+
+                    }
+
+                  </div>
+
+                  <!-- FECHA -->
+
+                  <div class="min-w-0">
+
+                    <p class="text-xs font-medium text-slate-500">Entrega estimada</p>
+
+                    <p class="mt-2 text-xs font-semibold text-slate-700">
+
+                      {{ (p.fechaEntregaEstimada | date:'dd/MM/yyyy') || 'Sin definir' }}
+
+                    </p>
+
+                  </div>
+
+                </div>
+
+                <!-- ACCIONES -->
+
+                <div class="mt-auto flex min-w-0 flex-col gap-3 border-t border-slate-100 pt-4">
+
+                  <!-- VER PRODUCTOS -->
+
+                  <button type="button" (click)="ver(p)" class="flex min-h-11 w-full min-w-0 items-center justify-center gap-2 rounded-xl border border-sky-200 bg-sky-50 px-3 py-2.5 text-center text-sm font-semibold leading-snug text-[#0077cc] transition-colors hover:bg-sky-100">
+
+                    <i class="pi pi-eye shrink-0"></i>
+
+                    <span>Ver productos</span>
+
+                  </button>
+
+                  <!-- PROGRAMACIÓN -->
+
+                  @if (puedeProgramar(p)) {
+
+                    <a routerLink="/dashboard/atenciones/nueva" [queryParams]="{ pedido: p.idPedido }" class="flex min-h-11 w-full min-w-0 items-center justify-center gap-2 rounded-xl bg-[#0077cc] px-3 py-2.5 text-center text-sm font-semibold leading-snug text-white transition-colors hover:bg-[#0064a3]">
+
+                      <i class="pi pi-calendar-plus shrink-0"></i>
+
+                      <span>Programar atención</span>
+
+                    </a>
+
+                  } @else if (activa(p); as cita) {
+
+                    @if (cita.estado === 'PROGRAMADA') {
+
+                      <a [routerLink]="['/dashboard/atenciones', cita.idAtencion, 'editar']" class="flex min-h-11 w-full min-w-0 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-center text-sm font-semibold leading-snug text-[#0077cc] transition-colors hover:bg-slate-50">
+
+                        <i class="pi pi-calendar shrink-0"></i>
+
+                        <span class="min-w-0 wrap-break-word">Ver programación #{{ cita.idAtencion }}</span>
+
+                      </a>
+
+                    } @else {
+
+                      <p class="rounded-lg bg-slate-50 px-3 py-3 text-center text-xs leading-relaxed text-slate-500">
+
+                        <i class="pi pi-clock mr-1"></i>
+
+                        Atención #{{ cita.idAtencion }} en curso
+
+                      </p>
+
+                    }
+
+                  } @else {
+
+                    <p class="rounded-lg bg-slate-50 px-3 py-3 text-center text-xs text-slate-400">
+
+                      Sin programación disponible
+
+                    </p>
+
+                  }
+
+                </div>
+
+              </div>
+
+            </article>
+
+          }
+
+        </div>
+
+      }
+
+      <!-- PAGINACIÓN RESPONSIVE -->
+
+      <div class="flex min-w-0 flex-col gap-4 border-t border-slate-100 bg-slate-50/50 px-4 py-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
+
+        <p class="text-center text-xs text-slate-500 lg:text-left">
+
+          <span class="font-bold text-[#002d54]">{{ filtrados().length }}</span>
+
+          resultados encontrados
+
+        </p>
+
+        <div class="grid w-full grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 sm:gap-3 lg:w-auto">
+
+          <button type="button" (click)="pagina.set(actual() - 1)" [disabled]="actual() === 1" class="flex min-h-10 min-w-0 items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40 sm:px-4">
+
+            <i class="pi pi-chevron-left shrink-0 text-[10px]"></i>
+
+            <span>Anterior</span>
+
+          </button>
+
+          <span class="whitespace-nowrap text-center text-xs font-medium text-slate-600">
+
+            {{ actual() }} / {{ paginas() }}
+
+          </span>
+
+          <button type="button" (click)="pagina.set(actual() + 1)" [disabled]="actual() === paginas()" class="flex min-h-10 min-w-0 items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40 sm:px-4">
+
+            <span>Siguiente</span>
+
+            <i class="pi pi-chevron-right shrink-0 text-[10px]"></i>
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  }
+
+  <!-- DETALLE DE PRODUCTOS -->
+
+  @if (seleccionado(); as pedido) {
+
+    <article class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" aria-live="polite">
+
+      <!-- ENCABEZADO DEL DETALLE -->
+
+      <div class="flex min-w-0 flex-col gap-4 border-b border-slate-100 bg-[#f8fafd] px-4 py-5 sm:flex-row sm:items-start sm:justify-between sm:px-6">
+
+        <div class="flex min-w-0 items-start gap-3">
+
+          <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#002d54] text-white">
+
+            <i class="pi pi-box text-lg"></i>
+
+          </div>
+
+          <div class="min-w-0">
+
+            <p class="text-xs font-bold uppercase tracking-wide text-[#0077cc]">
+
+              Detalle del pedido
+
+            </p>
+
+            <h2 class="mt-1 wrap-break-word text-lg font-bold text-[#002d54] sm:text-xl">
+
+              Productos del pedido #{{ pedido.idPedido }}
+
+            </h2>
+
+            <p class="mt-1 wrap-break-word text-sm text-slate-500">
+
+              {{ pedido.razonSocial || 'Empresa no disponible' }}
+
+            </p>
+
+          </div>
+
+        </div>
+
+        <!-- CERRAR -->
+
+        <button type="button" (click)="seleccionado.set(null)" class="inline-flex min-h-10 w-full shrink-0 items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-50 sm:w-auto">
+
+          <i class="pi pi-times shrink-0"></i>
+
+          Cerrar detalle
+
+        </button>
+
+      </div>
+
+      @if (cargandoDetalle()) {
+
+        <!-- CARGANDO DETALLE -->
+
+        <div role="status" class="flex min-h-40 flex-col items-center justify-center gap-3 px-5 py-10 text-center">
+
+          <i class="pi pi-spin pi-spinner text-2xl text-[#0077cc]"></i>
+
+          <p class="text-sm text-slate-500">Consultando productos...</p>
+
+        </div>
+
+      } @else if (errorDetalle()) {
+
+        <!-- ERROR DETALLE -->
+
+        <div role="alert" class="p-4 sm:p-6">
+
+          <div class="rounded-xl border border-red-200 bg-red-50 p-4">
+
+            <p class="flex items-start gap-2 wrap-break-word text-sm font-medium text-red-700">
+
+              <i class="pi pi-exclamation-circle mt-0.5 shrink-0"></i>
+
+              <span>{{ errorDetalle() }}</span>
+
+            </p>
+
+            <button type="button" (click)="ver(pedido)" class="mt-3 inline-flex min-h-10 items-center gap-2 text-xs font-bold text-red-700 hover:underline">
+
+              <i class="pi pi-refresh"></i>
+
+              Reintentar
+
+            </button>
+
+          </div>
+
+        </div>
+
+      } @else {
+
+        <!-- PRODUCTOS: TARJETAS EN MÓVIL -->
+
+        <div class="grid grid-cols-1 gap-3 p-4 sm:grid-cols-2 md:hidden">
+
+          @for (d of detalles(); track d.idDetalle) {
+
+            <div class="min-w-0 rounded-xl border border-slate-200 p-4">
+
+              <div class="flex min-w-0 items-start gap-3">
+
+                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-sky-50 text-[#0077cc]">
+
+                  <i class="pi pi-box"></i>
+
+                </div>
+
+                <div class="min-w-0">
+
+                  <p class="text-xs font-medium text-slate-500">Producto</p>
+
+                  <p class="mt-1 wrap-break-word text-sm font-bold text-[#002d54]">
+
+                    {{ d.nombreProducto }}
+
+                  </p>
+
+                </div>
+
+              </div>
+
+              <div class="mt-4 grid grid-cols-2 gap-3 border-t border-slate-100 pt-4">
+
+                <div class="min-w-0">
+
+                  <p class="text-xs text-slate-500">Cantidad</p>
+
+                  <p class="mt-1 text-sm font-semibold text-slate-700">
+
+                    {{ d.cantidad | number:'1.0-2' }}
+
+                  </p>
+
+                </div>
+
+                <div class="min-w-0 text-right">
+
+                  <p class="text-xs text-slate-500">Precio unitario</p>
+
+                  <p class="mt-1 wrap-break-word text-sm font-bold text-[#002d54]">
+
+                    {{ d.precioUnitario | number:'1.2-2' }}
+
+                  </p>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          } @empty {
+
+            <p class="col-span-full py-8 text-center text-sm text-slate-500">
+
+              Este pedido no tiene productos activos.
+
+            </p>
+
+          }
+
+        </div>
+
+        <!-- PRODUCTOS: TABLA EN TABLET Y ESCRITORIO -->
+
+        <div class="hidden w-full overflow-x-auto md:block">
+
+          <table class="w-full min-w-125 text-left text-sm">
+
+            <thead class="bg-slate-50">
+
+              <tr class="border-b border-slate-200">
+
+                <th scope="col" class="px-5 py-4 text-xs font-bold uppercase tracking-wide text-slate-500">Producto</th>
+
+                <th scope="col" class="px-5 py-4 text-right text-xs font-bold uppercase tracking-wide text-slate-500">Cantidad</th>
+
+                <th scope="col" class="px-5 py-4 text-right text-xs font-bold uppercase tracking-wide text-slate-500">Precio unitario guardado</th>
+
+              </tr>
+
+            </thead>
+
+            <tbody class="divide-y divide-slate-100">
+
+              @for (d of detalles(); track d.idDetalle) {
+
+                <tr class="transition-colors hover:bg-slate-50/70">
+
+                  <td class="px-5 py-4">
+
+                    <div class="flex min-w-0 items-center gap-3">
+
+                      <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sky-50 text-[#0077cc]">
+
+                        <i class="pi pi-box text-sm"></i>
+
+                      </div>
+
+                      <span class="wrap-break-word font-semibold text-slate-700">
+
+                        {{ d.nombreProducto }}
+
+                      </span>
+
+                    </div>
+
+                  </td>
+
+                  <td class="px-5 py-4 text-right font-medium text-slate-600">
+
+                    {{ d.cantidad | number:'1.0-2' }}
+
+                  </td>
+
+                  <td class="px-5 py-4 text-right font-semibold text-[#002d54]">
+
+                    {{ d.precioUnitario | number:'1.2-2' }}
+
+                  </td>
+
+                </tr>
+
+              } @empty {
+
+                <tr>
+
+                  <td colspan="3" class="px-6 py-10 text-center text-sm text-slate-500">
+
+                    Este pedido no tiene productos activos.
+
+                  </td>
+
+                </tr>
+
+              }
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      }
+
+    </article>
+
+  }
+
+</section>

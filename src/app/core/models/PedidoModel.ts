@@ -17,6 +17,7 @@ export interface PedidoResponse {
   fechaEntregaEstimada: string;
   prioridad: string;
   idCliente: number;
+  razonSocial?: string;
 }
 
 export interface DetallePedidoResponse {

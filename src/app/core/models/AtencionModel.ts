@@ -10,4 +10,7 @@ export interface AtencionResponse {
   idConductor: number;
   idCisterna: number;
   idProgramador: number;
+  razonSocial?: string | null;
+  nombreConductor?: string | null;
+  cisterna?: string | null;
 }
