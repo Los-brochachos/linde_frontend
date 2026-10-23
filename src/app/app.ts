@@ -10,5 +10,5 @@ import { ButtonModule } from 'primeng/button';
   templateUrl: './app.html',
 })
 export class App {
-  protected readonly title = signal('linde-frontend');
+  protected readonly title = signal('without-frontend');
 }

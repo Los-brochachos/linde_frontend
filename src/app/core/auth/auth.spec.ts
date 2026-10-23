@@ -28,7 +28,7 @@ describe('Auth', () => {
 
     const profile = http.expectOne(`${environment.apiUrl}/api/v1/usuarios/me`);
     expect(profile.request.headers.get('Authorization')).toBe('Bearer new-access');
-    profile.flush({ correo: 'admin@linde.example', rol: 'ADMIN' });
+    profile.flush({ correo: 'admin@without.example', rol: 'ADMIN' });
   });
 
   it('consulta mis-pedidos para cliente y el listado general para admin', () => {
@@ -42,7 +42,7 @@ describe('Auth', () => {
     service.refreshSession().subscribe();
     http.expectOne(`${environment.apiUrl}/auth/csrf`).flush({ token: 'csrf', headerName: 'X-XSRF-TOKEN' });
     http.expectOne(`${environment.apiUrl}/auth/refresh-token`).flush({ access_token: 'access' });
-    http.expectOne(`${environment.apiUrl}/api/v1/usuarios/me`).flush({ idUsuario: 1, correo: 'admin@linde.example', rol: 'ADMIN', estado: 'ACTIVO' });
+    http.expectOne(`${environment.apiUrl}/api/v1/usuarios/me`).flush({ idUsuario: 1, correo: 'admin@without.example', rol: 'ADMIN', estado: 'ACTIVO' });
     service.logout().subscribe();
     http.expectOne(`${environment.apiUrl}/auth/csrf`).flush({ token: 'csrf', headerName: 'X-XSRF-TOKEN' });
     const logout = http.expectOne(`${environment.apiUrl}/auth/logout`);

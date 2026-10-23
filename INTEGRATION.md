@@ -57,7 +57,7 @@ El portal cliente usa:
 ## Verificación
 
 En frontend: `npm test -- --watch=false` y `npm run build -- --configuration development`.
-En la carpeta Linde: `npx playwright test`; CP05 usa `/dashboard/usuarios`.
+En la carpeta without: `npx playwright test`; CP05 usa `/dashboard/usuarios`.
 Las pruebas de backend AtencionClienteTest y AtencionClienteSecurityTest cubren
 la consulta propia, el aislamiento y la autorización del nuevo endpoint.
 No se requieren cambios de esquema de base de datos para esta integración.

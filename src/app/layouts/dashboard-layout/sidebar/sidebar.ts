@@ -33,7 +33,7 @@ const CLIENT_SECTIONS = [
 
 
       /* ENLACES Y BOTONES */
-      .linde-sidebar-link {
+      .without-sidebar-link {
         position: relative;
         border: 0;
         border-radius: 6px;
@@ -41,21 +41,21 @@ const CLIENT_SECTIONS = [
       }
 
       /* ENLACE NORMAL SELECCIONADO */
-      .linde-sidebar-link.linde-sidebar-active {
+      .without-sidebar-link.without-sidebar-active {
         background: #07365f !important;
         color: #ffffff !important;
         font-weight: 600;
       }
 
       /* GRUPO PEDIDOS ACTIVO: SOLO LÍNEA IZQUIERDA */
-      .linde-sidebar-group.linde-sidebar-active {
+      .without-sidebar-group.without-sidebar-active {
         background: transparent !important;
         box-shadow: none !important;
         color: #ffffff !important;
       }
 
       /* INDICADOR LATERAL */
-      .linde-sidebar-link.linde-sidebar-active::before {
+      .without-sidebar-link.without-sidebar-active::before {
         content: '';
         position: absolute;
         left: 0;
@@ -67,17 +67,17 @@ const CLIENT_SECTIONS = [
       }
 
       /* ICONOS */
-      .linde-sidebar-link.linde-sidebar-active > i:first-child {
+      .without-sidebar-link.without-sidebar-active > i:first-child {
         color: #ffffff !important;
       }
 
       /* HOVER */
-      .linde-sidebar-link:not(.linde-sidebar-active):hover {
+      .without-sidebar-link:not(.without-sidebar-active):hover {
         background: #094272 !important;
       }
 
       /* SUBOPCIÓN ACTIVA */
-      .linde-sidebar-subitem.linde-sidebar-active {
+      .without-sidebar-subitem.without-sidebar-active {
         background: #07365f !important;
         color: #ffffff !important;
       }

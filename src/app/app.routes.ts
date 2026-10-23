@@ -9,7 +9,7 @@ const listado = () => import('./features/dashboard/listado/listado').then(m => m
 export const routes: Routes = [
   { path: '', redirectTo: 'inicio', pathMatch: 'full' },
   {
-    path: 'cliente', title: 'Linde · Clientes', data: { area: 'cliente' },
+    path: 'cliente', title: 'without · Clientes', data: { area: 'cliente' },
     canActivate: [authGuard], canActivateChild: [authGuard],
     loadComponent: () => import('./layouts/client-layout/client-layout').then(m => m.ClientLayout),
     children: [
@@ -27,7 +27,7 @@ export const routes: Routes = [
     ],
   },
   {
-    path: 'dashboard', title: 'Linde · Gestión', data: { area: 'staff' },
+    path: 'dashboard', title: 'without · Gestión', data: { area: 'staff' },
     canActivate: [authGuard], canActivateChild: [authGuard],
     loadComponent: () => import('./layouts/dashboard-layout/dashboard-layout').then(m => m.DashboardLayout),
     children: [
@@ -45,7 +45,7 @@ export const routes: Routes = [
     ],
   },
   {
-    path: '', title: 'Linde', loadComponent: () => import('./layouts/public-layout/public-layout').then(m => m.PublicLayout),
+    path: '', title: 'without', loadComponent: () => import('./layouts/public-layout/public-layout').then(m => m.PublicLayout),
     children: [
       { path: 'register', loadComponent: () => import('./features/auth/register/register').then(m => m.Register) },
       { path: 'login', loadComponent: () => import('./features/auth/login/login').then(m => m.Login) },

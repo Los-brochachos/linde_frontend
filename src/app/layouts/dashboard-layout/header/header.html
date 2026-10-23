@@ -27,7 +27,7 @@
     <div class="mx-1 hidden h-8 w-px bg-white/15 sm:block"></div>
 
     <!-- MENÚ DESPLEGABLE -->
-    <p-menu #menu [model]="items()" [popup]="true" appendTo="body" styleClass="linde-user-menu">
+    <p-menu #menu [model]="items()" [popup]="true" appendTo="body" styleClass="without-user-menu">
 
       <!-- INFORMACIÓN DE CUENTA -->
       <ng-template #start>
@@ -54,7 +54,7 @@
 
       <!-- OPCIONES DEL MENÚ -->
       <ng-template #item let-item>
-        <a pRipple [routerLink]="item.routerLink || null" (click)="item.command?.({ originalEvent: $event, item: item })" class="linde-menu-link flex w-full cursor-pointer items-center gap-3 text-sm font-medium transition-colors duration-150" [class.text-red-600]="item.label === 'Cerrar sesión'" [class.text-slate-700]="item.label !== 'Cerrar sesión'">
+        <a pRipple [routerLink]="item.routerLink || null" (click)="item.command?.({ originalEvent: $event, item: item })" class="without-menu-link flex w-full cursor-pointer items-center gap-3 text-sm font-medium transition-colors duration-150" [class.text-red-600]="item.label === 'Cerrar sesión'" [class.text-slate-700]="item.label !== 'Cerrar sesión'">
           <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg" [class.bg-red-50]="item.label === 'Cerrar sesión'" [class.bg-sky-50]="item.label !== 'Cerrar sesión'">
             <i [class]="item.icon" [class.text-red-500]="item.label === 'Cerrar sesión'" [class.text-[#007ac3]]="item.label !== 'Cerrar sesión'"></i>
           </span>

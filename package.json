@@ -1,5 +1,5 @@
 {
-  "name": "linde-frontend",
+  "name": "without-frontend",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",

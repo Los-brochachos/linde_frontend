@@ -19,7 +19,7 @@ import { Auth } from '../../../core/auth/auth';
   encapsulation: ViewEncapsulation.None,
   styles: `
 
-    .linde-user-menu {
+    .without-user-menu {
       width: 290px !important;
       max-width: calc(100vw - 16px) !important;
       padding: 4px 0 !important;
@@ -33,7 +33,7 @@ import { Auth } from '../../../core/auth/auth';
       margin-top: 6px !important;
     }
 
-    .linde-user-menu .p-menu-list {
+    .without-user-menu .p-menu-list {
       display: flex;
       flex-direction: column;
       gap: 0;
@@ -41,19 +41,19 @@ import { Auth } from '../../../core/auth/auth';
       margin: 0 !important;
     }
 
-    .linde-user-menu .p-menu-item,
-    .linde-user-menu .p-menu-item-content {
+    .without-user-menu .p-menu-item,
+    .without-user-menu .p-menu-item-content {
       margin: 0 !important;
       background: transparent !important;
       border-radius: 0 !important;
     }
 
-    .linde-user-menu .p-menu-item-content:hover,
-    .linde-user-menu .p-menu-item.p-focus > .p-menu-item-content {
+    .without-user-menu .p-menu-item-content:hover,
+    .without-user-menu .p-menu-item.p-focus > .p-menu-item-content {
       background: #f1f5f9 !important;
     }
 
-    .linde-user-menu .linde-menu-link {
+    .without-user-menu .without-menu-link {
       width: 100%;
       padding: 11px 16px;
       border-radius: 0 !important;
@@ -61,7 +61,7 @@ import { Auth } from '../../../core/auth/auth';
       text-decoration: none;
     }
 
-    .linde-user-menu .p-menu-separator {
+    .without-user-menu .p-menu-separator {
       margin: 4px 12px !important;
       border-color: #e2e8f0 !important;
     }

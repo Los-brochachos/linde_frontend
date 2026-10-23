@@ -59,7 +59,7 @@
     <nav aria-label="Navegación principal" class="flex flex-col gap-1">
 
       <!-- INICIO / RESUMEN -->
-      <a [routerLink]="home()" routerLinkActive="linde-sidebar-active" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page" class="linde-sidebar-link group relative flex items-center gap-3 rounded-md px-3 py-3 text-sm font-medium text-white transition-colors duration-200">
+      <a [routerLink]="home()" routerLinkActive="without-sidebar-active" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page" class="without-sidebar-link group relative flex items-center gap-3 rounded-md px-3 py-3 text-sm font-medium text-white transition-colors duration-200">
 
         <i class="pi pi-home w-5 text-center text-base text-white/85" aria-hidden="true"></i>
 
@@ -78,7 +78,7 @@
           <div class="flex flex-col gap-1">
 
             <!-- BOTÓN DEL GRUPO -->
-            <button type="button" (click)="toggleGrupo(section.key)" [attr.aria-expanded]="abierto(section.key)" [attr.aria-controls]="'submenu-' + section.key" [class.linde-sidebar-active]="activo(section.key)" class="linde-sidebar-link linde-sidebar-group group relative flex w-full items-center gap-3 rounded-md px-3 py-3 text-left text-sm font-medium text-white transition-colors duration-200">
+            <button type="button" (click)="toggleGrupo(section.key)" [attr.aria-expanded]="abierto(section.key)" [attr.aria-controls]="'submenu-' + section.key" [class.without-sidebar-active]="activo(section.key)" class="without-sidebar-link without-sidebar-group group relative flex w-full items-center gap-3 rounded-md px-3 py-3 text-left text-sm font-medium text-white transition-colors duration-200">
 
               <i [class]="(section.key === 'pedidos' ? 'pi pi-shopping-cart' : section.key === 'trabajadores' ? 'pi pi-users' : 'pi pi-calendar') + ' w-5 text-center text-base text-white/85'" aria-hidden="true"></i>
 
@@ -95,7 +95,7 @@
 
               @for (child of section.children; track child.route) {
 
-                <a [routerLink]="child.route" routerLinkActive="linde-sidebar-active" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page" class="linde-sidebar-link linde-sidebar-subitem relative flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-white/90 transition-colors duration-200">
+                <a [routerLink]="child.route" routerLinkActive="without-sidebar-active" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page" class="without-sidebar-link without-sidebar-subitem relative flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-white/90 transition-colors duration-200">
 
                   <i [class]="child.icon + ' w-4 text-center text-sm'" aria-hidden="true"></i>
 
@@ -114,7 +114,7 @@
         } @else {
 
           <!-- SECCIÓN NORMAL SIN SUBMENÚ -->
-          <a [routerLink]="section.route" routerLinkActive="linde-sidebar-active" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page" class="linde-sidebar-link group relative flex items-center gap-3 rounded-md px-3 py-3 text-sm font-medium text-white transition-colors duration-200">
+          <a [routerLink]="section.route" routerLinkActive="without-sidebar-active" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page" class="without-sidebar-link group relative flex items-center gap-3 rounded-md px-3 py-3 text-sm font-medium text-white transition-colors duration-200">
 
             <i [class]="(isClient() && section.key === 'citas' ? 'pi pi-calendar-clock' : isClient() && section.key === 'seguimiento' ? 'pi pi-map-marker' : isClient() && section.key === 'productos' ? 'pi pi-box' : usuario()?.rol === 'ADMIN' ? (iconosAdmin[section.key] || 'pi pi-angle-right') : 'pi pi-angle-right') + ' w-5 text-center text-base text-white/80'" aria-hidden="true"></i>
 

@@ -26,10 +26,10 @@ export class Contacto {
     },
     {
       titulo: 'Correo electrónico',
-      valor: 'pedidos@lindeperu.com',
+      valor: 'pedidos@withoutperu.com',
       descripcion: 'Envíenos sus consultas y solicitudes comerciales.',
       icono: 'pi pi-envelope',
-      enlace: 'mailto:pedidos@lindeperu.com',
+      enlace: 'mailto:pedidos@withoutperu.com',
       accion: 'Enviar correo'
     }
   ];

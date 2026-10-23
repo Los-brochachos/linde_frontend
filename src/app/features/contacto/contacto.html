@@ -17,7 +17,7 @@
       <div class="max-w-3xl">
 
         <p class="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-sky-300">
-          Linde Perú
+          Without Demo
         </p>
 
         <h1 class="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
@@ -53,41 +53,36 @@
         </h2>
 
         <p class="mt-5 text-base leading-8 text-slate-600">
-          Nuestro equipo está disponible para responder sus consultas comerciales, solicitudes de productos y requerimientos de información. Elija el canal de comunicación que mejor se adapte a sus necesidades.
+          Esta es una página de demostración. Los datos de contacto y la dirección son ficticios y se muestran únicamente como ejemplo de diseño.
         </p>
 
       </div>
 
       <div class="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
 
-        @for (canal of canales; track canal.titulo) {
+        <article class="group flex flex-col rounded-2xl border border-slate-200 bg-white p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-sky-200 hover:shadow-lg">
+          <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-[#eaf4fc] text-[#0077cc] transition-colors group-hover:bg-[#0077cc] group-hover:text-white"><i class="bi bi-envelope text-2xl"></i></div>
+          <h3 class="text-lg font-bold text-[#002d54]">Correo electrónico</h3>
+          <a href="mailto:contacto@example.com" class="mt-3 break-all text-base font-semibold text-[#0077cc] hover:underline">contacto@example.com</a>
+          <p class="mt-4 flex-1 text-sm leading-7 text-slate-600">Escríbanos para consultas generales. Correo ilustrativo, no corresponde a una empresa real.</p>
+          <a href="mailto:contacto@example.com" class="mt-7 inline-flex items-center gap-2 text-sm font-bold text-[#0077cc] hover:text-[#002d54]">Enviar correo<i class="bi bi-arrow-right"></i></a>
+        </article>
 
-          <article class="group flex flex-col rounded-2xl border border-slate-200 bg-white p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-sky-200 hover:shadow-lg">
+        <article class="group flex flex-col rounded-2xl border border-slate-200 bg-white p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-sky-200 hover:shadow-lg">
+          <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-[#eaf4fc] text-[#0077cc] transition-colors group-hover:bg-[#0077cc] group-hover:text-white"><i class="bi bi-telephone text-2xl"></i></div>
+          <h3 class="text-lg font-bold text-[#002d54]">Teléfono</h3>
+          <p class="mt-3 text-base font-semibold text-[#0077cc]">+51 900 000 000</p>
+          <p class="mt-4 flex-1 text-sm leading-7 text-slate-600">Número ficticio mostrado como referencia visual. No está habilitado para atención.</p>
+          <p class="mt-7 text-xs font-semibold text-slate-400">Solo demostración</p>
+        </article>
 
-            <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-[#eaf4fc] text-[#0077cc] transition-colors group-hover:bg-[#0077cc] group-hover:text-white">
-              <i [class]="canal.icono + ' text-2xl'"></i>
-            </div>
-
-            <h3 class="text-lg font-bold text-[#002d54]">
-              {{ canal.titulo }}
-            </h3>
-
-            <a [href]="canal.enlace" class="mt-3 break-all text-base font-semibold text-[#0077cc] hover:underline">
-              {{ canal.valor }}
-            </a>
-
-            <p class="mt-4 flex-1 text-sm leading-7 text-slate-600">
-              {{ canal.descripcion }}
-            </p>
-
-            <a [href]="canal.enlace" class="mt-7 inline-flex items-center gap-2 text-sm font-bold text-[#0077cc] transition-colors hover:text-[#002d54]">
-              {{ canal.accion }}
-              <i class="bi bi-arrow-right"></i>
-            </a>
-
-          </article>
-
-        }
+        <article class="group flex flex-col rounded-2xl border border-slate-200 bg-white p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-sky-200 hover:shadow-lg">
+          <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-[#eaf4fc] text-[#0077cc] transition-colors group-hover:bg-[#0077cc] group-hover:text-white"><i class="bi bi-chat-dots text-2xl"></i></div>
+          <h3 class="text-lg font-bold text-[#002d54]">Cotizaciones</h3>
+          <a href="mailto:cotizaciones@example.com" class="mt-3 break-all text-base font-semibold text-[#0077cc] hover:underline">cotizaciones@example.com</a>
+          <p class="mt-4 flex-1 text-sm leading-7 text-slate-600">Buzón de demostración para solicitudes comerciales. No envíe información real.</p>
+          <a href="mailto:cotizaciones@example.com" class="mt-7 inline-flex items-center gap-2 text-sm font-bold text-[#0077cc] hover:text-[#002d54]">Preparar correo<i class="bi bi-arrow-right"></i></a>
+        </article>
 
       </div>
 
@@ -112,7 +107,7 @@
         </h2>
 
         <p class="mt-5 text-base leading-8 text-slate-600">
-          Encuentre nuestra oficina principal en Lima, Perú. Para recibir atención, puede comunicarse previamente mediante nuestros canales oficiales.
+          La siguiente ubicación es inventada y se incluye únicamente para mostrar cómo se vería una oficina en esta página.
         </p>
 
         <div class="mt-9 space-y-7">
@@ -126,8 +121,8 @@
             <div>
               <h3 class="font-bold text-[#002d54]">Dirección</h3>
               <p class="mt-2 text-sm leading-7 text-slate-600">
-                Av. Alfredo Benavides 801, oficina 1102<br>
-                Miraflores, Lima, Perú
+                Av. Horizonte Azul 1234, oficina 302 (ficticia)<br>
+                Lima, Perú · Dirección de ejemplo
               </p>
             </div>
 
@@ -142,8 +137,8 @@
             <div>
               <h3 class="font-bold text-[#002d54]">Horario de atención</h3>
               <p class="mt-2 text-sm leading-7 text-slate-600">
-                Lunes a viernes<br>
-                7:00 a. m. a 7:00 p. m.
+                Lunes a viernes (ejemplo)<br>
+                9:00 a. m. a 6:00 p. m.
               </p>
             </div>
 
@@ -158,32 +153,31 @@
             <div>
               <h3 class="font-bold text-[#002d54]">Servicio de urgencias</h3>
               <p class="mt-2 text-sm leading-7 text-slate-600">
-                Atención de urgencias disponible las 24 horas.
+                No existe un servicio de urgencias asociado a esta página de demostración.
               </p>
             </div>
 
           </div>
 
         </div>
-
-        <a href="https://www.google.com/maps/search/?api=1&amp;query=Av.+Alfredo+Benavides+801+Miraflores+Lima+Peru" target="_blank" rel="noopener noreferrer" class="mt-9 inline-flex items-center gap-3 rounded-lg bg-[#0077cc] px-6 py-3.5 text-sm font-bold text-white transition-all hover:-translate-y-0.5 hover:bg-[#005491]">
-          <i class="bi bi-geo-alt"></i>
-          Ver ubicación en Google Maps
-          <i class="bi bi-box-arrow-up-right text-xs"></i>
-        </a>
+        <p class="mt-9 text-sm font-semibold text-[#0077cc]">Ubicación ficticia: no disponible en Google Maps.</p>
 
       </div>
 
       <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg shadow-slate-200/60">
 
-        <iframe title="Mapa de la oficina principal de Linde Perú en Miraflores" src="https://www.google.com/maps?q=Av.%20Alfredo%20Benavides%20801%20Miraflores%20Lima%20Peru&amp;output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="h-87.5 w-full border-0 sm:h-107.5 lg:h-125"></iframe>
+        <div role="img" aria-label="Mapa ilustrativo: dirección ficticia sin ubicación real" class="flex h-87.5 w-full flex-col items-center justify-center gap-4 bg-[#eaf4fc] px-8 text-center sm:h-107.5 lg:h-125">
+          <i class="bi bi-geo-alt-fill text-5xl text-[#0077cc]"></i>
+          <p class="text-xl font-bold text-[#002d54]">Ubicación de demostración</p>
+          <p class="max-w-sm text-sm leading-7 text-slate-600">Av. Horizonte Azul 1234, oficina 302, Lima, Perú. Dirección inventada; no representa un lugar verificable.</p>
+        </div>
 
         <div class="flex items-center gap-3 border-t border-slate-100 px-6 py-5">
 
           <i class="bi bi-geo-alt-fill text-lg text-[#0077cc]"></i>
 
           <p class="text-sm font-medium text-slate-600">
-            Miraflores, Lima — Perú
+            Lima, Perú — Ubicación ficticia
           </p>
 
         </div>
@@ -215,13 +209,13 @@
         </p>
 
         <p class="mt-5 text-base leading-8 text-slate-600">
-          Puede utilizar el formulario oficial de cotizaciones de Linde Perú para enviar su solicitud y proporcionar información sobre los productos o soluciones que necesita.
+          Puede utilizar el formulario oficial de cotizaciones de Without Demo para enviar su solicitud y proporcionar información sobre los productos o soluciones que necesita.
         </p>
 
         <div class="mt-8 flex flex-wrap gap-4">
 
-          <a href="https://forms.office.com/e/WHxgZ8J36H" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-3 rounded-lg bg-[#0077cc] px-7 py-4 text-sm font-bold text-white transition-all hover:-translate-y-0.5 hover:bg-[#005491]">
-            Solicitar cotización
+          <a href="mailto:cotizaciones@example.com?subject=Cotizaci%C3%B3n%20de%20demostraci%C3%B3n" class="inline-flex items-center justify-center gap-3 rounded-lg bg-[#0077cc] px-7 py-4 text-sm font-bold text-white transition-all hover:-translate-y-0.5 hover:bg-[#005491]">
+            Correo de ejemplo
             <i class="bi bi-box-arrow-up-right"></i>
           </a>
 
@@ -290,15 +284,15 @@
 
       <div>
         <h2 class="text-lg font-bold text-[#002d54]">
-          Información de contacto oficial
+          Información de demostración
         </h2>
         <p class="mt-2 text-sm leading-7 text-slate-600">
-          Los datos mostrados corresponden a los canales de contacto publicados por Linde Perú. Para información adicional, también puede consultar su sitio web oficial.
+          Los datos mostrados corresponden a los canales de contacto publicados por Without Demo. Para información adicional, también puede consultar su sitio web oficial.
         </p>
       </div>
 
-      <a href="https://www.linde.pe/contacto" target="_blank" rel="noopener noreferrer" class="inline-flex shrink-0 items-center gap-2 text-sm font-bold text-[#0077cc] hover:underline md:ml-auto">
-        Sitio oficial
+      <a routerLink="/inicio" class="inline-flex shrink-0 items-center gap-2 text-sm font-bold text-[#0077cc] hover:underline md:ml-auto">
+         Volver al inicio
         <i class="bi bi-box-arrow-up-right"></i>
       </a>
 
